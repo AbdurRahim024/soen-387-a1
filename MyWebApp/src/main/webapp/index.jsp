@@ -7,6 +7,12 @@
 <body>
 <h1><%= "Your Online Store" %></h1>
 <br/>
-<a href="hello-servlet">Hello Servlet</a>
+<a href="/products">View products</a>
+<br>
+<a href="/products/orange">Orange</a>
+<br>
+<a href="/products/download">Download products</a>
+<br>
+<a href="/cart/products">View cart</a>
 </body>
 </html>

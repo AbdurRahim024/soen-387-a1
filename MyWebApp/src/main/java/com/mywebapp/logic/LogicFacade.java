@@ -37,8 +37,9 @@ public class LogicFacade {
 
     }
 
-    public void removeProductFromCart(String user, String sku) {
+    public static boolean removeProductFromCart(String user, String sku) {
 
+        return false;
     }
 
     public File downloadProductCatalog() {
