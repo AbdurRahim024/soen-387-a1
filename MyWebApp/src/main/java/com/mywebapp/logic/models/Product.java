@@ -17,6 +17,10 @@ public class Product {
         this.price = price;
     }
 
+    public String[] getCsvFormat() {
+        return new String[] {sku, name, description, vendor, urlSlug, String.valueOf(price)};
+    }
+
     public String getName() {
         return name;
     }
