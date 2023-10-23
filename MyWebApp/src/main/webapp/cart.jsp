@@ -85,6 +85,14 @@
             bottom: 0;
             width: 100%;
         }
+        .btn-remove {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -108,22 +116,38 @@
         </form>
     </div>
 
-    <form action="/updateCartItemQuantity" id="updateQuantity" method="get">
-        <table>
-            <thead>
+
+    <table>
+        <thead>
+        <tr>
+            <th></th>
+            <th>Product Name</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total Price</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <c:forEach items="${customer.cart}" var="cartItem">
             <tr>
-                <th></th>
-                <th>Product Name</th>
-                <th>Quantity</th>
-                <th>Total Price</th>
-                <th></th>
+                <td>${cartItem.value.name}</td>
+                <td>${cartItem.value.name}</td>
+                <td>${cartItem.value.quantity}</td>
+                <td>${cartItem.value.price}</td>
+                <td>${cartItem.value.totalPrice}</td>
+                <td>
+                    <form action="/removeFromCart" method="post">
+                        <input type="hidden" name="sku" value="${cartItem.key}">
+                        <input type="submit" class="btn-remove" value="Remove">
+                    </form>
+                </td>
             </tr>
-            </thead>
-            <tbody>
-            <!-- Add your loop here when you have data -->
-            </tbody>
-        </table>
-    </form>
+        </c:forEach>
+        </tbody>
+    </table>
+
+
 
     <p id="total">Total: $${total}</p>
     <a href="/buy" class="btn">Check out</a>
