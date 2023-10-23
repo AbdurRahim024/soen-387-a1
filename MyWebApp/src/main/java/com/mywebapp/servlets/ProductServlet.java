@@ -1,6 +1,7 @@
 package com.mywebapp.servlets;
 
 import com.mywebapp.logic.LogicFacade;
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -10,12 +11,16 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-@WebServlet(name = "productServlet", value = {"/products/*", "/cart/products/*"})
+@WebServlet(name = "productServlet", value = {"/home", "/products/*", "/cart/products/*"})
 public class ProductServlet extends HttpServlet {
 
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String url = request.getRequestURI();
-        if (url.equals("/products")) {
+        if(url.equals("/home")) {
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/home.jsp");
+        dispatcher.forward(request, response);
+        }
+        else if (url.equals("/products")) {
             response.setContentType("text/html");
             PrintWriter out = response.getWriter();
             out.println("<html><body>");
