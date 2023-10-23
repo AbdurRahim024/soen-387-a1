@@ -25,18 +25,9 @@ public class ProductServlet extends HttpServlet {
             dispatcher.forward(request, response);
         }
         else if (url.equals("/products")) {
-            response.setContentType("text/html");
-            PrintWriter out = response.getWriter();
-            out.println("<html><body>");
-            out.println("<h1>Your Products Page. URL is: " + url + "</h1>");
-            out.println("</body></html>");
-        }
-        else if(url.endsWith("/orange")) {
-            response.setContentType("text/html");
-            PrintWriter out = response.getWriter();
-            out.println("<html><body>");
-            out.println("<h1>Imagine an Orange. URL is: " + url + "</h1>");
-            out.println("</body></html>");
+//          request.setAttribute("products", LogicFacade.products);
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/products.jsp");
+            dispatcher.forward(request, response);
         }
         else if (url.equals("/products/download")) {
             response.setContentType("text/html");

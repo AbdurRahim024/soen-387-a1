@@ -138,7 +138,7 @@
 <body>
 <nav>
   <a href="/home">Home</a>
-  <a href="/products">Shop</a>
+  <a href="/products">Products</a>
   <a href="#">New Arrivals</a>
   <a href="#">Men</a>
   <a href="#">Women</a>
