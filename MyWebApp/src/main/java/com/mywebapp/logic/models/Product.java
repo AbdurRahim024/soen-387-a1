@@ -6,6 +6,16 @@ public class Product {
     private String vendor;
     private String urlSlug;
     private String sku;
+    private float price;
+
+    public Product(String name, String description, String vendor, String urlSlug, String sku, float price) {
+        this.name = name;
+        this.description = description;
+        this.vendor = vendor;
+        this.urlSlug = urlSlug;
+        this.sku = sku;
+        this.price = price;
+    }
 
     public String getName() {
         return name;
@@ -45,6 +55,14 @@ public class Product {
 
     public void setSku(String sku) {
         this.sku = sku;
+    }
+
+    public float getPrice() {
+        return price;
+    }
+
+    public void setPrice(float price){
+        this.price = price;
     }
 
 }
