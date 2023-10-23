@@ -69,35 +69,51 @@
         }
         .container {
             margin: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
         }
-        .product {
+
+        .product-form {
+            margin-top: 2px;
             background-color: #fff;
             color: #333;
-            padding: 10px;
+            padding: 20px;
             border: 1px solid #ccc;
             border-radius: 5px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            transition: 0.3s;
-            display: inline-block; /* Display products in a horizontal line */
-            width: calc(30% - 20px); /* Set the width to accommodate three products in a row */
-            margin: 0 10px; /* Add some margin between products */
-            vertical-align: top; /* Align the tops of the products */
+            width: 50%;
+            max-width: 600px;
+
         }
 
-        .product h2 {
-            font-size: 24px;
-            margin: 0;
+        .form-group {
+            margin-bottom: 15px;
         }
 
-        .product p {
-            font-size: 16px;
-        }
-
-        .product p:last-child {
+        .form-group label {
+            display: block;
             font-weight: bold;
         }
 
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box; /* Ensures the specified width includes padding and border */
+        }
 
+        .form-group textarea {
+            height: 100px;
+        }
+        h1{
+            margin-bottom: 0px;
+            text-align: center;
+        }
 
         .footer {
             background-color: #333;
@@ -121,6 +137,33 @@
     <a href="#" id="staff-login-button">Staff Login</a>
     <a hidden href="#" id="logout-button">Staff Logout</a>
 </nav>
+
+<h1>Create Product</h1>
+<div class="container">
+    <form action="/addProductToList" method="post" class="product-form">
+        <div class="form-group">
+            <label for="productName">Product Name:</label>
+            <input type="text" id="productName" name="productName" required>
+        </div>
+        <div class="form-group">
+            <label for="productDescription">Product Description:</label>
+            <textarea id="productDescription" name="productDescription" rows="4" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="productVendor">Vendor:</label>
+            <input type="text" id="productVendor" name="productVendor" required>
+        </div>
+        <div class="form-group">
+            <label for="productUrlSlug">URL Slug:</label>
+            <input type="text" id="productUrlSlug" name="productUrlSlug" required>
+        </div>
+        <div class="form-group">
+            <label for="productPrice">Price:</label>
+            <input type="number" id="productPrice" name="productPrice" step="0.01" required>
+        </div>
+        <button type="submit" class="btn">Add Product</button>
+    </form>
+</div>
 
 
 <div class="footer">
