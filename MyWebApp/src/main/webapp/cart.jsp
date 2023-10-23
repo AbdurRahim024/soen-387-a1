@@ -97,6 +97,7 @@
     <a href="/cart">Cart</a>
     <a href="#" id="staff-login-button">Staff Login</a>
     <a hidden href="#" id="logout-button">Staff Logout</a>
+    <a hidden href="/createProduct.jsp" id = "create-new-product">Creat New Product</a>
 </nav>
 <div class="container">
     <h1>My Cart</h1>
@@ -105,13 +106,6 @@
         <form action="/clearcart" method="get">
             <button type="submit" class="btn">Clear cart</button>
         </form>
-        <form action="/movecustomtocart" method="get">
-            <button type="submit" class="btn">Add custom cart to cart</button>
-        </form>
-        <a href="/custom-cart" class="btn">Show custom cart</a>
-        <input type="button" value="Edit quantities" class="btn" onclick="editMode()">
-        <button hidden type="submit" form="updateQuantity" class="btn">Confirm changes</button>
-        <input hidden type="button" value="Cancel" class="btn" onclick="cancel()">
     </div>
 
     <form action="/updateCartItemQuantity" id="updateQuantity" method="get">
@@ -131,8 +125,6 @@
         </table>
     </form>
 
-    <p class="empty-cart-message" id="emptyCartMessage">Your cart is currently empty, add some products to view them here.
-        <br><a href="/shop">Go to shop page</a></p>
     <p id="total">Total: $${total}</p>
     <a href="/buy" class="btn">Check out</a>
 </div>
@@ -150,6 +142,8 @@
     // Display admin-specific options
     document.getElementById("staff-login-button").hidden = true;
     document.getElementById("logout-button").hidden = false;
+    document.getElementById("create-new-product").hidden = false;
+
     } else {
         // Display customer options
     }
