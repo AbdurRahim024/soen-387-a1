@@ -89,7 +89,7 @@
 </head>
 <body>
 <nav>
-    <a href="/index.jsp">Home</a>
+    <a href="/home.jsp">Home</a>
     <a href="/products">Shop</a>
     <a href="#">New Arrivals</a>
     <a href="#">Men</a>
