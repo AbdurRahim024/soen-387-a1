@@ -145,6 +145,7 @@
   <a href="/cart">Cart</a>
   <a href="#" id="staff-login-button">Staff Login</a>
   <a hidden href="#" id="logout-button">Staff Logout</a>
+  <a hidden href="#" id = "create-new-product">Creat New Product</a>
 </nav>
 
 <div class="hero-section">
@@ -202,6 +203,7 @@
     // Display admin-specific options
     document.getElementById("staff-login-button").hidden = true;
     document.getElementById("logout-button").hidden = false;
+    document.getElementById("create-new-product").hidden = false;
 } else {
     // Display customer options
 }
