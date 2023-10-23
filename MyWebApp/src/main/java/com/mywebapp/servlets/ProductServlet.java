@@ -11,14 +11,18 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-@WebServlet(name = "productServlet", value = {"/home", "/products/*", "/cart/products/*"})
+@WebServlet(name = "productServlet", value = {"/home", "/products/*", "/cart/*"})
 public class ProductServlet extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String url = request.getRequestURI();
         if(url.equals("/home")) {
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/home.jsp");
-        dispatcher.forward(request, response);
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/home.jsp");
+            dispatcher.forward(request, response);
+        }
+        else if(url.equals("/cart")) {
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/cart.jsp");
+            dispatcher.forward(request, response);
         }
         else if (url.equals("/products")) {
             response.setContentType("text/html");
