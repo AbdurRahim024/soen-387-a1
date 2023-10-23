@@ -4,13 +4,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Login - Your Clothing Store</title>
+    <title>Staff Login</title>
     <style>
         body {
             margin: 0;
             padding: 0;
             font-family: 'Arial', sans-serif;
-            background: url('bg5.avif') no-repeat center center fixed;
+
             background-size: cover;
         }
 
@@ -99,7 +99,7 @@
         <button type="submit">Login</button>
     </form>
 
-    <a href="/new-user" class="new-user-link">New user? Click here to create an account</a>
+
 </div>
 
 </body>
