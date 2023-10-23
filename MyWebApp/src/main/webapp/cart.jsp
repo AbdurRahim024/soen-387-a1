@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Clothing Store - My Cart</title>
+    <title>BestClothes - My Cart</title>
     <style>
         body {
             margin: 0;
@@ -97,7 +97,7 @@
     <a href="/cart">Cart</a>
     <a href="#" id="staff-login-button">Staff Login</a>
     <a hidden href="#" id="logout-button">Staff Logout</a>
-    <a hidden href="/createProduct.jsp" id = "create-new-product">Creat New Product</a>
+    <a hidden href="/createProduct.jsp" id = "create-new-product">Create New Product</a>
 </nav>
 <div class="container">
     <h1>My Cart</h1>

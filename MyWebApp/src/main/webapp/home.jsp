@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Online Store</title>
+  <title>BestClothes</title>
   <style>
     body {
       margin: 0;

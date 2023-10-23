@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 public class Customer {
     private String name;
-    private HashMap<String,Product> cart; // the key is the sku and the value is the product itself
+    private HashMap<String, Product> cart; // the key is the sku and the value is the product itself
 
     public Customer(String name) {
         this.name = name;
@@ -34,3 +34,4 @@ public class Customer {
     public void removeFromCart(Product productToRemove) {
         cart.remove(productToRemove.getSku());
     }
+}

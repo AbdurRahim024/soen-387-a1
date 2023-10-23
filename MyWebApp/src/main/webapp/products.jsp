@@ -121,7 +121,7 @@
     <a href="/cart">Cart</a>
     <a href="#" id="staff-login-button">Staff Login</a>
     <a hidden href="#" id="logout-button">Staff Logout</a>
-    <a hidden href="/createProduct" id = "create-new-product">Creat New Product</a>
+    <a hidden href="/createProduct" id = "create-new-product">Create New Product</a>
 </nav>
 <div class="container">
     <h1>Product Listing</h1>
@@ -159,12 +159,10 @@
     }
 
     if (isAdminUser()) {
-        // Display admin-specific options
         document.getElementById("staff-login-button").hidden = true;
         document.getElementById("logout-button").hidden = false;
         document.getElementById("create-new-product").hidden = false;
     } else {
-        // Display customer options
     }
 
     document.getElementById("staff-login-button").addEventListener("click", function() {
@@ -178,10 +176,8 @@
     });
 
     document.getElementById("logout-button").addEventListener("click", function() {
-        // Clear the isAdmin cookie on logout
         document.cookie = "isAdmin=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        // Redirect to the home page or any other suitable page after logout
-        window.location.href = "/home"; // Replace "/home" with the desired URL
+        window.location.href = "/home";
     });
 </script>
 </html>

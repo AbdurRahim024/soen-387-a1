@@ -212,18 +212,6 @@ public class LogicFacade {
 
 /////////////////////////////////////////// CUSTOM EXCEPTIONS ////////////////////////////////////////////////////////
 
-class UserNotFoundException extends Exception {
-    public UserNotFoundException(String s) {
-        super(s);
-    }
-}
-
-class ProductNotFoundException extends Exception {
-    public ProductNotFoundException(String s) {
-        super(s);
-    }
-}
-
 class UserHasNoCartException extends Exception {
     public UserHasNoCartException(String s) {
         super(s);
