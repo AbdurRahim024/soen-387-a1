@@ -37,11 +37,6 @@
             margin-bottom: 20px;
         }
 
-        .d-flex {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
 
         .btn {
             background-color: #333;
@@ -129,13 +124,14 @@
 <body>
 <nav>
     <a href="/home">Home</a>
-    <a href="/products">Shop</a>
+    <a href="/products">Products</a>
     <a href="#">New Arrivals</a>
     <a href="#">Men</a>
     <a href="#">Women</a>
     <a href="/cart">Cart</a>
     <a href="#" id="staff-login-button">Staff Login</a>
     <a hidden href="#" id="logout-button">Staff Logout</a>
+    <a hidden href="/createProduct.jsp" id = "create-new-product">Create New Product</a>
 </nav>
 
 <h1>Create Product</h1>
@@ -179,6 +175,7 @@
         // Display admin-specific options
         document.getElementById("staff-login-button").hidden = true;
         document.getElementById("logout-button").hidden = false;
+        document.getElementById("create-new-product").hidden = false;
     } else {
         // Display customer options
     }

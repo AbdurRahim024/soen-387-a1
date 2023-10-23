@@ -56,23 +56,28 @@
     }
 
     .product-section {
+      display: flex;
       text-align: center;
       padding: 50px 0;
+      justify-content: center;
     }
 
     .product-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 20px;
+      /*display: grid;*/
+      /*grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));*/
+      /*gap: 20px;*/
+      display: flex;
       justify-content: center;
     }
 
     .product-item {
+      width: 300px;
       position: relative;
       overflow: hidden;
       border-radius: 10px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       transition: transform 0.3s ease-in-out;
+      margin: 10px;
     }
 
     .product-item:hover {
@@ -83,22 +88,6 @@
       width: 100%;
       height: 400px;
       border-radius: 10px 10px 0 0;
-    }
-
-    .product-info {
-      padding: 20px;
-      background-color: #fff;
-      border-radius: 0 0 10px 10px;
-    }
-
-    .product-info h2 {
-      font-size: 18px;
-      margin-bottom: 10px;
-    }
-
-    .product-info p {
-      font-size: 14px;
-      color: #666;
     }
 
     .footer {
@@ -160,6 +149,16 @@
       <div class="product-info">
         <h2>Stylish Jacket</h2>
         <p>Explore our latest collection of jackets for men and women.</p>
+        <form action="/addToCart" method="post">
+          <!-- Hard code the values for these products -->
+          <input type="hidden" name="productName" value="${product.name}">
+          <input type="hidden" name="productDescription" value="${product.description}">
+          <input type="hidden" name="productVendor" value="${product.vendor}">
+          <input type="hidden" name="productUrlSlug" value="${product.urlSlug}">
+          <input type="hidden" name="productPrice" value="${product.price}">
+
+          <button class="cta-button" type="submit">Add to Cart</button>
+        </form>
       </div>
     </div>
     <div class="product-item">
@@ -167,6 +166,16 @@
       <div class="product-info">
         <h2>Denim Jeans</h2>
         <p>Classic denim jeans for a timeless look. Available in various styles and fits.</p>
+        <form action="/addToCart" method="post">
+          <!-- Hard code the values for these products -->
+          <input type="hidden" name="productName" value="${product.name}">
+          <input type="hidden" name="productDescription" value="${product.description}">
+          <input type="hidden" name="productVendor" value="${product.vendor}">
+          <input type="hidden" name="productUrlSlug" value="${product.urlSlug}">
+          <input type="hidden" name="productPrice" value="${product.price}">
+
+          <button class="cta-button" type="submit">Add to Cart</button>
+        </form>
       </div>
     </div>
     <div class="product-item">
@@ -174,6 +183,16 @@
       <div class="product-info">
         <h2>Sports Wear</h2>
         <p>Elevate your wardrobe with our collection of classic shirts for any occasion.</p>
+        <form action="/addToCart" method="post">
+          <!-- Hard code the values for these products -->
+          <input type="hidden" name="productName" value="${product.name}">
+          <input type="hidden" name="productDescription" value="${product.description}">
+          <input type="hidden" name="productVendor" value="${product.vendor}">
+          <input type="hidden" name="productUrlSlug" value="${product.urlSlug}">
+          <input type="hidden" name="productPrice" value="${product.price}">
+
+          <button class="cta-button" type="submit">Add to Cart</button>
+        </form>
       </div>
     </div>
   </div>
