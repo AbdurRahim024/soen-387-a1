@@ -1,3 +1,5 @@
+<%@ page import="java.util.HashMap" %>
+<%@ page import="com.mywebapp.logic.models.Product" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -130,13 +132,16 @@
         </tr>
         </thead>
         <tbody>
-        <c:forEach items="${customer.cart}" var="cartItem">
+        <%
+            HashMap<String, Product> cart = (HashMap<String, Product>) request.getAttribute("cartMap");
+            for (HashMap.Entry<String,Product> product : cart.entrySet()) {
+                Product p = product.getValue();
+        %>
             <tr>
-                <td>${cartItem.value.name}</td>
-                <td>${cartItem.value.name}</td>
-                <td>${cartItem.value.quantity}</td>
-                <td>${cartItem.value.price}</td>
-                <td>${cartItem.value.totalPrice}</td>
+                <td><%=product.getValue().getName()%></td>
+<%--                <td><%=product.getValue().getQuantity()%></td>--%>
+                <td>${cart.value.price}</td>
+                <td>${cart.value.totalPrice}</td>
                 <td>
                     <form action="/removeFromCart" method="post">
                         <input type="hidden" name="sku" value="${cartItem.key}">
