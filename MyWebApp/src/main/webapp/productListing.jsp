@@ -28,12 +28,6 @@
             margin: 0 15px;
             font-size: 18px;
         }
-        .link {
-            color: black;
-            text-decoration: none;
-            margin: 0 15px;
-            font-size: 18px;
-        }
 
         .container {
             margin: 20px;
@@ -115,18 +109,6 @@
             bottom: 0;
             width: 100%;
         }
-        .button-container {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        form {
-            margin: 0; /* Remove default form margin */
-        }
-
-        button {
-            padding: 10px 20px;
-        }
     </style>
 </head>
 <body>
@@ -142,39 +124,7 @@
     <a hidden href="/createProduct" id = "create-new-product">Create New Product</a>
     <a hidden href="/products/download" id = "download-catalog">Download Catalog</a>
 </nav>
-<div class="container">
-    <h1>Product Listing</h1>
-    <div id="product-container">
-        <c:forEach items="${products}" var="product">
-            <div class="product">
-                <h2>${product.name}</h2>
-                <p>${product.description}</p>
-                <p>Price: $${product.price}</p>
 
-                <div class="button-container">
-                    <form action="/addToCart" method="post">
-                        <input type="hidden" name="productName" value="${product.name}">
-                        <input type="hidden" name="productDescription" value="${product.description}">
-                        <input type="hidden" name="productVendor" value="${product.vendor}">
-                        <input type="hidden" name="productUrlSlug" value="${product.urlSlug}">
-                        <input type="hidden" name="productPrice" value="${product.price}">
-                        <button class="btn" type="submit">Add to Cart</button>
-                    </form>
-
-                    <form action="/products/${product.urlSlug}">
-                        <input type="hidden" name="productName" value="${product.name}">
-                        <input type="hidden" name="productDescription" value="${product.description}">
-                        <input type="hidden" name="productVendor" value="${product.vendor}">
-                        <input type="hidden" name="productUrlSlug" value="${product.urlSlug}">
-                        <input type="hidden" name="productPrice" value="${product.price}">
-                        <button class="btn" type="submit">View Details</button>
-                    </form>
-                </div>
-            </div>
-        </c:forEach>
-    </div>
-
-</div>
 
 <div class="footer">
     <p>&copy; 2023 BestClothes</p>
@@ -202,6 +152,7 @@
             alert("Incorrect password. You are not authorized.");
         }
     });
+
 
     document.getElementById("logout-button").addEventListener("click", function() {
         document.cookie = "isAdmin=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";

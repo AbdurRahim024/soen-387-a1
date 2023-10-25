@@ -190,6 +190,7 @@
         }
     });
 
+
     document.getElementById("logout-button").addEventListener("click", function() {
         // Clear the isAdmin cookie on logout
         document.cookie = "isAdmin=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
