@@ -160,6 +160,7 @@
                         <input type="hidden" name="productPrice" value="${product.price}">
                         <button class="btn" type="submit">Add to Cart</button>
                     </form>
+
                     <form action="/products/${product.urlSlug}">
                         <input type="hidden" name="productName" value="${product.name}">
                         <input type="hidden" name="productDescription" value="${product.description}">

@@ -110,6 +110,7 @@
 <div class="container">
     <h1>My Cart</h1>
 
+
     <div class="d-flex">
         <form action="/clearcart" method="get">
             <button type="submit" class="btn">Clear cart</button>

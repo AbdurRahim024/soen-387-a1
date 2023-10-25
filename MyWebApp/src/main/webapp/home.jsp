@@ -194,6 +194,7 @@
           <button class="cta-button" type="submit">Add to Cart</button>
         </form>
       </div>
+
     </div>
   </div>
 </div>
