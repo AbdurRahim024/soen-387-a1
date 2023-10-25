@@ -148,13 +148,6 @@
         <%
             ArrayList<Product> list = (ArrayList<Product>) request.getAttribute("products");
             for (Product product : list){ %>
-<%--                <tr>--%>
-<%--                <td><%=product.getName()%></td>--%>
-<%--                <td><%=product.getVendor()%></td>--%>
-<%--                <td><%=product.getDescription()%></td>--%>
-<%--                <td><%=product.getPrice() + ""%></td>--%>
-<%--                <td><%=product.getSku()%></td>--%>
-<%--                </tr>--%>
             <div class="product">
                 <h2><%=product.getName()%></h2>
                 <p><%=product.getPrice()%></p>
