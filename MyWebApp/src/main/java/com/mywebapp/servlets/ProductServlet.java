@@ -87,7 +87,7 @@ public class ProductServlet extends HttpServlet {
                 throw new RuntimeException(e);
             }
             request.setAttribute("product", product);
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/productsListings.jsp");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/productListing.jsp");
             dispatcher.forward(request, response);
 
 
