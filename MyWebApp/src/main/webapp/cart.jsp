@@ -98,6 +98,25 @@
         }
     </style>
 </head>
+<script>
+    function removeFromCart(urlSlug) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("DELETE", "/cart/products/" + urlSlug, true);
+
+        xhr.send();
+
+        let totalElement = document.getElementById("total").innerText;
+        let priceElement = document.getElementById("price").innerText;
+        console.log(totalElement);
+        console.log(priceElement);
+        document.getElementById("total").innerText = parseFloat(totalElement) - parseFloat(priceElement);
+        document.getElementById("remove-row").remove();
+
+
+
+    }
+</script>
+
 <body>
 <nav>
     <a href="/home">Home</a>
@@ -109,6 +128,7 @@
     <a href="#" id="staff-login-button">Staff Login</a>
     <a hidden href="#" id="logout-button">Staff Logout</a>
     <a hidden href="/createProduct" id = "create-new-product">Create New Product</a>
+    <a hidden href="/products/download" id = "download-catalog">Download Catalog</a>
 </nav>
 <div class="container">
     <h1>My Cart</h1>
@@ -122,6 +142,7 @@
 
     <%
         double total = 0;
+        double price = 0;
     %>
     <table>
         <thead>
@@ -134,31 +155,30 @@
         </thead>
         <tbody>
         <%
-        <%
             ArrayList<Product> list = (ArrayList<Product>) request.getAttribute("cart");
-            for (Product product : list){
-                double price = product.getPrice();
+            for (Product product : list) {
+                price = product.getPrice();
                 String name = product.getName();
                 total = total + price;
-
         %>
-            <tr>
-                <td><%=name%></td>
-                <td><%=price%></td>
-                <td>
-                    <form action="/cart/products/<%=product.getUrlSlug()%>" method="method">
-                        <input type="hidden" name="productSku" value="<%=product.getSku()%>">
-                        <input type="submit" id="removeFromCart" class="btn-remove" value="Remove">
-                    </form>
-                </td>
-            </tr>
-        <% } %>
+        <tr id="remove-row">
+            <td><%=name%></td>
+            <td id="price"><%=price%></td>
+            <td>
+                <button class="btn-remove" onclick="removeFromCart('<%=product.getUrlSlug()%>');">
+                    Remove
+                </button>
+            </td>
+        </tr>
+        <%
+            }
+        %>
         </tbody>
     </table>
 
 
 
-    <p>Total: <%=total%></p>
+    <p>Total:</p> <p id="total"><%=total%></p>
     <a href="/buy" class="btn">Check out</a>
 </div>
 
@@ -176,6 +196,7 @@
         document.getElementById("staff-login-button").hidden = true;
         document.getElementById("logout-button").hidden = false;
         document.getElementById("create-new-product").hidden = false;
+        document.getElementById("download-catalog").hidden = false;
 
     } else {
         // Display customer options
@@ -197,6 +218,7 @@
         // Redirect to the home page or any other suitable page after logout
         window.location.href = "/home"; // Replace "/home" with the desired URL
 });
+
 
 
 
