@@ -18,7 +18,14 @@ public class Product {
     }
 
     public String[] getCsvFormat() {
-        return new String[] {sku, name, description, vendor, urlSlug, String.valueOf(price)};
+        return new String[]{
+                this.sku,
+                this.name,
+                this.description,
+                this.vendor,
+                this.urlSlug,
+                String.valueOf(this.price)
+        };
     }
 
     public String getName() {
