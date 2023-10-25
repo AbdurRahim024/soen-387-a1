@@ -148,42 +148,33 @@
         <%
             ArrayList<Product> list = (ArrayList<Product>) request.getAttribute("products");
             for (Product product : list){ %>
-                <tr>
-                <td><%=product.getName()%></td>
-                <td><%=product.getVendor()%></td>
-                <td><%=product.getDescription()%></td>
-                <td><%=product.getPrice() + ""%></td>
-                <td><%=product.getSku()%></td>
-                </tr>
+<%--                <tr>--%>
+<%--                <td><%=product.getName()%></td>--%>
+<%--                <td><%=product.getVendor()%></td>--%>
+<%--                <td><%=product.getDescription()%></td>--%>
+<%--                <td><%=product.getPrice() + ""%></td>--%>
+<%--                <td><%=product.getSku()%></td>--%>
+<%--                </tr>--%>
+            <div class="product">
+                <h2><%=product.getName()%></h2>
+                <p><%=product.getPrice()%></p>
+                <div class="button-container">
+                    <form action="/addToCart" method="post">
+                        <input type="hidden" name="productSku" value="<%=product.getSku()%>">
+                        <button class="btn" type="submit">Add to Cart</button>
+                    </form>
+
+                    <form action="/products/<%=product.getUrlSlug()%>" method="post">
+                        <input type="hidden" name="productSku" value="<%=product.getSku()%>">
+                        <button class="btn" type="submit">View Details</button>
+                    </form>
+                </div>
+            </div>
+
             <% } %>
 
-<%--        <c:forEach items="${products}" var="product">--%>
-<%--            <div class="product">--%>
-<%--                <h2>${product.name}</h2>--%>
-<%--                <p>${product.description}</p>--%>
-<%--                <p>Price: $${product.price}</p>--%>
 
-<%--                <div class="button-container">--%>
-<%--                    <form action="/addToCart" method="post">--%>
-<%--                        <input type="hidden" name="productName" value="${product.name}">--%>
-<%--                        <input type="hidden" name="productDescription" value="${product.description}">--%>
-<%--                        <input type="hidden" name="productVendor" value="${product.vendor}">--%>
-<%--                        <input type="hidden" name="productUrlSlug" value="${product.urlSlug}">--%>
-<%--                        <input type="hidden" name="productPrice" value="${product.price}">--%>
-<%--                        <button class="btn" type="submit">Add to Cart</button>--%>
-<%--                    </form>--%>
 
-<%--                    <form action="/products/${product.urlSlug}">--%>
-<%--                        <input type="hidden" name="productName" value="${product.name}">--%>
-<%--                        <input type="hidden" name="productDescription" value="${product.description}">--%>
-<%--                        <input type="hidden" name="productVendor" value="${product.vendor}">--%>
-<%--                        <input type="hidden" name="productUrlSlug" value="${product.urlSlug}">--%>
-<%--                        <input type="hidden" name="productPrice" value="${product.price}">--%>
-<%--                        <button class="btn" type="submit">View Details</button>--%>
-<%--                    </form>--%>
-<%--                </div>--%>
-<%--            </div>--%>
-<%--        </c:forEach>--%>
     </div>
 
 </div>

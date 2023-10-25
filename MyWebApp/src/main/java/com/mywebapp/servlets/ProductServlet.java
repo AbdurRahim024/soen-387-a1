@@ -14,7 +14,7 @@ import jakarta.servlet.http.Cookie;
 import java.io.*;
 import java.util.Arrays;
 
-@WebServlet(name = "productServlet", value = {"/home", "/products/*", "/cart/*", "/addProductToList"})
+@WebServlet(name = "productServlet", value = {"/home", "/products/*", "/cart/*", "/addProductToList", "/createProduct"})
 public class ProductServlet extends HttpServlet {
 
     LogicFacade logic = new LogicFacade();
@@ -27,6 +27,10 @@ public class ProductServlet extends HttpServlet {
         }
         else if(url.equals("/cart")) {
             RequestDispatcher dispatcher = request.getRequestDispatcher("/cart.jsp");
+            dispatcher.forward(request, response);
+        }
+        else if(url.equals("/createProduct")) {
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/createProduct.jsp");
             dispatcher.forward(request, response);
         }
         else if (url.equals("/products")) {
