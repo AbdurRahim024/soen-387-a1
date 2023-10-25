@@ -152,7 +152,7 @@
                 <h2><%=product.getName()%></h2>
                 <p><%=product.getPrice()%></p>
                 <div class="button-container">
-                    <form action="/addToCart" method="post">
+                    <form action="/cart/addToCart/<%=product.getUrlSlug()%>" method="post">
                         <input type="hidden" name="productSku" value="<%=product.getSku()%>">
                         <button class="btn" type="submit">Add to Cart</button>
                     </form>
