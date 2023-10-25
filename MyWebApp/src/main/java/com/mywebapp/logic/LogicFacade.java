@@ -36,8 +36,8 @@ public class LogicFacade {
         addProductToCSV(product);
     }
 
-    public void updateProduct(String name, String description, String vendor, String urlSlug, double price, String sku) throws ProductNotFoundException {
-        Product product = products.get(sku);
+    public void updateProduct(String name, String description, String vendor, String urlSlug, double price) throws ProductNotFoundException {
+        Product product = getProductBySlug(urlSlug);
         if (product == null) {
             throw new ProductNotFoundException("This product doesn't exist.");
         }
