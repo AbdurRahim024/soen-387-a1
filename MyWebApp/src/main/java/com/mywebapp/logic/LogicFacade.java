@@ -14,7 +14,7 @@ public class LogicFacade {
 
     private HashMap<String,Product> products; //The hashmap's key is the sku
     private ArrayList<Customer> customers;
-    private File products_file = new File("/Users/abdurrahimgigani/Documents/SOEN 387/soen-387-a1/MyWebApp/src/main/java/com/mywebapp/logic/products.csv");
+    private File products_file = new File("/Users/emmuh/Documents/COMP/SOEN 387/soen-387-a1/MyWebApp/src/main/java/com/mywebapp/logic/products.csv");
 
     public LogicFacade() {
         this.products = new HashMap<>();
@@ -137,7 +137,6 @@ public class LogicFacade {
 
 
 
-
     public Customer findCustomerByName(String name) throws UserNotFoundException {
         for (Customer customer : customers) {
             if (customer.getName().equals(name)) {
@@ -173,14 +172,7 @@ public class LogicFacade {
     public void updateProductInCSV() {
         try (CSVWriter writer = new CSVWriter(new FileWriter(this.products_file))) {
             for (Product product : products.values()) {
-                String[] entry = {
-                        product.getSku(),
-                        product.getName(),
-                        product.getDescription(),
-                        product.getVendor(),
-                        product.getUrlSlug(),
-                        String.valueOf(product.getPrice())
-                };
+                String[] entry = product.getCsvFormat();
                 writer.writeNext(entry);
             }
         } catch (Exception e) {
@@ -190,14 +182,7 @@ public class LogicFacade {
 
     public void addProductToCSV(Product product) {
         try (CSVWriter writer = new CSVWriter(new FileWriter(this.products_file, true))) {
-            String[] entry = {
-                    product.getSku(),
-                    product.getName(),
-                    product.getDescription(),
-                    product.getVendor(),
-                    product.getUrlSlug(),
-                    String.valueOf(product.getPrice())
-            };
+            String[] entry = product.getCsvFormat();
             writer.writeNext(entry);
         } catch (Exception e) {
             e.printStackTrace();

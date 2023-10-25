@@ -23,11 +23,15 @@ public class ProductServlet extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String url = request.getRequestURI();
+
+        // home page
         if(url.equals("/home")) {
             response.setStatus(HttpServletResponse.SC_OK);
             RequestDispatcher dispatcher = request.getRequestDispatcher("/home.jsp");
             dispatcher.forward(request, response);
         }
+
+        // view cart
         else if(url.equals("/cart")) {
             ArrayList<Product> cart;
             try {
@@ -42,7 +46,7 @@ public class ProductServlet extends HttpServlet {
             dispatcher.forward(request, response);
         }
 
-        // GET /products
+        // view all products
         else if (url.equals("/products")) {
             request.setAttribute("products", logic.getProducts());
             response.setStatus(HttpServletResponse.SC_OK);
@@ -50,7 +54,7 @@ public class ProductServlet extends HttpServlet {
             dispatcher.forward(request, response);
         }
 
-        // GET /products/:slug
+        // view a specific product
         else if (url.startsWith("/products") && !url.equals("/products/download")) {
             String[] fullUrl = url.split("/");
             String urlSlug = fullUrl[fullUrl.length-1];
@@ -68,13 +72,7 @@ public class ProductServlet extends HttpServlet {
 
         }
 
-        else if(url.equals("/createProduct")) {
-            response.setStatus(HttpServletResponse.SC_OK);
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/createProduct.jsp");
-            dispatcher.forward(request, response);
-        }
-
-
+        // [STAFF ONLY] download products list
         else if (url.equals("/products/download")) {
             String isAdminCookie = Arrays.stream(request.getCookies())
             .filter(cookie -> "isAdmin".equals(cookie.getName()))
@@ -103,6 +101,7 @@ public class ProductServlet extends HttpServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String url = request.getRequestURI();
 
+        // [STAFF ONLY] create product
         if (url.equals("/addProductToList")) {
             String name = request.getParameter("productName");
             String description = request.getParameter("productDescription");
@@ -116,7 +115,7 @@ public class ProductServlet extends HttpServlet {
             dispatcher.forward(request, response);
         }
 
-        // POST /products/:slug
+        // [STAFF ONLY] update product
         if (url.equals("/updateProduct")) {
             String sku = request.getParameter("productSku");
             String name = request.getParameter("productName");
@@ -137,7 +136,7 @@ public class ProductServlet extends HttpServlet {
             dispatcher.forward(request, response);
         }
 
-        // POST /cart/products/:slug
+        // add product to cart
         if (url.startsWith("/cart/products")) {
             String sku = request.getParameter("productSku");
             ArrayList<Product> cart = new ArrayList<>();
@@ -154,10 +153,11 @@ public class ProductServlet extends HttpServlet {
         }
     }
 
+
     public void doDelete(HttpServletRequest request, HttpServletResponse response) {
         String url = request.getRequestURI();
 
-        // DELETE /cart/products/:slug
+        // remove product from cart
         if (url.startsWith("/cart/products")) {
             String[] fullUrl = url.split("/");
             String urlSlug = fullUrl[fullUrl.length-1];
