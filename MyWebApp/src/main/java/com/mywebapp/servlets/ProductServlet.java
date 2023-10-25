@@ -3,6 +3,7 @@ package com.mywebapp.servlets;
 import com.mywebapp.logic.LogicFacade;
 import com.mywebapp.logic.ProductNotFoundException;
 import com.mywebapp.logic.UserNotFoundException;
+import com.mywebapp.logic.models.Product;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -14,7 +15,7 @@ import jakarta.servlet.http.Cookie;
 import java.io.*;
 import java.util.Arrays;
 
-@WebServlet(name = "productServlet", value = {"/home", "/products/*", "/cart/*", "/addProductToList", "/createProduct"})
+@WebServlet(name = "productServlet", value = {"/home", "/products/*", "/cart/*", "/addProductToList", "/createProduct", "/updateProduct"})
 public class ProductServlet extends HttpServlet {
 
     LogicFacade logic = new LogicFacade();
@@ -46,10 +47,10 @@ public class ProductServlet extends HttpServlet {
             .orElse(null);
 
             if (isAdminCookie != null && isAdminCookie.equals("true")) {
-                File catalog = logic.downloadProductCatalog();
+                File catalog_path = logic.downloadProductCatalog();
                 response.setContentType("text/csv");
                 response.setHeader("Content-Disposition", "attachment; filename=\"product_catalog.csv\"");
-                try (InputStream fileInputStream = new FileInputStream(catalog);
+                try (InputStream fileInputStream = new FileInputStream(catalog_path);
                      OutputStream responseOutputStream = response.getOutputStream()) {
                 byte[] buffer = new byte[4096];
                 int bytesRead;
@@ -77,7 +78,22 @@ public class ProductServlet extends HttpServlet {
             RequestDispatcher dispatcher = request.getRequestDispatcher("/createProduct.jsp");
             dispatcher.forward(request, response);
         }
-        if (url.startsWith("/products") && url.endsWith("prodName")) {
+        if (url.startsWith("/products")) {
+            String sku = request.getParameter("productSku");
+            Product product;
+            try {
+                product = logic.getProduct(sku);
+            } catch (ProductNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+            request.setAttribute("product", product);
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/productsListings.jsp");
+            dispatcher.forward(request, response);
+
+
+        }
+
+        if (url.equals("/updateProduct")) {
 
         }
         if (url.startsWith("/cart") && url.endsWith("prodName")) {
