@@ -135,6 +135,7 @@
   <a href="#" id="staff-login-button">Staff Login</a>
   <a hidden href="#" id="logout-button">Staff Logout</a>
   <a hidden href="/createProduct" id = "create-new-product">Create New Product</a>
+  <a hidden href="/products/download" id = "download-catalog">Download Catalog</a>
 </nav>
 
 <div class="hero-section">
@@ -157,7 +158,7 @@
           <input type="hidden" name="productUrlSlug" value="${product.urlSlug}">
           <input type="hidden" name="productPrice" value="${product.price}">
 
-          <button class="cta-button" type="submit">Add to Cart</button>
+
         </form>
       </div>
     </div>
@@ -174,7 +175,7 @@
           <input type="hidden" name="productUrlSlug" value="${product.urlSlug}">
           <input type="hidden" name="productPrice" value="${product.price}">
 
-          <button class="cta-button" type="submit">Add to Cart</button>
+
         </form>
       </div>
     </div>
@@ -191,7 +192,7 @@
           <input type="hidden" name="productUrlSlug" value="${product.urlSlug}">
           <input type="hidden" name="productPrice" value="${product.price}">
 
-          <button class="cta-button" type="submit">Add to Cart</button>
+
         </form>
       </div>
 
@@ -224,6 +225,7 @@
     document.getElementById("staff-login-button").hidden = true;
     document.getElementById("logout-button").hidden = false;
     document.getElementById("create-new-product").hidden = false;
+    document.getElementById("download-catalog").hidden = false;
 } else {
     // Display customer options
 }

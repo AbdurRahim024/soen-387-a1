@@ -152,13 +152,13 @@
                 <h2><%=product.getName()%></h2>
                 <p><%=product.getPrice()%></p>
                 <div class="button-container">
-                    <form action="/cart/addToCart/<%=product.getUrlSlug()%>" method="post">
+                    <form action="/cart/products/<%=product.getUrlSlug()%>" method="post">
                         <input type="hidden" name="productSku" value="<%=product.getSku()%>">
                         <button class="btn" type="submit">Add to Cart</button>
                     </form>
 
-                    <form action="/products/<%=product.getUrlSlug()%>" method="post">
-                        <input type="hidden" name="productSku" value="<%=product.getSku()%>">
+                    <form action="/products/<%=product.getUrlSlug()%>" method="get">
+<%--                        <input type="hidden" name="productSku" value="<%=product.getSku()%>">--%>
                         <button class="btn" type="submit">View Details</button>
                     </form>
                 </div>

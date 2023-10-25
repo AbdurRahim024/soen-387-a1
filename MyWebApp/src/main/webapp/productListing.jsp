@@ -135,11 +135,12 @@
     <a hidden href="/createProduct" id = "create-new-product">Create New Product</a>
     <a hidden href="/products/download" id = "download-catalog">Download Catalog</a>
 </nav>
+<% Product product = (Product) request.getAttribute("product");
+
+%>
 <div class="container">
     <form action="/updateProduct" method="post" class="product-form">
-        <% Product product = (Product) request.getAttribute("product");
 
-        %>
         <div class="form-group">
             <label for="productName">Product Name:</label>
             <input class="formButtons" type="text" id="productName" name="productName" required value="<%=product.getName()%>" readonly>
@@ -160,6 +161,8 @@
             <label for="productPrice">Price:</label>
             <input class="formButtons" type="number" id="productPrice" name="productPrice" step="0.01" required value="<%=product.getPrice()%>" readonly>
         </div>
+        <input hidden class="formButtons" type="text" id="productSku" name="productSku" required value="<%=product.getSku()%>" readonly>
+
         <button hidden id="submitButton" type="submit" class="btn formButtons">Update Product</button>
     </form>
 </div>
