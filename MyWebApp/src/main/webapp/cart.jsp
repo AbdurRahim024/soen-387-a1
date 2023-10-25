@@ -105,7 +105,7 @@
     <a href="/cart">Cart</a>
     <a href="#" id="staff-login-button">Staff Login</a>
     <a hidden href="#" id="logout-button">Staff Logout</a>
-    <a hidden href="/createProduct.jsp" id = "create-new-product">Create New Product</a>
+    <a hidden href="/createProduct" id = "create-new-product">Create New Product</a>
 </nav>
 <div class="container">
     <h1>My Cart</h1>
