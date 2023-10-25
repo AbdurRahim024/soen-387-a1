@@ -30,7 +30,7 @@ public class ProductServlet extends HttpServlet {
             dispatcher.forward(request, response);
         }
         else if (url.equals("/products")) {
-//          request.setAttribute("products", logic.products);
+            request.setAttribute("products", logic.getProducts());
             RequestDispatcher dispatcher = request.getRequestDispatcher("/products.jsp");
             dispatcher.forward(request, response);
         }
