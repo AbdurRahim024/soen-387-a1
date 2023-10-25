@@ -1,5 +1,6 @@
 <%@ page import="java.util.HashMap" %>
 <%@ page import="com.mywebapp.logic.models.Product" %>
+<%@ page import="java.util.ArrayList" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -119,43 +120,45 @@
         </form>
     </div>
 
-
+    <%
+        double total = 0;
+    %>
     <table>
         <thead>
         <tr>
             <th></th>
             <th>Product Name</th>
-            <th>Quantity</th>
             <th>Price</th>
-            <th>Total Price</th>
             <th></th>
         </tr>
         </thead>
         <tbody>
         <%
-            HashMap<String, Product> cart = (HashMap<String, Product>) request.getAttribute("cartMap");
-            for (HashMap.Entry<String,Product> product : cart.entrySet()) {
-                Product p = product.getValue();
+        <%
+            ArrayList<Product> list = (ArrayList<Product>) request.getAttribute("cart");
+            for (Product product : list){
+                double price = product.getPrice();
+                String name = product.getName();
+                total = total + price;
+
         %>
             <tr>
-                <td><%=product.getValue().getName()%></td>
-<%--                <td><%=product.getValue().getQuantity()%></td>--%>
-                <td>${cart.value.price}</td>
-                <td>${cart.value.totalPrice}</td>
+                <td><%=name%></td>
+                <td><%=price%></td>
                 <td>
-                    <form action="/removeFromCart" method="post">
-                        <input type="hidden" name="sku" value="${cartItem.key}">
+                    <form action="/cart/products/<%=product.getUrlSlug()%>" method="method">
+                        <input type="hidden" name="productSku" value="<%=product.getSku()%>">
                         <input type="submit" id="removeFromCart" class="btn-remove" value="Remove">
                     </form>
                 </td>
             </tr>
-        </c:forEach>
+        <% } %>
         </tbody>
     </table>
 
 
 
-    <p>Total: $<span id="totalAmount">0.00</span></p>
+    <p>Total: <%=total%></p>
     <a href="/buy" class="btn">Check out</a>
 </div>
 
