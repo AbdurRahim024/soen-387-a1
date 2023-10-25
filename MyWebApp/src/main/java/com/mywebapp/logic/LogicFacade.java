@@ -15,7 +15,12 @@ public class LogicFacade {
     private ArrayList<Customer> customers;
 
     public LogicFacade() {
+
+        Product product1 = new Product("apple", "some apple", "applevendor", "apple2", "appl1", 3.45);
+        Product product2 = new Product("apple3", "some apple3", "applevendor3", "apple3", "appl3", 3.95);
         products = new ArrayList<>();
+        products.add(product1);
+        products.add(product2);
         customers = new ArrayList<>();
     }
 
@@ -212,8 +217,3 @@ public class LogicFacade {
 
 /////////////////////////////////////////// CUSTOM EXCEPTIONS ////////////////////////////////////////////////////////
 
-class UserHasNoCartException extends Exception {
-    public UserHasNoCartException(String s) {
-        super(s);
-    }
-}
