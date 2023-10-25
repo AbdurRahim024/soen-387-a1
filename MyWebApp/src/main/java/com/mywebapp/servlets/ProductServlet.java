@@ -14,7 +14,7 @@ import jakarta.servlet.http.Cookie;
 import java.io.*;
 import java.util.Arrays;
 
-@WebServlet(name = "productServlet", value = {"/home", "/products/*", "/cart/*"})
+@WebServlet(name = "productServlet", value = {"/home", "/products/*", "/cart/*", "/addProductToList"})
 public class ProductServlet extends HttpServlet {
 
     LogicFacade logic = new LogicFacade();
@@ -59,8 +59,20 @@ public class ProductServlet extends HttpServlet {
         }
     }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String url = request.getRequestURI();
+        if (url.equals("/addProductToList")) {
+            String name = request.getParameter("productName");
+            String description = request.getParameter("productDescription");
+            String vendor = request.getParameter("productVendor");
+            String urlSlug = request.getParameter("productUrlSlug");
+            double price = Double.parseDouble(request.getParameter("productPrice"));
+
+            logic.createProduct(name, description, vendor, urlSlug, price);
+
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/createProduct.jsp");
+            dispatcher.forward(request, response);
+        }
         if (url.startsWith("/products") && url.endsWith("prodName")) {
 
         }

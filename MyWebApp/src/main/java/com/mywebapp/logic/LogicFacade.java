@@ -33,10 +33,9 @@ public class LogicFacade {
         price,
     }
 
-    public void createProduct(String name, String description, String vendor, float price) {
+    public void createProduct(String name, String description, String vendor, String urlSlug, double price) {
         // Set sku as the length of the products array so it's unique
         String sku = String.valueOf(products.size());
-        String urlSlug = name + "slug";
 
         Product product = new Product(name, description, vendor, urlSlug, sku, price);
         products.add(product);
