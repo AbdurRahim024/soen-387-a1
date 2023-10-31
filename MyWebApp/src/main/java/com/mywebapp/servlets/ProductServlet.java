@@ -48,7 +48,11 @@ public class ProductServlet extends HttpServlet {
 
         // view all products
         else if (url.equals("/products")) {
-            request.setAttribute("products", logic.getProducts());
+            try {
+                request.setAttribute("products", logic.getProducts());
+            } catch (DataMapperException e) {
+                throw new RuntimeException(e);
+            }
             response.setStatus(HttpServletResponse.SC_OK);
             RequestDispatcher dispatcher = request.getRequestDispatcher("/products.jsp");
             dispatcher.forward(request, response);

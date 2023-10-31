@@ -109,6 +109,10 @@ public class LogicFacade {
         return this.products_file;
     }
 
+    public ArrayList<Product> getProducts() throws DataMapperException {
+        return Product.getAllProducts();
+    }
+
 
     //*******************************************************************************
     //* helper methods

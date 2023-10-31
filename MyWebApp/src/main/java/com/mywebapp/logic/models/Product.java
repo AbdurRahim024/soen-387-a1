@@ -3,6 +3,7 @@ package com.mywebapp.logic.models;
 import com.mywebapp.logic.DataMapperException;
 import com.mywebapp.logic.mappers.ProductDataMapper;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class Product {
@@ -62,6 +63,10 @@ public class Product {
     public static Product findProductBySlug(String urlSlug) throws DataMapperException {
         //TODO: throw ProductNotFoundException here
         return ProductDataMapper.findBySlug(urlSlug);
+    }
+
+    public static ArrayList<Product> getAllProducts() throws DataMapperException {
+        return ProductDataMapper.findAllProducts();
     }
 
     public String[] getCsvFormat() {

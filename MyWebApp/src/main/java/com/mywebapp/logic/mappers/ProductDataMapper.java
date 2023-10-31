@@ -37,5 +37,9 @@ public class ProductDataMapper {
         return null;
     }
 
+    public static ArrayList<Product> findAllProducts() throws DataMapperException {
+        return null;
+    }
+
 
 }
