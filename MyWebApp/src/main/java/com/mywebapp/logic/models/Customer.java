@@ -1,14 +1,59 @@
 package com.mywebapp.logic.models;
 
+import com.mywebapp.logic.DataMapperException;
+import com.mywebapp.logic.mappers.CustomerDataMapper;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.UUID;
 
 public class Customer {
+    private UUID customerId; //primary key
+    private UUID cartId; //foreign key
     private String name;
-    private HashMap<String, Product> cart; // the key is the sku and the value is the product itself
 
-    public Customer(String name) {
+    public Customer(String name, UUID cartId) {
+        this.customerId = UUID.randomUUID();
+
         this.name = name;
-        this.cart = new HashMap<>();
+        this.cartId = cartId;
+    }
+
+    public Customer(String sku, String name, UUID cartId) {
+        this.customerId = UUID.fromString(sku);
+
+        this.name = name;
+        this.cartId = cartId;
+    }
+
+    //*******************************************************************************
+    //* domain logic functions
+    //*******************************************************************************
+
+    public void resetCartId() {
+        this.setCartId(UUID.randomUUID());
+    }
+    public static Customer findCustomerByGuid(UUID guid) throws DataMapperException {
+        //TODO: throw CustomerNotFoundException here
+        return CustomerDataMapper.findByGuid(guid);
+    }
+    public static Customer findCustomerByName(String name) {
+        //TODO: throw CustomerNotFoundException here
+        return CustomerDataMapper.findByName(name);
+    }
+
+
+
+    //*******************************************************************************
+    //* getters and setters
+    //*******************************************************************************
+
+    public UUID getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(UUID customerId) {
+        this.customerId = customerId;
     }
 
     public String getName() {
@@ -19,19 +64,13 @@ public class Customer {
         this.name = name;
     }
 
-    public HashMap<String, Product> getCart() {
-        return cart;
+    public UUID getCartId() {
+        return cartId;
     }
 
-    public void setCart(HashMap<String, Product> cart) {
-        this.cart = cart;
+    public void setCartId(UUID cartId) {
+        this.cartId = cartId;
     }
 
-    public void addToCart(Product newProduct) {
-        cart.put(newProduct.getSku(), newProduct);
-    }
 
-    public void removeFromCart(Product productToRemove) {
-        cart.remove(productToRemove.getSku());
-    }
 }

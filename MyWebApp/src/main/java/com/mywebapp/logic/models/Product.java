@@ -1,25 +1,72 @@
 package com.mywebapp.logic.models;
 
+import com.mywebapp.logic.DataMapperException;
+import com.mywebapp.logic.mappers.ProductDataMapper;
+
+import java.util.UUID;
+
 public class Product {
     private String name;
     private String description;
     private String vendor;
     private String urlSlug;
-    private String sku;
+    private UUID sku;
     private double price;
 
-    public Product(String name, String description, String vendor, String urlSlug, String sku, double price) {
+    public Product(String name, String description, String vendor, String urlSlug, double price) {
+        this.sku = UUID.randomUUID();
+
         this.name = name;
         this.description = description;
         this.vendor = vendor;
         this.urlSlug = urlSlug;
-        this.sku = sku;
         this.price = price;
+    }
+
+    public Product(String sku, String name, String description, String vendor, String urlSlug, double price) {
+        this.sku = UUID.fromString(sku);
+
+        this.name = name;
+        this.description = description;
+        this.vendor = vendor;
+        this.urlSlug = urlSlug;
+        this.price = price;
+    }
+
+    //*******************************************************************************
+    //* domain logic functions
+    //*******************************************************************************
+
+    public void addProductToDb() throws DataMapperException {
+        ProductDataMapper.insert(this);
+    }
+    
+    public void updateProductInDb(String name, String description, String vendor, String urlSlug, double price) throws DataMapperException {
+        this.setName(name);
+        this.setDescription(description);
+        this.setVendor(vendor);
+        this.setUrlSlug(urlSlug);
+        this.setPrice(price);
+        ProductDataMapper.update(this);
+    }
+
+    public static boolean productAlreadyExists(String name, String description, String vendor, String urlSlug, double price) {
+        return ProductDataMapper.findByAttributes(name, description, vendor, urlSlug, price);
+    }
+
+    public static Product findProductByGuid(UUID sku) throws DataMapperException {
+        //TODO: throw ProductNotFoundException here
+        return ProductDataMapper.findByGuid(sku);
+    }
+
+    public static Product findProductBySlug(String urlSlug) throws DataMapperException {
+        //TODO: throw ProductNotFoundException here
+        return ProductDataMapper.findBySlug(urlSlug);
     }
 
     public String[] getCsvFormat() {
         return new String[]{
-                this.sku,
+                this.sku.toString(),
                 this.name,
                 this.description,
                 this.vendor,
@@ -27,6 +74,11 @@ public class Product {
                 String.valueOf(this.price)
         };
     }
+
+
+    //*******************************************************************************
+    //* getters and setters
+    //*******************************************************************************
 
     public String getName() {
         return name;
@@ -61,10 +113,10 @@ public class Product {
     }
 
     public String getSku() {
-        return sku;
+        return sku.toString();
     }
 
-    public void setSku(String sku) {
+    public void setSku(UUID sku) {
         this.sku = sku;
     }
 
