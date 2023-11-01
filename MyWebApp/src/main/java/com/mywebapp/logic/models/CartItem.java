@@ -1,6 +1,7 @@
 package com.mywebapp.logic.models;
 
 import com.mywebapp.logic.DataMapperException;
+import com.mywebapp.logic.ProductNotFoundException;
 import com.mywebapp.logic.mappers.CartDataMapper;
 import com.mywebapp.logic.mappers.CartItemDataMapper;
 
@@ -8,7 +9,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 public class CartItem extends Product {
-    private UUID cartId;
+    private UUID cartId; //foreign key + primary key
     private int quantity;
 
     public CartItem(Product product, UUID cartId) throws DataMapperException {
@@ -17,6 +18,12 @@ public class CartItem extends Product {
         this.quantity = 0;
 
         CartItemDataMapper.insert(this);
+    }
+
+    public CartItem(Product product, UUID cartId, int quantity) throws DataMapperException {
+        super(product.getName(), product.getDescription(), product.getVendor(), product.getUrlSlug(), product.getPrice());
+        this.cartId = cartId;
+        this.quantity = quantity;
     }
 
     //*******************************************************************************
@@ -36,16 +43,22 @@ public class CartItem extends Product {
             CartItemDataMapper.delete(this);
         }
     }
-    public static ArrayList<CartItem> findCartItemsByCartId(UUID cartId) {
-        return CartItemDataMapper.findByCartId(cartId);
+    public static ArrayList<CartItem> findCartItemsByCartId(UUID cartId) throws DataMapperException {
+        return CartItemDataMapper.getAllItemsInCart(cartId);
     }
 
-    public static CartItem findCartItemBySkuAndCartId(UUID sku, UUID cartId) throws DataMapperException {
-        return CartItemDataMapper.findByGuid(sku, cartId);
+    public static CartItem findCartItemBySkuAndCartId(UUID sku, UUID cartId) throws DataMapperException, ProductNotFoundException {
+        CartItem item = CartItemDataMapper.findBySkuAndCartId(sku, cartId);
+
+        if (item == null) {
+            throw new ProductNotFoundException("This product was not found in the cart");
+        }
+
+        return item;
     }
 
-    public static void deleteCartItemsInCart(UUID cartId) {
-        CartItemDataMapper.deleteItemsInCart(cartId);
+    public static void deleteAllItemsInCart(UUID cartId) throws DataMapperException {
+        CartItemDataMapper.deleteAllItemsInCart(cartId);
     }
 
     //*******************************************************************************

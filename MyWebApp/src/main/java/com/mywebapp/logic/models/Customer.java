@@ -12,15 +12,16 @@ public class Customer {
     private UUID cartId; //foreign key
     private String name;
 
-    public Customer(String name, UUID cartId) {
+    public Customer(String name) {
         this.customerId = UUID.randomUUID();
 
         this.name = name;
-        this.cartId = cartId;
+        Cart cart = new Cart();
+        this.cartId = cart.getCartId();
     }
 
-    public Customer(String sku, String name, UUID cartId) {
-        this.customerId = UUID.fromString(sku);
+    public Customer(UUID customerId, String name, UUID cartId) {
+        this.customerId = customerId;
 
         this.name = name;
         this.cartId = cartId;
@@ -29,9 +30,11 @@ public class Customer {
     //*******************************************************************************
     //* domain logic functions
     //*******************************************************************************
-
-    public void resetCartId() {
-        this.setCartId(UUID.randomUUID());
+    public void addCustomerToDb() throws DataMapperException {
+        CustomerDataMapper.insert(this);
+    }
+    public void clearCart() throws DataMapperException {
+        CartItem.deleteAllItemsInCart(this.cartId);
     }
     public static Customer findCustomerByGuid(UUID guid) throws DataMapperException {
         //TODO: throw CustomerNotFoundException here

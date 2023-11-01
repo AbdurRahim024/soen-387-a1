@@ -31,13 +31,13 @@ public class LogicFacade {
     }
 
     public void updateProduct(String name, String description, String vendor, String urlSlug, String sku, double price) throws ProductNotFoundException, DataMapperException {
-        Product product = Product.findProductByGuid(UUID.fromString(sku));
+        Product product = Product.findProductBySku(UUID.fromString(sku));
         product.updateProductInDb(name, description, vendor, urlSlug, price);
 
     }
 
     public Product getProduct(String sku) throws ProductNotFoundException, DataMapperException {
-        return Product.findProductByGuid(UUID.fromString(sku));
+        return Product.findProductBySku(UUID.fromString(sku));
     }
 
     public Product getProductBySlug(String urlSlug) throws ProductNotFoundException, DataMapperException {
@@ -61,7 +61,7 @@ public class LogicFacade {
         cart.remove(UUID.fromString(sku));
     }
 
-    public void setProductQuantityInCart(String userName, String sku, int quantity) throws UserNotFoundException, DataMapperException {
+    public void setProductQuantityInCart(String userName, String sku, int quantity) throws UserNotFoundException, DataMapperException, ProductNotFoundException {
         Customer customer = Customer.findCustomerByName(userName);
         CartItem item = CartItem.findCartItemBySkuAndCartId(UUID.fromString(sku), customer.getCartId());
         item.setQuantity(quantity);
@@ -69,25 +69,24 @@ public class LogicFacade {
 
     public void clearCart(String userName) throws UserNotFoundException, DataMapperException {
         Customer customer = Customer.findCustomerByName(userName);
-        CartItem.deleteCartItemsInCart(customer.getCartId());
+        customer.clearCart();
     }
 
     public void createOrder(String userName, String shippingAddress) throws UserNotFoundException, DataMapperException {
         Customer customer = Customer.findCustomerByName(userName);
-        Order order = new Order(customer.getCartId(), customer.getCustomerId(), shippingAddress);
-        order.addOrderToDb();
+        Order order = new Order(customer.getCartId(), shippingAddress);
+        order.placeOrder(customer.getCartId());
 
-        customer.resetCartId(); //cart is not cleared when user orders because the same cart object is used to view
-        // past orders, a "new" cart is simply assigned to the user and the old one gets assigned to an order
+        customer.clearCart();
     }
 
-    public ArrayList<Order> getOrders(String userName) throws UserNotFoundException, DataMapperException {
+    public ArrayList<Order> getOrdersByCustomer(String userName) throws UserNotFoundException, DataMapperException {
         Customer customer = Customer.findCustomerByName(userName);
         return Order.getOrdersByCustomer(customer.getCustomerId());
     }
 
-    public Order getOrder(String userName, String orderId) throws DataMapperException, CustomerOrderMismatchException {
-        Order order = Order.getOrderByGuid(UUID.fromString(orderId));
+    public Order getOrderDetails(String userName, int orderId) throws DataMapperException, CustomerOrderMismatchException {
+        Order order = Order.getOrderByGuid(orderId);
 
         if (!userName.isEmpty()) {
             Customer customer = Customer.findCustomerByName(userName);
@@ -99,9 +98,12 @@ public class LogicFacade {
         return order;
     }
 
-    public void shipOrder(String orderId) throws DataMapperException {
-        // Mark an order as being shipped and set a tracking number
-        Order order = Order.getOrderByGuid(UUID.fromString(orderId));
+    public ArrayList<Order> getAllOrders() throws DataMapperException {
+        return Order.getAllOrders();
+    }
+
+    public void shipOrder(int orderId) throws DataMapperException {
+        Order order = Order.getOrderByGuid(orderId);
         order.ship();
     }
 
@@ -111,6 +113,12 @@ public class LogicFacade {
 
     public ArrayList<Product> getProducts() throws DataMapperException {
         return Product.getAllProducts();
+    }
+
+    //TODO: sync with abdur to make sure whenever there's a new customer he calls this method
+    public void createCustomer(String userName) throws DataMapperException {
+        Customer customer = new Customer(userName);
+        customer.addCustomerToDb();
     }
 
 

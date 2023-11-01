@@ -1,6 +1,7 @@
 package com.mywebapp.logic.models;
 
 import com.mywebapp.logic.DataMapperException;
+import com.mywebapp.logic.ProductNotFoundException;
 import com.mywebapp.logic.mappers.ProductDataMapper;
 
 import java.util.ArrayList;
@@ -11,12 +12,11 @@ public class Product {
     private String description;
     private String vendor;
     private String urlSlug;
-    private UUID sku;
+    private UUID sku; //primary key
     private double price;
 
     public Product(String name, String description, String vendor, String urlSlug, double price) {
         this.sku = UUID.randomUUID();
-
         this.name = name;
         this.description = description;
         this.vendor = vendor;
@@ -24,9 +24,8 @@ public class Product {
         this.price = price;
     }
 
-    public Product(String sku, String name, String description, String vendor, String urlSlug, double price) {
-        this.sku = UUID.fromString(sku);
-
+    public Product(UUID sku, String name, String description, String vendor, String urlSlug, double price) {
+        this.sku = sku;
         this.name = name;
         this.description = description;
         this.vendor = vendor;
@@ -51,22 +50,30 @@ public class Product {
         ProductDataMapper.update(this);
     }
 
-    public static boolean productAlreadyExists(String name, String description, String vendor, String urlSlug, double price) {
+    public static boolean productAlreadyExists(String name, String description, String vendor, String urlSlug, double price) throws DataMapperException {
         return ProductDataMapper.findByAttributes(name, description, vendor, urlSlug, price);
     }
 
-    public static Product findProductByGuid(UUID sku) throws DataMapperException {
-        //TODO: throw ProductNotFoundException here
-        return ProductDataMapper.findByGuid(sku);
+    public static Product findProductBySku(UUID sku) throws DataMapperException, ProductNotFoundException {
+        Product product = ProductDataMapper.findBySkuOrSlug(sku, "");
+
+        if (product == null) {
+            throw new ProductNotFoundException("This SKU is not associated to any Product");
+        }
+        return product;
     }
 
-    public static Product findProductBySlug(String urlSlug) throws DataMapperException {
-        //TODO: throw ProductNotFoundException here
-        return ProductDataMapper.findBySlug(urlSlug);
+    public static Product findProductBySlug(String urlSlug) throws DataMapperException, ProductNotFoundException {
+        Product product = ProductDataMapper.findBySkuOrSlug(null, urlSlug);
+
+        if (product == null) {
+            throw new ProductNotFoundException("This urlSlug is not associated to any Product");
+        }
+        return product;
     }
 
     public static ArrayList<Product> getAllProducts() throws DataMapperException {
-        return ProductDataMapper.findAllProducts();
+        return ProductDataMapper.getAllProducts();
     }
 
     public String[] getCsvFormat() {
@@ -117,8 +124,8 @@ public class Product {
         this.urlSlug = urlSlug;
     }
 
-    public String getSku() {
-        return sku.toString();
+    public UUID getSku() {
+        return sku;
     }
 
     public void setSku(UUID sku) {

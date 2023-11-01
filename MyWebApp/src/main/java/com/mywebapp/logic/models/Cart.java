@@ -1,6 +1,7 @@
 package com.mywebapp.logic.models;
 
 import com.mywebapp.logic.DataMapperException;
+import com.mywebapp.logic.ProductNotFoundException;
 import com.mywebapp.logic.mappers.CartDataMapper;
 import com.mywebapp.logic.mappers.CartItemDataMapper;
 
@@ -8,8 +9,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class Cart implements Serializable {
-    private UUID cartId;
+public class Cart {
+    private UUID cartId; //primary key
 
     public Cart() {
         this.cartId = UUID.randomUUID();
@@ -18,7 +19,7 @@ public class Cart implements Serializable {
     //*******************************************************************************
     //* domain logic functions
     //*******************************************************************************
-    public void add(UUID sku) throws DataMapperException {
+    public void add(UUID sku) throws DataMapperException, ProductNotFoundException {
         CartItem item;
 
         if (Cart.isItemInCart(this.cartId, sku)) {
@@ -26,14 +27,14 @@ public class Cart implements Serializable {
 
         }
         else {
-            Product product = Product.findProductByGuid(sku);
+            Product product = Product.findProductBySku(sku);
             item = new CartItem(product, this.cartId);
         }
 
         item.incrementQuantity();
     }
 
-    public void remove(UUID sku) throws DataMapperException {
+    public void remove(UUID sku) throws DataMapperException, ProductNotFoundException {
         CartItem item = CartItem.findCartItemBySkuAndCartId(sku, this.cartId);
         item.decrementQuantity();
     }
@@ -43,7 +44,7 @@ public class Cart implements Serializable {
     }
 
     public static boolean isItemInCart(UUID cartId, UUID sku) throws DataMapperException {
-        return CartItemDataMapper.findByGuid(sku, cartId) != null;
+        return CartItemDataMapper.findBySkuAndCartId(sku, cartId) != null;
     }
 
 

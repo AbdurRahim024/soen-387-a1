@@ -6,50 +6,48 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 public class Order {
-    private UUID orderId; //primary key
+    private int orderId; //primary key
     private UUID customerId; //foreign key
-    private UUID cartId;
+    private ArrayList<CartItem> items; //BLOB
     private String shippingAddress;
-    private int trackingNumber;
+    private UUID trackingNumber;
     private boolean isShipped;
 
-    public Order(UUID cartId, UUID customerId, String shippingAddress) throws DataMapperException {
-        this.orderId = UUID.randomUUID();
-
-        this.cartId = cartId;
+    public Order(UUID customerId, String shippingAddress) {
         this.customerId = customerId;
         this.shippingAddress = shippingAddress;
-        this.trackingNumber = -1;
         this.isShipped = false;
+    }
+
+    public Order(int orderId, UUID customerId, String shippingAddress, UUID trackingNumber, boolean isShipped, ArrayList<CartItem> items) {
+        this.orderId = orderId;
+        this.customerId = customerId;
+        this.shippingAddress = shippingAddress;
+        this.trackingNumber = trackingNumber;
+        this.isShipped = isShipped;
+        this.items = items;
     }
 
     //*******************************************************************************
     //* domain logic functions
     //*******************************************************************************
 
-    public void addOrderToDb() throws DataMapperException {
+    public void placeOrder(UUID cartId) throws DataMapperException {
+        this.items = CartItem.findCartItemsByCartId(cartId);
         OrderDataMapper.insert(this);
-    }
-
-    public ArrayList<Order> getOrders() throws DataMapperException {
-        return OrderDataMapper.findAllOrders();
-    }
-
-    public Order findOrderById(String orderId) throws DataMapperException {
-        UUID orderGuid = UUID.fromString(orderId);
-        return OrderDataMapper.findByGuid(orderGuid);
     }
 
     public void ship() throws DataMapperException {
         this.setShipped(true);
-
-        //TODO: figure out a way to auto gen this
-        this.trackingNumber = 5;
-
+        this.setTrackingNumber(UUID.randomUUID());
         OrderDataMapper.update(this);
     }
 
-    public static Order getOrderByGuid(UUID orderId) throws DataMapperException {
+    public static ArrayList<Order> getAllOrders() throws DataMapperException {
+        return OrderDataMapper.findAllOrders();
+    }
+
+    public static Order getOrderByGuid(int orderId) throws DataMapperException {
         return OrderDataMapper.findByGuid(orderId);
     }
 
@@ -70,19 +68,11 @@ public class Order {
         this.customerId = customerId;
     }
 
-    public UUID getCartId() {
-        return cartId;
-    }
-
-    public void setCart(UUID cartId) {
-        this.cartId = cartId;
-    }
-
-    public UUID getOrderId() {
+    public int getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(UUID order_id) {
+    public void setOrderId(int order_id) {
         this.orderId = order_id;
     }
 
@@ -94,11 +84,11 @@ public class Order {
         this.shippingAddress = shipping_address;
     }
 
-    public int getTrackingNumber() {
+    public UUID getTrackingNumber() {
         return trackingNumber;
     }
 
-    public void setTrackingNumber(int tracking_number) {
+    public void setTrackingNumber(UUID tracking_number) {
         this.trackingNumber = tracking_number;
     }
 

@@ -179,7 +179,7 @@ public class ProductServlet extends HttpServlet {
             String urlSlug = fullUrl[fullUrl.length-1];
             try {
                 Product product = logic.getProductBySlug(urlSlug);
-                logic.removeProductFromCart("guest", product.getSku());
+                logic.removeProductFromCart("guest", product.getSku().toString());
                 request.setAttribute("cart", logic.getCart("guest"));
                 response.setStatus(HttpServletResponse.SC_OK);
             } catch (UserNotFoundException | ProductNotFoundException e) {

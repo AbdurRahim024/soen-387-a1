@@ -9,12 +9,14 @@ import java.util.UUID;
 public class OrderDataMapper {
 
     
-    public static Order findByGuid(UUID uniqueID) throws DataMapperException {
+    public static Order findByGuid(int uniqueID) throws DataMapperException {
+        //TODO: deserialize items BLOB
         return null;
     }
 
     
     public static void insert(Object object) throws DataMapperException {
+        //TODO: serialize order.items into BLOB
 
     }
 
