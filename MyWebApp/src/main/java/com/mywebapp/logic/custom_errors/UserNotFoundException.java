@@ -1,4 +1,4 @@
-package com.mywebapp.logic;
+package com.mywebapp.logic.custom_errors;
 
 public class UserNotFoundException extends Exception {
     public UserNotFoundException(String s) {

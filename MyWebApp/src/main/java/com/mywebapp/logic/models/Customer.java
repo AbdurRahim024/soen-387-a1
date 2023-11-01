@@ -1,14 +1,61 @@
 package com.mywebapp.logic.models;
 
-import java.util.HashMap;
+import com.mywebapp.logic.custom_errors.DataMapperException;
+import com.mywebapp.logic.custom_errors.UserNotFoundException;
+import com.mywebapp.logic.mappers.CustomerDataMapper;
+
+import java.util.UUID;
 
 public class Customer {
+    private UUID customerId; //primary key
+    private UUID cartId; //foreign key
     private String name;
-    private HashMap<String, Product> cart; // the key is the sku and the value is the product itself
 
     public Customer(String name) {
+        this.customerId = UUID.randomUUID();
+
         this.name = name;
-        this.cart = new HashMap<>();
+        Cart cart = new Cart();
+        this.cartId = cart.getCartId();
+    }
+
+    public Customer(UUID customerId, UUID cartId, String name) {
+        this.customerId = customerId;
+
+        this.name = name;
+        this.cartId = cartId;
+    }
+
+    //*******************************************************************************
+    //* domain logic functions
+    //*******************************************************************************
+    public void addCustomerToDb() throws DataMapperException {
+        CustomerDataMapper.insert(this);
+    }
+    public void clearCart() throws DataMapperException {
+        CartItem.deleteAllItemsInCart(this.cartId);
+    }
+    public static Customer findCustomerByName(String name) throws UserNotFoundException, DataMapperException {
+        Customer customer = CustomerDataMapper.findByName(name);
+
+        if (customer == null) {
+            throw new UserNotFoundException("This customer was not found.");
+        }
+        return customer;
+    }
+
+
+
+    //*******************************************************************************
+    //* getters and setters
+    //*******************************************************************************
+
+    public UUID getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(UUID customerId) {
+        this.customerId = customerId;
     }
 
     public String getName() {
@@ -19,19 +66,13 @@ public class Customer {
         this.name = name;
     }
 
-    public HashMap<String, Product> getCart() {
-        return cart;
+    public UUID getCartId() {
+        return cartId;
     }
 
-    public void setCart(HashMap<String, Product> cart) {
-        this.cart = cart;
+    public void setCartId(UUID cartId) {
+        this.cartId = cartId;
     }
 
-    public void addToCart(Product newProduct) {
-        cart.put(newProduct.getSku(), newProduct);
-    }
 
-    public void removeFromCart(Product productToRemove) {
-        cart.remove(productToRemove.getSku());
-    }
 }
