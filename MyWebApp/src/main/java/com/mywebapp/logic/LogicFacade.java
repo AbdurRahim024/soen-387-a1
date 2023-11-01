@@ -51,13 +51,13 @@ public class LogicFacade {
 
     public void addProductToCart(String userName, String sku) throws UserNotFoundException, ProductNotFoundException, DataMapperException {
         Customer customer = Customer.findCustomerByName(userName);
-        Cart cart = Cart.findCartByGuid(customer.getCartId());
+        Cart cart = new Cart(customer.getCartId());
         cart.add(UUID.fromString(sku));
     }
 
     public void removeProductFromCart(String userName, String sku) throws UserNotFoundException, ProductNotFoundException, DataMapperException {
         Customer customer = Customer.findCustomerByName(userName);
-        Cart cart = Cart.findCartByGuid(customer.getCartId());
+        Cart cart = new Cart(customer.getCartId());
         cart.remove(UUID.fromString(sku));
     }
 
@@ -108,6 +108,7 @@ public class LogicFacade {
     }
 
     public File downloadProductCatalog() {
+        //TODO: use getAllProducts() to get list of products
         return this.products_file;
     }
 

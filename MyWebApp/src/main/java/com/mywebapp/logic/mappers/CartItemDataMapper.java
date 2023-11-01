@@ -87,7 +87,6 @@ public class CartItemDataMapper {
         }
     }
 
-    
     public static void delete(CartItem item) throws DataMapperException {
         try {
             Connection db = DriverManager.getConnection("jdbc:mysql://localhost:3306/soen_387", "root", "killmenow");

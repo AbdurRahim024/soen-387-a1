@@ -16,6 +16,10 @@ public class Cart {
         this.cartId = UUID.randomUUID();
     }
 
+    public Cart(UUID cartId) {
+        this.cartId = cartId;
+    }
+
     //*******************************************************************************
     //* domain logic functions
     //*******************************************************************************
@@ -37,10 +41,6 @@ public class Cart {
     public void remove(UUID sku) throws DataMapperException, ProductNotFoundException {
         CartItem item = CartItem.findCartItemBySkuAndCartId(sku, this.cartId);
         item.decrementQuantity();
-    }
-
-    public static Cart findCartByGuid(UUID guid) throws DataMapperException {
-        return CartDataMapper.findByGuid(guid);
     }
 
     public static boolean isItemInCart(UUID cartId, UUID sku) throws DataMapperException {

@@ -20,7 +20,7 @@ public class Customer {
         this.cartId = cart.getCartId();
     }
 
-    public Customer(UUID customerId, String name, UUID cartId) {
+    public Customer(UUID customerId, UUID cartId, String name) {
         this.customerId = customerId;
 
         this.name = name;
@@ -35,10 +35,6 @@ public class Customer {
     }
     public void clearCart() throws DataMapperException {
         CartItem.deleteAllItemsInCart(this.cartId);
-    }
-    public static Customer findCustomerByGuid(UUID guid) throws DataMapperException {
-        //TODO: throw CustomerNotFoundException here
-        return CustomerDataMapper.findByGuid(guid);
     }
     public static Customer findCustomerByName(String name) {
         //TODO: throw CustomerNotFoundException here
