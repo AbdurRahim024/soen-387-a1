@@ -1,8 +1,7 @@
 package com.mywebapp.logic.mappers;
 
-import com.mywebapp.logic.DataMapperException;
+import com.mywebapp.logic.custom_errors.DataMapperException;
 import com.mywebapp.logic.models.CartItem;
-import com.mywebapp.logic.models.Order;
 import com.mywebapp.logic.models.Product;
 
 import java.sql.*;

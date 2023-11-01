@@ -1,17 +1,13 @@
 package com.mywebapp.logic;
 
+import com.mywebapp.logic.custom_errors.*;
 import com.mywebapp.logic.models.*;
-import com.opencsv.CSVReader;
-import com.opencsv.CSVWriter;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.io.FileWriter;
 import java.io.*;
 import java.util.UUID;
 
 public class LogicFacade {
-    private final File products_file = new File("/Users/emmuh/Documents/COMP/SOEN 387/soen-387-a1/MyWebApp/src/main/java/com/mywebapp/logic/products.csv");
 
     public LogicFacade() {
     }
@@ -107,9 +103,8 @@ public class LogicFacade {
         order.ship();
     }
 
-    public File downloadProductCatalog() {
-        //TODO: use getAllProducts() to get list of products
-        return this.products_file;
+    public File downloadProductCatalog() throws DataMapperException, FileDownloadException {
+        return Product.downloadProductCatalog();
     }
 
     public ArrayList<Product> getProducts() throws DataMapperException {
@@ -121,54 +116,5 @@ public class LogicFacade {
         Customer customer = new Customer(userName);
         customer.addCustomerToDb();
     }
-
-
-    //*******************************************************************************
-    //* helper methods
-    //*******************************************************************************
-
-//    private void readProductsFromCSV() {
-//        try (CSVReader reader = new CSVReader(new FileReader(this.products_file))) {
-//            String[] line;
-//            while ((line = reader.readNext()) != null) {
-//                String sku = line[0];
-//                if (sku.equals("sku")) { // skip if the first row (titles) is being read
-//                    continue;
-//                }
-//                String name = line[1];
-//                String description = line[2];
-//                String vendor = line[3];
-//                String urlSlug = line[4];
-//                double price = Double.valueOf(line[5]);
-//
-//                Product product = new Product(name, description, vendor, urlSlug, price);
-//                this.products.put(sku, product);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    private void updateProductInCSV() {
-//        try (CSVWriter writer = new CSVWriter(new FileWriter(this.products_file))) {
-//            for (Product product : products.values()) {
-//                String[] entry = product.getCsvFormat();
-//                writer.writeNext(entry);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    private void addProductToCSV(Product product) {
-//        try (CSVWriter writer = new CSVWriter(new FileWriter(this.products_file, true))) {
-//            String[] entry = product.getCsvFormat();
-//            writer.writeNext(entry);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-
-
 
 }

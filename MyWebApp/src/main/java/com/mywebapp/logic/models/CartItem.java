@@ -1,8 +1,7 @@
 package com.mywebapp.logic.models;
 
-import com.mywebapp.logic.DataMapperException;
-import com.mywebapp.logic.ProductNotFoundException;
-import com.mywebapp.logic.mappers.CartDataMapper;
+import com.mywebapp.logic.custom_errors.DataMapperException;
+import com.mywebapp.logic.custom_errors.ProductNotFoundException;
 import com.mywebapp.logic.mappers.CartItemDataMapper;
 
 import java.util.ArrayList;

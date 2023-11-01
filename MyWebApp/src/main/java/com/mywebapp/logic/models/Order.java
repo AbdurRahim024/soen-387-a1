@@ -1,7 +1,7 @@
 package com.mywebapp.logic.models;
 
-import com.mywebapp.logic.DataMapperException;
-import com.mywebapp.logic.OrderNotFoundException;
+import com.mywebapp.logic.custom_errors.DataMapperException;
+import com.mywebapp.logic.custom_errors.OrderNotFoundException;
 import com.mywebapp.logic.mappers.OrderDataMapper;
 import java.util.ArrayList;
 import java.util.UUID;

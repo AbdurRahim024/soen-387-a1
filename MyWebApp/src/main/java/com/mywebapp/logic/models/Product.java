@@ -1,9 +1,14 @@
 package com.mywebapp.logic.models;
 
-import com.mywebapp.logic.DataMapperException;
-import com.mywebapp.logic.ProductNotFoundException;
+import com.mywebapp.logic.custom_errors.DataMapperException;
+import com.mywebapp.logic.custom_errors.FileDownloadException;
+import com.mywebapp.logic.custom_errors.ProductNotFoundException;
 import com.mywebapp.logic.mappers.ProductDataMapper;
+import com.opencsv.CSVWriter;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -76,15 +81,10 @@ public class Product {
         return ProductDataMapper.getAllProducts();
     }
 
-    public String[] getCsvFormat() {
-        return new String[]{
-                this.sku.toString(),
-                this.name,
-                this.description,
-                this.vendor,
-                this.urlSlug,
-                String.valueOf(this.price)
-        };
+    public static File downloadProductCatalog() throws DataMapperException, FileDownloadException {
+        ArrayList<Product> products = getAllProducts();
+        return writeToCSV(products, "products.csv");
+
     }
 
 
@@ -138,6 +138,39 @@ public class Product {
 
     public void setPrice(double price){
         this.price = price;
+    }
+
+
+    //*******************************************************************************
+    //* helper methods
+    //*******************************************************************************
+
+    private static File writeToCSV(ArrayList<Product> products, String filePath) throws FileDownloadException {
+        String csvFile = filePath;
+
+        try (CSVWriter writer = new CSVWriter(new FileWriter(csvFile))) {
+
+            String[] header = {"sku", "name", "description", "vendor", "urlSlug", "price"};
+            writer.writeNext(header);
+
+            // Write data
+            for (Product product : products) {
+                String[] data = {
+                        product.sku.toString(),
+                        product.name,
+                        product.description,
+                        product.vendor,
+                        product.urlSlug,
+                        String.valueOf(product.price)
+                };
+                writer.writeNext(data);
+            }
+
+            System.out.println("CSV file written successfully!");
+            return new File(csvFile);
+        } catch (IOException e) {
+            throw new FileDownloadException("Error occurred while writing products file");
+        }
     }
 
 }

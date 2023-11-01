@@ -1,6 +1,7 @@
 package com.mywebapp.servlets;
 
 import com.mywebapp.logic.*;
+import com.mywebapp.logic.custom_errors.*;
 import com.mywebapp.logic.models.Product;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -87,7 +88,14 @@ public class ProductServlet extends HttpServlet {
             .orElse(null);
 
             if (isAdminCookie != null && isAdminCookie.equals("true")) {
-                File catalog_path = logic.downloadProductCatalog();
+                File catalog_path = null;
+                try {
+                    catalog_path = logic.downloadProductCatalog();
+                } catch (DataMapperException e) {
+                    throw new RuntimeException(e);
+                } catch (FileDownloadException e) {
+                    throw new RuntimeException(e);
+                }
                 response.setContentType("text/csv");
                 response.setHeader("Content-Disposition", "attachment; filename=\"product_catalog.csv\"");
                 try (InputStream fileInputStream = new FileInputStream(catalog_path);

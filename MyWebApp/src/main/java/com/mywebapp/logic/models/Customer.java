@@ -1,11 +1,9 @@
 package com.mywebapp.logic.models;
 
-import com.mywebapp.logic.DataMapperException;
-import com.mywebapp.logic.UserNotFoundException;
+import com.mywebapp.logic.custom_errors.DataMapperException;
+import com.mywebapp.logic.custom_errors.UserNotFoundException;
 import com.mywebapp.logic.mappers.CustomerDataMapper;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.UUID;
 
 public class Customer {

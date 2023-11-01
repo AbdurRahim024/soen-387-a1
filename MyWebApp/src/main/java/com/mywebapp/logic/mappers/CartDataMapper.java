@@ -1,15 +1,12 @@
 package com.mywebapp.logic.mappers;
 
-import com.mywebapp.logic.DataMapperException;
+import com.mywebapp.logic.custom_errors.DataMapperException;
 import com.mywebapp.logic.models.Cart;
-import com.mywebapp.logic.models.Order;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.UUID;
 
 public class CartDataMapper {
     public static void insert(Cart cart) throws DataMapperException {
