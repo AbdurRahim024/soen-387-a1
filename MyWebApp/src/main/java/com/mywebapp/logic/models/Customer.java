@@ -1,6 +1,7 @@
 package com.mywebapp.logic.models;
 
 import com.mywebapp.logic.DataMapperException;
+import com.mywebapp.logic.UserNotFoundException;
 import com.mywebapp.logic.mappers.CustomerDataMapper;
 
 import java.util.ArrayList;
@@ -36,9 +37,13 @@ public class Customer {
     public void clearCart() throws DataMapperException {
         CartItem.deleteAllItemsInCart(this.cartId);
     }
-    public static Customer findCustomerByName(String name) {
-        //TODO: throw CustomerNotFoundException here
-        return CustomerDataMapper.findByName(name);
+    public static Customer findCustomerByName(String name) throws UserNotFoundException, DataMapperException {
+        Customer customer = CustomerDataMapper.findByName(name);
+
+        if (customer == null) {
+            throw new UserNotFoundException("This customer was not found.");
+        }
+        return customer;
     }
 
 

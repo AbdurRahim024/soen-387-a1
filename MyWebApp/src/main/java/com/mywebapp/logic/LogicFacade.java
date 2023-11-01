@@ -85,7 +85,7 @@ public class LogicFacade {
         return Order.getOrdersByCustomer(customer.getCustomerId());
     }
 
-    public Order getOrderDetails(String userName, int orderId) throws DataMapperException, CustomerOrderMismatchException {
+    public Order getOrderDetails(String userName, int orderId) throws DataMapperException, CustomerOrderMismatchException, UserNotFoundException, OrderNotFoundException {
         Order order = Order.getOrderByGuid(orderId);
 
         if (!userName.isEmpty()) {
@@ -98,11 +98,11 @@ public class LogicFacade {
         return order;
     }
 
-    public ArrayList<Order> getAllOrders() throws DataMapperException {
+    public ArrayList<Order> getAllOrders() throws DataMapperException, OrderNotFoundException {
         return Order.getAllOrders();
     }
 
-    public void shipOrder(int orderId) throws DataMapperException {
+    public void shipOrder(int orderId) throws DataMapperException, OrderNotFoundException {
         Order order = Order.getOrderByGuid(orderId);
         order.ship();
     }

@@ -1,6 +1,7 @@
 package com.mywebapp.logic.models;
 
 import com.mywebapp.logic.DataMapperException;
+import com.mywebapp.logic.OrderNotFoundException;
 import com.mywebapp.logic.mappers.OrderDataMapper;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -44,15 +45,19 @@ public class Order {
     }
 
     public static ArrayList<Order> getAllOrders() throws DataMapperException {
-        return OrderDataMapper.findAllOrders();
+        return OrderDataMapper.getOrders(-1, null);
     }
 
-    public static Order getOrderByGuid(int orderId) throws DataMapperException {
-        return OrderDataMapper.findByGuid(orderId);
+    public static Order getOrderByGuid(int orderId) throws DataMapperException, OrderNotFoundException {
+        ArrayList<Order> ordersResult = OrderDataMapper.getOrders(orderId, null);
+        if (ordersResult.isEmpty()) {
+            throw new OrderNotFoundException("No order was found with this order_id.");
+        }
+        return ordersResult.get(0);
     }
 
     public static ArrayList<Order> getOrdersByCustomer(UUID customerId) throws DataMapperException {
-        return OrderDataMapper.findOrdersByCustomer(customerId);
+        return OrderDataMapper.getOrders(-1, customerId);
     }
 
 
@@ -100,4 +105,15 @@ public class Order {
         isShipped = shipped;
     }
 
+    public void setCustomerId(UUID customerId) {
+        this.customerId = customerId;
+    }
+
+    public ArrayList<CartItem> getItems() {
+        return items;
+    }
+
+    public void setItems(ArrayList<CartItem> items) {
+        this.items = items;
+    }
 }
