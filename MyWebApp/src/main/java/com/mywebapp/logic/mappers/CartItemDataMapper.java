@@ -12,6 +12,7 @@ public class CartItemDataMapper {
     
     public static CartItem findBySkuAndCartId(UUID p_id, UUID cart_id) throws DataMapperException {
         try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
             Connection db = DriverManager.getConnection("jdbc:mysql://localhost:3306/soen_387", "root", "killmenow");
             String statement = "SELECT * FROM `cartItems` WHERE `sku`=? AND `cart_id`=?";
             PreparedStatement dbStatement = db.prepareStatement(statement);
@@ -33,8 +34,8 @@ public class CartItemDataMapper {
                 Product product = new Product(sku, name, description, vendor, urlSlug, price);
                 return new CartItem(product, cartId, quantity);
             }
-        } catch (SQLException e) {
-            throw new DataMapperException("Error occurred while getting a row in the CartItems table");
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DataMapperException("Error occurred while getting a row in the CartItems table: " + e);
         }
 
         return null;
@@ -43,6 +44,7 @@ public class CartItemDataMapper {
     
     public static void insert(CartItem item) throws DataMapperException {
         try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
             Connection db = DriverManager.getConnection("jdbc:mysql://localhost:3306/soen_387", "root", "killmenow");
             String statement = "INSERT INTO `cartItems` (`sku`, `cart_id`, `name`, `description`, `vendor`, `urlSlug`, `price`, `quantity`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -58,14 +60,15 @@ public class CartItemDataMapper {
 
             dbStatement.executeUpdate();
 
-        } catch (SQLException e) {
-            throw new DataMapperException("Error occurred while inserting a row in the CartItems table");
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DataMapperException("Error occurred while inserting a row in the CartItems table: " + e);
         }
     }
 
     
     public static void update(CartItem item) throws DataMapperException {
         try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
             Connection db = DriverManager.getConnection("jdbc:mysql://localhost:3306/soen_387", "root", "killmenow");
             String statement = "UPDATE `cartItems` SET `name`=?, `description`=?, `vendor`=?, `urlSlug`=?, `price`=?, `quantity`=? WHERE `sku`=? AND `cart_id`=?";
 
@@ -81,13 +84,14 @@ public class CartItemDataMapper {
             dbStatement.setString(8, item.getCartId().toString());
             dbStatement.executeUpdate();
 
-        } catch (SQLException e) {
-            throw new DataMapperException("Error occurred while updating a row in the CartItems table");
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DataMapperException("Error occurred while updating a row in the CartItems table: " + e);
         }
     }
 
     public static void delete(CartItem item) throws DataMapperException {
         try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
             Connection db = DriverManager.getConnection("jdbc:mysql://localhost:3306/soen_387", "root", "killmenow");
 
             String statement = "DELETE FROM `cartItems` where `sku`=? AND `cart_id`=?";
@@ -96,8 +100,8 @@ public class CartItemDataMapper {
             dbStatement.setString(2, item.getCartId().toString());
             dbStatement.executeUpdate();
 
-        } catch (SQLException e) {
-            throw new DataMapperException("Error occurred while deleting a row from the CartItems table.");
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DataMapperException("Error occurred while deleting a row from the CartItems table: " + e);
         }
     }
 
@@ -105,6 +109,7 @@ public class CartItemDataMapper {
         ArrayList<CartItem> items = new ArrayList<>();
 
         try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
             Connection db = DriverManager.getConnection("jdbc:mysql://localhost:3306/soen_387", "root", "killmenow");
             String statement = "SELECT * FROM `cartItems` WHERE `cart_id`=?";
             PreparedStatement dbStatement = db.prepareStatement(statement);
@@ -126,8 +131,8 @@ public class CartItemDataMapper {
                 CartItem item = new CartItem(product, cartId, quantity);
                 items.add(item);
             }
-        } catch (SQLException e) {
-            throw new DataMapperException("Error occurred while retrieving all items in the cart");
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DataMapperException("Error occurred while retrieving all items in the cart: " + e);
         }
 
         return items;
@@ -135,6 +140,7 @@ public class CartItemDataMapper {
 
     public static void deleteAllItemsInCart(UUID cart_id) throws DataMapperException {
         try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
             Connection db = DriverManager.getConnection("jdbc:mysql://localhost:3306/soen_387", "root", "killmenow");
 
             String statement = "DELETE FROM `cartItems` where `cart_id`=?";
@@ -142,8 +148,8 @@ public class CartItemDataMapper {
             dbStatement.setString(1, cart_id.toString());
             dbStatement.executeUpdate();
 
-        } catch (SQLException e) {
-            throw new DataMapperException("Error occurred while deleting all items in the cart.");
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DataMapperException("Error occurred while deleting all items in the cart: " + e);
         }
     }
 

@@ -12,6 +12,7 @@ public class ProductDataMapper {
     public static Product findBySkuOrSlug(UUID p_id, String slug) throws DataMapperException {
 
         try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
             Connection db = DriverManager.getConnection("jdbc:mysql://localhost:3306/soen_387", "root", "killmenow");
             String statement;
             PreparedStatement dbStatement;
@@ -41,8 +42,8 @@ public class ProductDataMapper {
                 product = new Product(sku, name, description, vendor, urlSlug, price);
                 return product;
             }
-        } catch (SQLException e) {
-            throw new DataMapperException("Error occurred while getting a row in the Products table");
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DataMapperException("Error occurred while getting a row in the Products table" + e);
         }
 
         return null;
@@ -50,6 +51,7 @@ public class ProductDataMapper {
 
     public static void insert(Product product) throws DataMapperException {
         try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
             Connection db = DriverManager.getConnection("jdbc:mysql://localhost:3306/soen_387", "root", "killmenow");
             String statement = "INSERT INTO `products` (`sku`, `name`, `description`, `vendor`, `urlSlug`, `price`) VALUES (?, ?, ?, ?, ?, ?)";
 
@@ -62,14 +64,15 @@ public class ProductDataMapper {
             dbStatement.setDouble(6, product.getPrice());
             dbStatement.executeUpdate();
 
-        } catch (SQLException e) {
-            throw new DataMapperException("Error occurred while inserting a row in the Products table");
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DataMapperException("Error occurred while inserting a row in the Products table: " + e);
         }
     }
 
     
     public static void update(Product product) throws DataMapperException {
         try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
             Connection db = DriverManager.getConnection("jdbc:mysql://localhost:3306/soen_387", "root", "killmenow");
             String statement = "UPDATE `products` SET `name`=?, `description`=?, `vendor`=?, `urlSlug`=?, `price`=? WHERE `sku`=?";
 
@@ -82,14 +85,14 @@ public class ProductDataMapper {
             dbStatement.setString(6, product.getSku().toString());
             dbStatement.executeUpdate();
 
-        } catch (SQLException e) {
-            throw new DataMapperException("Error occurred while updating a row in the Products table");
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DataMapperException("Error occurred while updating a row in the Products table: " + e);
         }
     }
 
-    
     public static void delete(Product product) throws DataMapperException {
         try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
             Connection db = DriverManager.getConnection("jdbc:mysql://localhost:3306/soen_387", "root", "killmenow");
 
             String statement = "DELETE FROM `products` where `sku`=?";
@@ -97,13 +100,14 @@ public class ProductDataMapper {
             dbStatement.setString(1, product.getSku().toString());
             dbStatement.executeUpdate();
 
-        } catch (SQLException e) {
-            throw new DataMapperException("Error occurred while deleting a row from the Products table.");
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DataMapperException("Error occurred while deleting a row from the Products table: " + e);
         }
     }
 
     public static boolean findByAttributes(String name, String description, String vendor, String urlSlug, double price) throws DataMapperException {
         try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
             Connection db = DriverManager.getConnection("jdbc:mysql://localhost:3306/soen_387", "root", "killmenow");
             String statement = "SELECT * FROM `products` WHERE `name`=? AND `description`=? AND `vendor`=? AND `urlSlug`=? AND `price`=?";
 
@@ -118,8 +122,8 @@ public class ProductDataMapper {
             while (rs.next()) {
                 return true;
             }
-        } catch (SQLException e) {
-            throw new DataMapperException("Error occurred while searching for a row in the Products table");
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DataMapperException("Error occurred while searching for a row in the Products table: " + e);
         }
 
         return false;
@@ -129,6 +133,7 @@ public class ProductDataMapper {
         ArrayList<Product> products = new ArrayList<>();
 
         try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
             Connection db = DriverManager.getConnection("jdbc:mysql://localhost:3306/soen_387", "root", "killmenow");
             String statement = "SELECT * FROM `products`";
             PreparedStatement dbStatement = db.prepareStatement(statement);
@@ -145,8 +150,8 @@ public class ProductDataMapper {
                 Product product = new Product(sku, name, description, vendor, urlSlug, price);
                 products.add(product);
             }
-        } catch (SQLException e) {
-            throw new DataMapperException("Error occurred while getting a row in the Products table");
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DataMapperException("Error occurred while getting a row in the Products table: " + e);
         }
 
         return products;

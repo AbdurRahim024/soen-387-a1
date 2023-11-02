@@ -11,6 +11,7 @@ import java.sql.SQLException;
 public class CartDataMapper {
     public static void insert(Cart cart) throws DataMapperException {
         try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
             Connection db = DriverManager.getConnection("jdbc:mysql://localhost:3306/soen_387", "root", "killmenow");
             String statement = "INSERT INTO `carts` (`cart_id`) VALUES (?)";
 
@@ -19,8 +20,8 @@ public class CartDataMapper {
 
             dbStatement.executeUpdate();
 
-        } catch (SQLException e) {
-            throw new DataMapperException("Error occurred while inserting a row in the Carts table");
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DataMapperException("Error occurred while inserting a row in the Carts table: " + e);
         }
     }
 }

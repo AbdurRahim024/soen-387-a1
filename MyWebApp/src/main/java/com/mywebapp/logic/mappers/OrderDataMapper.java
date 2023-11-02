@@ -13,6 +13,7 @@ public class OrderDataMapper {
     public static void insert(Order order) throws DataMapperException {
 
         try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
             Connection db = DriverManager.getConnection("jdbc:mysql://localhost:3306/soen_387", "root", "killmenow");
             String statement = "INSERT INTO `orders` (`customer_id`, `shipping_address`, `is_shipped`, `items`) VALUES (?, ?, ?, ?)";
 
@@ -26,14 +27,15 @@ public class OrderDataMapper {
             dbStatement.setBinaryStream(4, bais, itemsBytes.length);
             dbStatement.executeUpdate();
 
-        } catch (SQLException e) {
-            throw new DataMapperException("Error occurred while inserting a new order");
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DataMapperException("Error occurred while inserting a new order: " + e);
         }
 
     }
 
     public static void update(Order order) throws DataMapperException {
         try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
             Connection db = DriverManager.getConnection("jdbc:mysql://localhost:3306/soen_387", "root", "killmenow");
             String statement = "UPDATE `orders` SET `is_shipped`=?, `tracking_number`=? WHERE `order_id`=?";
 
@@ -43,8 +45,8 @@ public class OrderDataMapper {
             dbStatement.setInt(3, order.getOrderId());
             dbStatement.executeUpdate();
 
-        } catch (SQLException e) {
-            throw new DataMapperException("Error occurred while updating an order");
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DataMapperException("Error occurred while updating an order: " + e);
         }
 
     }
@@ -53,6 +55,7 @@ public class OrderDataMapper {
         ArrayList<Order> orders = new ArrayList<>();
 
         try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
             Connection db = DriverManager.getConnection("jdbc:mysql://localhost:3306/soen_387", "root", "killmenow");
             PreparedStatement dbStatement;
 
@@ -85,8 +88,8 @@ public class OrderDataMapper {
                 Order order = new Order(order_id, customer_id, shipping_address, tracking_number, is_shipped, items);
                 orders.add(order);
             }
-        } catch (SQLException e) {
-            throw new DataMapperException("Error occurred while retrieving orders");
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DataMapperException("Error occurred while retrieving orders: " + e);
         }
 
         return orders;

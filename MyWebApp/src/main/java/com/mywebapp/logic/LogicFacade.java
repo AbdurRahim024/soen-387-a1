@@ -108,6 +108,8 @@ public class LogicFacade {
     }
 
     public ArrayList<Product> getProducts() throws DataMapperException {
+        String classpath = System.getProperty("java.class.path");
+        System.out.println(classpath);
         return Product.getAllProducts();
     }
 
