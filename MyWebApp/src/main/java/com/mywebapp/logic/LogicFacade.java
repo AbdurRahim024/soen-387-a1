@@ -51,6 +51,7 @@ public class LogicFacade {
         cart.add(UUID.fromString(sku));
     }
 
+    //TODO: fix this (this is not reached)
     public void removeProductFromCart(String userName, String sku) throws UserNotFoundException, ProductNotFoundException, DataMapperException {
         Customer customer = Customer.findCustomerByName(userName);
         Cart cart = new Cart(customer.getCartId());

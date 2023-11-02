@@ -68,6 +68,7 @@ public class CartItemDataMapper {
     
     public static void update(CartItem item) throws DataMapperException {
         try {
+
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection db = DriverManager.getConnection("jdbc:mysql://localhost:3306/soen_387", "root", "killmenow");
             String statement = "UPDATE `cartItems` SET `name`=?, `description`=?, `vendor`=?, `urlSlug`=?, `price`=?, `quantity`=? WHERE `sku`=? AND `cart_id`=?";
