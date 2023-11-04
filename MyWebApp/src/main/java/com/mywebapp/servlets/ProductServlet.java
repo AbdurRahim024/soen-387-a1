@@ -31,6 +31,13 @@ public class ProductServlet extends HttpServlet {
             dispatcher.forward(request, response);
         }
 
+        // [STAFF ONLY] create product page
+        else if (url.equals("/createProduct")) {
+            response.setStatus(HttpServletResponse.SC_OK);
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/createProduct.jsp");
+            dispatcher.forward(request, response);
+        }
+
         // view all products
         else if (url.equals("/products")) {
             try {
@@ -44,7 +51,6 @@ public class ProductServlet extends HttpServlet {
         }
 
         // view a specific product
-
         else if (url.startsWith("/products") && !url.equals("/products/download")) {
             String[] fullUrl = url.split("/");
             String urlSlug = fullUrl[fullUrl.length-1];
