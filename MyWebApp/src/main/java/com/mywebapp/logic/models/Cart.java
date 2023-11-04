@@ -31,7 +31,6 @@ public class Cart {
             Product product = Product.findProductBySku(sku);
             item = new CartItem(product, this.cartId);
         }
-
         item.incrementQuantity();
     }
 

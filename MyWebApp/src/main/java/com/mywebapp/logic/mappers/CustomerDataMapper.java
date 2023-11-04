@@ -10,6 +10,7 @@ public class CustomerDataMapper {
     
     public static void insert(Customer customer) throws DataMapperException {
         try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
             Connection db = DriverManager.getConnection("jdbc:mysql://localhost:3306/soen_387", "root", "killmenow");
             String statement = "INSERT INTO `customers` (`customer_id`, `cart_id`, `name`) VALUES (?, ?, ?)";
 
@@ -20,13 +21,14 @@ public class CustomerDataMapper {
 
             dbStatement.executeUpdate();
 
-        } catch (SQLException e) {
-            throw new DataMapperException("Error occurred while inserting a row in the Customers table");
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DataMapperException("Error occurred while inserting a row in the Customers table: " + e);
         }
     }
 
     public static Customer findByName(String userName) throws DataMapperException {
         try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
             Connection db = DriverManager.getConnection("jdbc:mysql://localhost:3306/soen_387", "root", "killmenow");
             String statement = "SELECT * FROM `customers` WHERE `name`=?";
             PreparedStatement dbStatement = db.prepareStatement(statement);
@@ -41,8 +43,8 @@ public class CustomerDataMapper {
 
                 return new Customer(customerId, cartId, name);
             }
-        } catch (SQLException e) {
-            throw new DataMapperException("Error occurred while getting a row in the CartItems table");
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DataMapperException("Error occurred while getting a row in the CartItems table: " + e);
         }
 
         return null;

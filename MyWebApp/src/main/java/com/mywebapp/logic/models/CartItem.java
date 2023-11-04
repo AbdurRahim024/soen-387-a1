@@ -12,7 +12,7 @@ public class CartItem extends Product {
     private int quantity;
 
     public CartItem(Product product, UUID cartId) throws DataMapperException {
-        super(product.getName(), product.getDescription(), product.getVendor(), product.getUrlSlug(), product.getPrice());
+        super(product.getSku(), product.getName(), product.getDescription(), product.getVendor(), product.getUrlSlug(), product.getPrice());
         this.cartId = cartId;
         this.quantity = 0;
 
@@ -20,7 +20,7 @@ public class CartItem extends Product {
     }
 
     public CartItem(Product product, UUID cartId, int quantity) throws DataMapperException {
-        super(product.getName(), product.getDescription(), product.getVendor(), product.getUrlSlug(), product.getPrice());
+        super(product.getSku(), product.getName(), product.getDescription(), product.getVendor(), product.getUrlSlug(), product.getPrice());
         this.cartId = cartId;
         this.quantity = quantity;
     }
