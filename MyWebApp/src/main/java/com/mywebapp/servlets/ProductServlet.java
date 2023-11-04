@@ -14,8 +14,9 @@ import jakarta.servlet.http.Cookie;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Scanner;
 
-@WebServlet(name = "productServlet", value = {"/home", "/products/*", "/cart/*", "/addProductToList", "/createProduct", "/updateProduct", "/removeFromCart", "/addToCart"})
+@WebServlet(name = "productServlet", value = {"/home", "/products/*", "/addProductToList", "/createProduct", "/updateProduct"})
 public class ProductServlet extends HttpServlet {
 
     LogicFacade logic = new LogicFacade();
@@ -30,29 +31,12 @@ public class ProductServlet extends HttpServlet {
             dispatcher.forward(request, response);
         }
 
-        // view cart
-        else if(url.equals("/cart")) {
-            ArrayList<Product> cart;
-            try {
-                cart = (ArrayList<Product>) logic.getCart("guest");
-                request.setAttribute("cart", cart);
-                response.setStatus(HttpServletResponse.SC_OK);
-            } catch (UserNotFoundException e) {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            } catch (DataMapperException e) {
-                throw new RuntimeException(e);
-            }
-
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/cart.jsp");
-            dispatcher.forward(request, response);
-        }
-
         // view all products
         else if (url.equals("/products")) {
             try {
                 request.setAttribute("products", logic.getProducts());
             } catch (DataMapperException e) {
-                throw new RuntimeException(e);
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
             response.setStatus(HttpServletResponse.SC_OK);
             RequestDispatcher dispatcher = request.getRequestDispatcher("/products.jsp");
@@ -60,6 +44,7 @@ public class ProductServlet extends HttpServlet {
         }
 
         // view a specific product
+
         else if (url.startsWith("/products") && !url.equals("/products/download")) {
             String[] fullUrl = url.split("/");
             String urlSlug = fullUrl[fullUrl.length-1];
@@ -67,13 +52,12 @@ public class ProductServlet extends HttpServlet {
             try {
                 product = logic.getProductBySlug(urlSlug);
                 request.setAttribute("product", product);
-                response.setStatus(HttpServletResponse.SC_OK);
             } catch (ProductNotFoundException e) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             } catch (DataMapperException e) {
-                throw new RuntimeException(e);
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
-
+            response.setStatus(HttpServletResponse.SC_OK);
             RequestDispatcher dispatcher = request.getRequestDispatcher("/productListing.jsp");
             dispatcher.forward(request, response);
 
@@ -92,10 +76,11 @@ public class ProductServlet extends HttpServlet {
                 try {
                     catalog_path = logic.downloadProductCatalog();
                 } catch (DataMapperException e) {
-                    throw new RuntimeException(e);
+                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 } catch (FileDownloadException e) {
-                    throw new RuntimeException(e);
+                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 }
+                response.setStatus(HttpServletResponse.SC_OK);
                 response.setContentType("text/csv");
                 response.setHeader("Content-Disposition", "attachment; filename=\"product_catalog.csv\"");
                 try (InputStream fileInputStream = new FileInputStream(catalog_path);
@@ -126,9 +111,9 @@ public class ProductServlet extends HttpServlet {
             try {
                 logic.createProduct(name, description, vendor, urlSlug, price);
             } catch (ProductAlreadyExistsException e) {
-                throw new RuntimeException(e);
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             } catch (DataMapperException e) {
-                throw new RuntimeException(e);
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
             response.setStatus(HttpServletResponse.SC_OK);
             RequestDispatcher dispatcher = request.getRequestDispatcher("/createProduct.jsp");
@@ -147,55 +132,15 @@ public class ProductServlet extends HttpServlet {
             try {
                 logic.updateProduct(name, description, vendor, urlSlug, sku, price);
                 request.setAttribute("products", logic.getProducts());
-                response.setStatus(HttpServletResponse.SC_OK);
             } catch (ProductNotFoundException e) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             } catch (DataMapperException e) {
-                throw new RuntimeException(e);
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
-
+            response.setStatus(HttpServletResponse.SC_OK);
             RequestDispatcher dispatcher = request.getRequestDispatcher("/products.jsp");
             dispatcher.forward(request, response);
         }
-
-        // add product to cart
-        if (url.startsWith("/cart/products")) {
-            String sku = request.getParameter("productSku");
-            ArrayList<Product> cart = new ArrayList<>();
-            try {
-                logic.addProductToCart("guest", sku);
-                cart = (ArrayList<Product>) logic.getCart("guest");
-                response.setStatus(HttpServletResponse.SC_OK);
-            } catch (UserNotFoundException | ProductNotFoundException e) {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            } catch (DataMapperException e) {
-                throw new RuntimeException(e);
-            }
-            request.setAttribute("cart", cart);
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/cart.jsp");
-            dispatcher.forward(request, response);
-        }
-    }
-
-
-    public void doDelete(HttpServletRequest request, HttpServletResponse response) {
-        String url = request.getRequestURI();
-
-        // remove product from cart
-        if (url.startsWith("/cart/products")) {
-            String[] fullUrl = url.split("/");
-            String urlSlug = fullUrl[fullUrl.length-1];
-            try {
-                Product product = logic.getProductBySlug(urlSlug);
-                logic.removeProductFromCart("guest", product.getSku().toString());
-                request.setAttribute("cart", logic.getCart("guest"));
-                response.setStatus(HttpServletResponse.SC_OK);
-            } catch (UserNotFoundException | ProductNotFoundException e) {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            } catch (DataMapperException e) {
-                throw new RuntimeException(e);
-            }
-
-        }
     }
 }
+
