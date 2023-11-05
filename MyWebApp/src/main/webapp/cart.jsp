@@ -112,8 +112,6 @@
         document.getElementById("total").innerText = parseFloat(totalElement) - parseFloat(priceElement);
         document.getElementById("remove-row").remove();
 
-
-
     }
 </script>
 
