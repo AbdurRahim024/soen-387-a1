@@ -87,6 +87,7 @@ public class OrdersServlet {
             response.setStatus(HttpServletResponse.SC_OK);
             request.setAttribute("order", order);
             RequestDispatcher dispatcher = request.getRequestDispatcher("/orderListing.jsp");
+            dispatcher.forward(request,response);
         }
     }
 
