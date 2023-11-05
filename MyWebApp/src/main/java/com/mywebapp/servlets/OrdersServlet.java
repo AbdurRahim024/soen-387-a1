@@ -1,6 +1,7 @@
 package com.mywebapp.servlets;
 
 import com.mywebapp.logic.LogicFacade;
+import com.mywebapp.logic.custom_errors.CustomerOrderMismatchException;
 import com.mywebapp.logic.custom_errors.DataMapperException;
 import com.mywebapp.logic.custom_errors.OrderNotFoundException;
 import com.mywebapp.logic.custom_errors.UserNotFoundException;
@@ -18,14 +19,19 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-@WebServlet(name = "ordersServlet", value = {"/orders/*", "/orderForm", "/createOrder"})
+@WebServlet(name = "ordersServlet", value = {"/orders/*", "/orderForm", "/createOrder", "/shipOrder"})
 public class OrdersServlet {
     LogicFacade logic = new LogicFacade();
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
         String url = request.getRequestURI();
 
-        if (url.equals("/orders")){
+        if (url.equals("/orderForm")){
+            response.setStatus(HttpServletResponse.SC_OK);
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/orders.jsp");
+            dispatcher.forward(request, response);
+        }
+        else if (url.equals("/orders")){
             String password = request.getParameter("password");
             String type = "user";
             boolean found = false;
@@ -64,10 +70,24 @@ public class OrdersServlet {
             request.setAttribute("orders", orders);
             //TODO: Where do i redirect to after this?
         }
-        if (url.equals("/orderForm")){
+
+        else if(url.startsWith("/orders/:")) {
+            String[] fullUrl = url.split("/");
+            String urlSlug = fullUrl[fullUrl.length-1];
+            String[] fullOrderId = urlSlug.split(":");
+            int orderId = Integer.parseInt(fullOrderId[fullOrderId.length-1]);
+            String customerId = request.getParameter("customerId");
+            Order order = null;
+            try {
+                order = logic.getOrderDetails(customerId, orderId);
+            } catch (DataMapperException | UserNotFoundException | OrderNotFoundException |
+                     CustomerOrderMismatchException e) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
             response.setStatus(HttpServletResponse.SC_OK);
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/orders.jsp");
-            dispatcher.forward(request, response);
+            request.setAttribute("order", order);
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/orderListing.jsp");
+            dispatcher.forward(request,response);
         }
     }
 
@@ -84,6 +104,17 @@ public class OrdersServlet {
             }
             response.setStatus(HttpServletResponse.SC_OK);
             //TODO: Ask someone what to do after the order has been placed?
+        }
+        if (url.equals("/shipOrder")){
+            int orderId = Integer.parseInt(request.getParameter("orderId"));
+            try {
+                logic.shipOrder(orderId);
+            } catch (DataMapperException | OrderNotFoundException e) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
+            response.setStatus(HttpServletResponse.SC_OK);
+            //TODO: Ask what to do after this
+
         }
     }
 }

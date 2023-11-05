@@ -28,7 +28,8 @@ public class UsersServlet {
             String password = request.getParameter("password");
             String type = "user";
             String isValid = "false";
-            String[] message = {isValid, type};
+            int customerId = 0;
+            String[] message = {String.valueOf(customerId), isValid, type};
             try (CSVReader reader = new CSVReader(new FileReader(users_file))) {
                 String[] line;
                 while ((line = reader.readNext()) != null) {
@@ -39,8 +40,9 @@ public class UsersServlet {
                     }
 
                     if(password.equals(newPass)){
-                        message[0] = "true";
-                        message[1] = type;
+                        message[0] = line[0];
+                        message[1] = "true";
+                        message[2] = type;
                     }
                 }
                 request.setAttribute("message", message);
@@ -59,7 +61,9 @@ public class UsersServlet {
         if (url.equals("/registerUser")) {
             String password = request.getParameter("password");
             File users_file = new File("/Users/abdurrahimgigani/Documents/SOEN 387/soen-387-a1/MyWebApp/src/main/java/com/mywebapp/servlets/users.csv");
-            boolean message = true;
+            boolean isValid = true;
+            int customerId = 0;
+            String[] message = {String.valueOf(customerId), String.valueOf(isValid)};
             try (CSVReader reader = new CSVReader(new FileReader(users_file))) {
                 String[] line;
                 while ((line = reader.readNext()) != null) {
@@ -68,13 +72,15 @@ public class UsersServlet {
                         continue;
                     }
                     if(password.equals(newPass)){
-                        message = false;
+                        message[1] = String.valueOf(false);
                     }
                 }
-                request.setAttribute("message", message);
-                if (message) {
-                    logic.createCustomer(password);
+
+                if (message[1].equals("true")) {
+                    logic.createCustomer(password); //TODO: this method will return a customer id after emma makes changes
+                    message[0] = String.valueOf(customerId);
                 }
+                request.setAttribute("message", message);
             }  catch (FileNotFoundException | DataMapperException | CsvValidationException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
