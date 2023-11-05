@@ -40,53 +40,53 @@ public class LogicFacade {
         return Product.findProductBySlug(urlSlug);
     }
 
-    public ArrayList<? extends Product> getCart(String userName) throws UserNotFoundException, DataMapperException {
-        Customer customer = Customer.findCustomerByName(userName);
+    public ArrayList<? extends Product> getCart(String customer_id) throws UserNotFoundException, DataMapperException {
+        Customer customer = Customer.getCustomer(customer_id);
         return CartItem.findCartItemsByCartId(customer.getCartId());
     }
 
-    public void addProductToCart(String userName, String sku) throws UserNotFoundException, ProductNotFoundException, DataMapperException {
-        Customer customer = Customer.findCustomerByName(userName);
+    public void addProductToCart(String customer_id, String sku) throws UserNotFoundException, ProductNotFoundException, DataMapperException {
+        Customer customer = Customer.getCustomer(customer_id);
         Cart cart = new Cart(customer.getCartId());
         cart.add(UUID.fromString(sku));
     }
 
     //TODO: fix this (this is not reached)
-    public void removeProductFromCart(String userName, String sku) throws UserNotFoundException, ProductNotFoundException, DataMapperException {
-        Customer customer = Customer.findCustomerByName(userName);
+    public void removeProductFromCart(String customer_id, String sku) throws UserNotFoundException, ProductNotFoundException, DataMapperException {
+        Customer customer = Customer.getCustomer(customer_id);
         Cart cart = new Cart(customer.getCartId());
         cart.remove(UUID.fromString(sku));
     }
 
-    public void setProductQuantityInCart(String userName, String sku, int quantity) throws UserNotFoundException, DataMapperException, ProductNotFoundException {
-        Customer customer = Customer.findCustomerByName(userName);
+    public void setProductQuantityInCart(String customer_id, String sku, int quantity) throws UserNotFoundException, DataMapperException, ProductNotFoundException {
+        Customer customer = Customer.getCustomer(customer_id);
         CartItem item = CartItem.findCartItemBySkuAndCartId(UUID.fromString(sku), customer.getCartId());
         item.setQuantity(quantity);
     }
 
-    public void clearCart(String userName) throws UserNotFoundException, DataMapperException {
-        Customer customer = Customer.findCustomerByName(userName);
+    public void clearCart(String customer_id) throws UserNotFoundException, DataMapperException {
+        Customer customer = Customer.getCustomer(customer_id);
         customer.clearCart();
     }
 
-    public void createOrder(String userName, String shippingAddress) throws UserNotFoundException, DataMapperException {
-        Customer customer = Customer.findCustomerByName(userName);
+    public void createOrder(String customer_id, String shippingAddress) throws UserNotFoundException, DataMapperException {
+        Customer customer = Customer.getCustomer(customer_id);
         Order order = new Order(customer.getCartId(), shippingAddress);
         order.placeOrder(customer.getCartId());
 
         customer.clearCart();
     }
 
-    public ArrayList<Order> getOrdersByCustomer(String userName) throws UserNotFoundException, DataMapperException {
-        Customer customer = Customer.findCustomerByName(userName);
+    public ArrayList<Order> getOrdersByCustomer(String customer_id) throws UserNotFoundException, DataMapperException {
+        Customer customer = Customer.getCustomer(customer_id);
         return Order.getOrdersByCustomer(customer.getCustomerId());
     }
 
-    public Order getOrderDetails(String userName, int orderId) throws DataMapperException, CustomerOrderMismatchException, UserNotFoundException, OrderNotFoundException {
+    public Order getOrderDetails(String customer_id, int orderId) throws DataMapperException, CustomerOrderMismatchException, UserNotFoundException, OrderNotFoundException {
         Order order = Order.getOrderByGuid(orderId);
 
-        if (!userName.isEmpty()) {
-            Customer customer = Customer.findCustomerByName(userName);
+        if (!customer_id.isEmpty()) {
+            Customer customer = Customer.getCustomer(customer_id);
             if (!order.getCustomerId().equals(customer.getCustomerId())) {
                 throw new CustomerOrderMismatchException("This order does not belong to this customer");
             }
@@ -114,10 +114,10 @@ public class LogicFacade {
         return Product.getAllProducts();
     }
 
-    //TODO: sync with abdur to make sure whenever there's a new customer he calls this method
-    public void createCustomer(String userName) throws DataMapperException {
-        Customer customer = new Customer(userName);
+    public String createCustomer() throws DataMapperException {
+        Customer customer = new Customer();
         customer.addCustomerToDb();
+        return customer.getCustomerId().toString();
     }
 
 }

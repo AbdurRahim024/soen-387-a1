@@ -57,7 +57,7 @@ public class UsersServlet {
                 }
                 myReader.close();
                 request.setAttribute("message", message);
-                logic.createCustomer(password);
+                String customer_id = logic.createCustomer();
             } catch (FileNotFoundException | DataMapperException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }

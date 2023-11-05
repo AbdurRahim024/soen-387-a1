@@ -8,21 +8,17 @@ import java.util.UUID;
 
 public class Customer {
     private UUID customerId; //primary key
-    private UUID cartId; //foreign key
-    private String name;
+    private UUID cartId;
 
-    public Customer(String name) {
+    public Customer() {
         this.customerId = UUID.randomUUID();
 
-        this.name = name;
         Cart cart = new Cart();
         this.cartId = cart.getCartId();
     }
 
-    public Customer(UUID customerId, UUID cartId, String name) {
+    public Customer(UUID customerId, UUID cartId) {
         this.customerId = customerId;
-
-        this.name = name;
         this.cartId = cartId;
     }
 
@@ -35,8 +31,8 @@ public class Customer {
     public void clearCart() throws DataMapperException {
         CartItem.deleteAllItemsInCart(this.cartId);
     }
-    public static Customer findCustomerByName(String name) throws UserNotFoundException, DataMapperException {
-        Customer customer = CustomerDataMapper.findByName(name);
+    public static Customer getCustomer(String customer_id) throws UserNotFoundException, DataMapperException {
+        Customer customer = CustomerDataMapper.findByGuid(UUID.fromString(customer_id));
 
         if (customer == null) {
             throw new UserNotFoundException("This customer was not found.");
@@ -56,14 +52,6 @@ public class Customer {
 
     public void setCustomerId(UUID customerId) {
         this.customerId = customerId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public UUID getCartId() {
