@@ -11,16 +11,29 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.Scanner;
 
 @WebServlet(name = "userServlet", value = {"/registerUser", "/authenticateUser"})
 public class UsersServlet {
     LogicFacade logic = new LogicFacade();
+    private void addToUsers(String customerId, String password, String type){
+        String csvFilePath = "/Users/abdurrahimgigani/Documents/SOEN 387/soen-387-a1/MyWebApp/src/main/java/com/mywebapp/servlets/users.csv";
 
+        try {
+            FileWriter fileWriter = new FileWriter(csvFilePath, true);
+            BufferedWriter writer = new BufferedWriter(fileWriter);
+
+            String newData = customerId + "," +  password + "," +  type;
+
+            writer.write(newData);
+            writer.newLine();
+            writer.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String url = request.getRequestURI();
         File users_file = new File("/Users/abdurrahimgigani/Documents/SOEN 387/soen-387-a1/MyWebApp/src/main/java/com/mywebapp/servlets/users.csv");
@@ -28,21 +41,19 @@ public class UsersServlet {
             String password = request.getParameter("password");
             String type = "user";
             String isValid = "false";
-            int customerId = 0;
-            String[] message = {String.valueOf(customerId), isValid, type};
+            String[] message = {isValid, type};
             try (CSVReader reader = new CSVReader(new FileReader(users_file))) {
                 String[] line;
                 while ((line = reader.readNext()) != null) {
-                    String newPass = line[0];
-                    type = line[1];
+                    String newPass = line[1];
+                    type = line[2];
                     if (newPass.equals("password")) { // skip if the first row (titles) is being read
                         continue;
                     }
 
                     if(password.equals(newPass)){
-                        message[0] = line[0];
-                        message[1] = "true";
-                        message[2] = type;
+                        message[0] = "true";
+                        message[1] = type;
                     }
                 }
                 request.setAttribute("message", message);
@@ -50,8 +61,9 @@ public class UsersServlet {
                 e.printStackTrace();
             }
             response.setStatus(HttpServletResponse.SC_OK);
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/home.jsp");
-            dispatcher.forward(request, response);
+//            RequestDispatcher dispatcher = request.getRequestDispatcher("/home.jsp");
+//            dispatcher.forward(request, response);
+            //TODO: Where do i redirect?
         }
     }
 
@@ -61,9 +73,7 @@ public class UsersServlet {
         if (url.equals("/registerUser")) {
             String password = request.getParameter("password");
             File users_file = new File("/Users/abdurrahimgigani/Documents/SOEN 387/soen-387-a1/MyWebApp/src/main/java/com/mywebapp/servlets/users.csv");
-            boolean isValid = true;
-            int customerId = 0;
-            String[] message = {String.valueOf(customerId), String.valueOf(isValid)};
+            boolean message = true;
             try (CSVReader reader = new CSVReader(new FileReader(users_file))) {
                 String[] line;
                 while ((line = reader.readNext()) != null) {
@@ -72,19 +82,20 @@ public class UsersServlet {
                         continue;
                     }
                     if(password.equals(newPass)){
-                        message[1] = String.valueOf(false);
+                        message = false;
                     }
                 }
 
-                if (message[1].equals("true")) {
-                    String customer_id = logic.createCustomer(); //TODO: this method will return a customer id after emma makes changes
-                    message[0] = String.valueOf(customerId);
+                if (message) {
+                    String customer_id = logic.createCustomer();
+                    addToUsers(customer_id, password, "user");
                 }
                 request.setAttribute("message", message);
             }  catch (FileNotFoundException | DataMapperException | CsvValidationException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
             response.setStatus(HttpServletResponse.SC_OK);
+            //TODO: Where do i redirect?
 
         }
     }

@@ -81,9 +81,7 @@ public class ProductServlet extends HttpServlet {
                 File catalog_path = null;
                 try {
                     catalog_path = logic.downloadProductCatalog();
-                } catch (DataMapperException e) {
-                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                } catch (FileDownloadException e) {
+                } catch (DataMapperException | FileDownloadException e) {
                     response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 }
                 response.setStatus(HttpServletResponse.SC_OK);
