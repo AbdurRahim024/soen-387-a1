@@ -77,7 +77,7 @@ public class UsersServlet {
                 }
 
                 if (message[1].equals("true")) {
-                    logic.createCustomer(password); //TODO: this method will return a customer id after emma makes changes
+                    String customer_id = logic.createCustomer(); //TODO: this method will return a customer id after emma makes changes
                     message[0] = String.valueOf(customerId);
                 }
                 request.setAttribute("message", message);
@@ -85,6 +85,7 @@ public class UsersServlet {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
             response.setStatus(HttpServletResponse.SC_OK);
+
         }
     }
 
