@@ -60,11 +60,20 @@ public class CartServlet extends HttpServlet {
             dispatcher.forward(request, response);
         }
         if(url.equals("/cart/editQuantities")){
+            String password = request.getParameter("password");
+            String sku = request.getParameter("productSku");
+            int quantity = Integer.parseInt(request.getParameter("quantity"));
 
+            try {
+                logic.setProductQuantityInCart(password, sku, quantity);
+            } catch (UserNotFoundException | DataMapperException | ProductNotFoundException e) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
+            response.setStatus(HttpServletResponse.SC_OK);
         }
 
     }
-    public void doDelete(HttpServletRequest request, HttpServletResponse response) {
+    public void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String url = request.getRequestURI();
 
         // remove product from cart
@@ -81,7 +90,19 @@ public class CartServlet extends HttpServlet {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
             response.setStatus(HttpServletResponse.SC_OK);
+        }
 
+        //clear the entire cart
+        if (url.equals("/cart/clearCart")){
+            String password = request.getParameter("password");
+            try {
+                logic.clearCart(password);
+            } catch (UserNotFoundException | DataMapperException e) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
+            response.setStatus(HttpServletResponse.SC_OK);
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/cart.jsp");
+            dispatcher.forward(request, response);
         }
     }
 }
