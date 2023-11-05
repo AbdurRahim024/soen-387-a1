@@ -22,7 +22,26 @@ import java.util.ArrayList;
 @WebServlet(name = "ordersServlet", value = {"/orders/*", "/orderForm", "/createOrder", "/shipOrder"})
 public class OrdersServlet {
     LogicFacade logic = new LogicFacade();
-
+    private String getCustomerID(String password){
+        String customerId = "";
+        String users_file = "/Users/abdurrahimgigani/Documents/SOEN 387/soen-387-a1/MyWebApp/src/main/java/com/mywebapp/servlets/users.csv";
+        try (CSVReader reader = new CSVReader(new FileReader(users_file))) {
+            String[] line;
+            while ((line = reader.readNext()) != null) {
+                String newPass = line[0];
+                if (newPass.equals("password")) { // skip if the first row (titles) is being read
+                    continue;
+                }
+                if(password.equals(newPass)){
+                    customerId = line[0];
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return customerId;
+    }
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
         String url = request.getRequestURI();
 
@@ -76,7 +95,8 @@ public class OrdersServlet {
             String urlSlug = fullUrl[fullUrl.length-1];
             String[] fullOrderId = urlSlug.split(":");
             int orderId = Integer.parseInt(fullOrderId[fullOrderId.length-1]);
-            String customerId = request.getParameter("customerId");
+            String password = request.getParameter("password");
+            String customerId = getCustomerID(password);
             Order order = null;
             try {
                 order = logic.getOrderDetails(customerId, orderId);
@@ -96,9 +116,10 @@ public class OrdersServlet {
 
         if (url.equals("/createOrder")){
             String password = request.getParameter("password");
+            String customerId = getCustomerID(password);
             String shippingAddress = request.getParameter("shippingAddress");
             try {
-                logic.createOrder(password, shippingAddress);
+                logic.createOrder(customerId, shippingAddress);
             } catch (UserNotFoundException | DataMapperException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
