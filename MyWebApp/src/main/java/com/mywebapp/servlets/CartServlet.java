@@ -2,11 +2,13 @@ package com.mywebapp.servlets;
 
 import com.mywebapp.logic.LogicFacade;
 import com.mywebapp.logic.custom_errors.DataMapperException;
+import com.mywebapp.logic.custom_errors.FileDownloadException;
 import com.mywebapp.logic.custom_errors.ProductNotFoundException;
 import com.mywebapp.logic.custom_errors.UserNotFoundException;
 import com.mywebapp.logic.models.Product;
 import com.mywebapp.ConfigManager;
 import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvValidationException;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -22,7 +24,7 @@ import java.util.ArrayList;
 @WebServlet(name = "cartServlet", value = {"/cart/*"})
 public class CartServlet extends HttpServlet {
     LogicFacade logic = new LogicFacade();
-    private String getCustomerID(String password){
+    private String getCustomerID(String password) throws CsvValidationException, IOException, FileDownloadException {
         String customerId = "";
         try (CSVReader reader = new CSVReader(new FileReader(ConfigManager.getCsvPath()))) {
             String[] line;
@@ -36,8 +38,6 @@ public class CartServlet extends HttpServlet {
                     break;
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
         return customerId;
     }
@@ -47,7 +47,12 @@ public class CartServlet extends HttpServlet {
         if(url.equals("/cart")) {
             ArrayList<Product> cart;
             String password = request.getParameter("password");
-            String customerID = getCustomerID(password);
+            String customerID = null;
+            try {
+                customerID = getCustomerID(password);
+            } catch (CsvValidationException | FileDownloadException e) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
             try {
                 cart = (ArrayList<Product>) logic.getCart(customerID);
                 request.setAttribute("cart", cart);
@@ -70,7 +75,12 @@ public class CartServlet extends HttpServlet {
             String sku = request.getParameter("productSku");
             ArrayList<Product> cart = new ArrayList<>();
             String password = request.getParameter("password");
-            String customerId = getCustomerID(password);
+            String customerId = null;
+            try {
+                customerId = getCustomerID(password);
+            } catch (CsvValidationException | FileDownloadException e) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
             try {
                 logic.addProductToCart(customerId, sku);
                 cart = (ArrayList<Product>) logic.getCart(customerId);
@@ -88,7 +98,12 @@ public class CartServlet extends HttpServlet {
             String password = request.getParameter("password");
             String sku = request.getParameter("productSku");
             int quantity = Integer.parseInt(request.getParameter("quantity"));
-            String customerId = getCustomerID(password);
+            String customerId = null;
+            try {
+                customerId = getCustomerID(password);
+            } catch (CsvValidationException | FileDownloadException e) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
             try {
                 logic.setProductQuantityInCart(customerId, sku, quantity);
             } catch (UserNotFoundException | DataMapperException | ProductNotFoundException e) {
@@ -108,7 +123,12 @@ public class CartServlet extends HttpServlet {
             String[] fullUrl = url.split("/");
             String urlSlug = fullUrl[fullUrl.length-1];
             String password = request.getParameter("password");
-            String customerId = getCustomerID(password);
+            String customerId = null;
+            try {
+                customerId = getCustomerID(password);
+            } catch (CsvValidationException | FileDownloadException e) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
             try {
                 Product product = logic.getProductBySlug(urlSlug);
                 logic.removeProductFromCart(customerId, product.getSku().toString());
@@ -124,7 +144,12 @@ public class CartServlet extends HttpServlet {
         //clear the entire cart
         if (url.equals("/cart/clearCart")){
             String password = request.getParameter("password");
-            String customerId = getCustomerID(password);
+            String customerId = null;
+            try {
+                customerId = getCustomerID(password);
+            } catch (CsvValidationException | FileDownloadException e) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
             try {
                 logic.clearCart(customerId);
             } catch (UserNotFoundException | DataMapperException e) {

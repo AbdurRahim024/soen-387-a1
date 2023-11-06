@@ -1,4 +1,4 @@
-customer_id, password, type
-11,abdur, admin
-22,emma, user
-33,mohammad, admin
+customer_id,password,type
+11,abdur,admin
+22,emma,user
+33,mohammad,admin

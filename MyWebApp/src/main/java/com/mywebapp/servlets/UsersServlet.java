@@ -19,20 +19,16 @@ import java.util.Scanner;
 @WebServlet(name = "userServlet", value = {"/registerUser", "/authenticateUser"})
 public class UsersServlet {
     LogicFacade logic = new LogicFacade();
-    private void addToUsers(String customerId, String password, String type){
-        try {
-            FileWriter fileWriter = new FileWriter(ConfigManager.getCsvPath(), true);
-            BufferedWriter writer = new BufferedWriter(fileWriter);
+    private void addToUsers(String customerId, String password, String type) throws IOException, FileDownloadException{
+        FileWriter fileWriter = new FileWriter(ConfigManager.getCsvPath(), true);
+        BufferedWriter writer = new BufferedWriter(fileWriter);
 
-            String newData = customerId + "," +  password + "," +  type;
+        String newData = customerId + "," +  password + "," +  type;
 
-            writer.write(newData);
-            writer.newLine();
-            writer.close();
+        writer.write(newData);
+        writer.newLine();
+        writer.close();
 
-        } catch (IOException | FileDownloadException e) {
-            throw new RuntimeException(e); //TODO: abdur set error code
-        }
     }
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String url = request.getRequestURI();
@@ -61,9 +57,8 @@ public class UsersServlet {
                 e.printStackTrace();
             }
             response.setStatus(HttpServletResponse.SC_OK);
-//            RequestDispatcher dispatcher = request.getRequestDispatcher("/home.jsp");
-//            dispatcher.forward(request, response);
-            //TODO: Where do i redirect?
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/home.jsp");
+            dispatcher.forward(request, response);
         }
     }
 
@@ -76,7 +71,7 @@ public class UsersServlet {
             try {
                 users_file = new File(ConfigManager.getCsvPath());
             } catch (FileDownloadException e) {
-                throw new RuntimeException(e); //TODO: abdur set error code
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
             boolean message = true;
             try (CSVReader reader = new CSVReader(new FileReader(users_file))) {
@@ -96,11 +91,12 @@ public class UsersServlet {
                     addToUsers(customer_id, password, "user");
                 }
                 request.setAttribute("message", message);
-            }  catch (FileNotFoundException | DataMapperException | CsvValidationException e) {
+            }  catch (FileNotFoundException | DataMapperException | CsvValidationException | FileDownloadException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
             response.setStatus(HttpServletResponse.SC_OK);
-            //TODO: Where do i redirect?
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/login.jsp");
+            dispatcher.forward(request, response);
 
         }
     }
