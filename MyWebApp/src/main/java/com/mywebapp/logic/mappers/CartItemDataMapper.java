@@ -1,6 +1,7 @@
 package com.mywebapp.logic.mappers;
 
 import com.mywebapp.logic.custom_errors.DataMapperException;
+import com.mywebapp.logic.custom_errors.FileDownloadException;
 import com.mywebapp.logic.models.CartItem;
 import com.mywebapp.logic.models.Product;
 import com.mywebapp.ConfigManager;
@@ -14,7 +15,7 @@ public class CartItemDataMapper {
     public static CartItem findBySkuAndCartId(UUID p_id, UUID cart_id) throws DataMapperException {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection db = DriverManager.getConnection(ConfigManager.getDbUrl(), ConfigManager.getDbUsername(), ConfigManager.getDbPassword());
+            Connection db = DriverManager.getConnection(ConfigManager.getDbParameter(ConfigManager.DbParameter.URL), ConfigManager.getDbParameter(ConfigManager.DbParameter.USERNAME), ConfigManager.getDbParameter(ConfigManager.DbParameter.PASSWORD));
             String statement = "SELECT * FROM `cartItems` WHERE `sku`=? AND `cart_id`=?";
             PreparedStatement dbStatement = db.prepareStatement(statement);
             dbStatement.setString(1, p_id.toString());
@@ -46,7 +47,7 @@ public class CartItemDataMapper {
     public static void insert(CartItem item) throws DataMapperException {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection db = DriverManager.getConnection(ConfigManager.getDbUrl(), ConfigManager.getDbUsername(), ConfigManager.getDbPassword());
+            Connection db = DriverManager.getConnection(ConfigManager.getDbParameter(ConfigManager.DbParameter.URL), ConfigManager.getDbParameter(ConfigManager.DbParameter.USERNAME), ConfigManager.getDbParameter(ConfigManager.DbParameter.PASSWORD));
             String statement = "INSERT INTO `cartItems` (`sku`, `cart_id`, `name`, `description`, `vendor`, `urlSlug`, `price`, `quantity`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
             PreparedStatement dbStatement = db.prepareStatement(statement);
@@ -71,7 +72,7 @@ public class CartItemDataMapper {
         try {
 
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection db = DriverManager.getConnection(ConfigManager.getDbUrl(), ConfigManager.getDbUsername(), ConfigManager.getDbPassword());
+            Connection db = DriverManager.getConnection(ConfigManager.getDbParameter(ConfigManager.DbParameter.URL), ConfigManager.getDbParameter(ConfigManager.DbParameter.USERNAME), ConfigManager.getDbParameter(ConfigManager.DbParameter.PASSWORD));
             String statement = "UPDATE `cartItems` SET `name`=?, `description`=?, `vendor`=?, `urlSlug`=?, `price`=?, `quantity`=? WHERE `sku`=? AND `cart_id`=?";
 
             PreparedStatement dbStatement = db.prepareStatement(statement);
@@ -94,8 +95,7 @@ public class CartItemDataMapper {
     public static void delete(CartItem item) throws DataMapperException {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection db = DriverManager.getConnection(ConfigManager.getDbUrl(), ConfigManager.getDbUsername(), ConfigManager.getDbPassword());
-
+            Connection db = DriverManager.getConnection(ConfigManager.getDbParameter(ConfigManager.DbParameter.URL), ConfigManager.getDbParameter(ConfigManager.DbParameter.USERNAME), ConfigManager.getDbParameter(ConfigManager.DbParameter.PASSWORD));
             String statement = "DELETE FROM `cartItems` where `sku`=? AND `cart_id`=?";
             PreparedStatement dbStatement = db.prepareStatement(statement);
             dbStatement.setString(1, item.getSku().toString());
@@ -112,7 +112,7 @@ public class CartItemDataMapper {
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection db = DriverManager.getConnection(ConfigManager.getDbUrl(), ConfigManager.getDbUsername(), ConfigManager.getDbPassword());
+            Connection db = DriverManager.getConnection(ConfigManager.getDbParameter(ConfigManager.DbParameter.URL), ConfigManager.getDbParameter(ConfigManager.DbParameter.USERNAME), ConfigManager.getDbParameter(ConfigManager.DbParameter.PASSWORD));
             String statement = "SELECT * FROM `cartItems` WHERE `cart_id`=?";
             PreparedStatement dbStatement = db.prepareStatement(statement);
             dbStatement.setString(1, cart_id.toString());
@@ -143,8 +143,7 @@ public class CartItemDataMapper {
     public static void deleteAllItemsInCart(UUID cart_id) throws DataMapperException {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection db = DriverManager.getConnection(ConfigManager.getDbUrl(), ConfigManager.getDbUsername(), ConfigManager.getDbPassword());
-
+            Connection db = DriverManager.getConnection(ConfigManager.getDbParameter(ConfigManager.DbParameter.URL), ConfigManager.getDbParameter(ConfigManager.DbParameter.USERNAME), ConfigManager.getDbParameter(ConfigManager.DbParameter.PASSWORD));
             String statement = "DELETE FROM `cartItems` where `cart_id`=?";
             PreparedStatement dbStatement = db.prepareStatement(statement);
             dbStatement.setString(1, cart_id.toString());

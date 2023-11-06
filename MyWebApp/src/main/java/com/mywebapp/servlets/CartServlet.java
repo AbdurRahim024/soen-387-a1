@@ -24,7 +24,7 @@ public class CartServlet extends HttpServlet {
     LogicFacade logic = new LogicFacade();
     private String getCustomerID(String password){
         String customerId = "";
-        try (CSVReader reader = new CSVReader(new FileReader(ConfigManager.getCSVPath()))) {
+        try (CSVReader reader = new CSVReader(new FileReader(ConfigManager.getCsvPath()))) {
             String[] line;
             while ((line = reader.readNext()) != null) {
                 String newPass = line[0];

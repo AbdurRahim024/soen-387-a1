@@ -14,7 +14,7 @@ public class ProductDataMapper {
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection db = DriverManager.getConnection(ConfigManager.getDbUrl(), ConfigManager.getDbUsername(), ConfigManager.getDbPassword());
+            Connection db = DriverManager.getConnection(ConfigManager.getDbParameter(ConfigManager.DbParameter.URL), ConfigManager.getDbParameter(ConfigManager.DbParameter.USERNAME), ConfigManager.getDbParameter(ConfigManager.DbParameter.PASSWORD));
             String statement;
             PreparedStatement dbStatement;
 
@@ -53,7 +53,7 @@ public class ProductDataMapper {
     public static void insert(Product product) throws DataMapperException {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection db = DriverManager.getConnection(ConfigManager.getDbUrl(), ConfigManager.getDbUsername(), ConfigManager.getDbPassword());
+            Connection db = DriverManager.getConnection(ConfigManager.getDbParameter(ConfigManager.DbParameter.URL), ConfigManager.getDbParameter(ConfigManager.DbParameter.USERNAME), ConfigManager.getDbParameter(ConfigManager.DbParameter.PASSWORD));
             String statement = "INSERT INTO `products` (`sku`, `name`, `description`, `vendor`, `urlSlug`, `price`) VALUES (?, ?, ?, ?, ?, ?)";
 
             PreparedStatement dbStatement = db.prepareStatement(statement);
@@ -74,7 +74,7 @@ public class ProductDataMapper {
     public static void update(Product product) throws DataMapperException {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection db = DriverManager.getConnection(ConfigManager.getDbUrl(), ConfigManager.getDbUsername(), ConfigManager.getDbPassword());
+            Connection db = DriverManager.getConnection(ConfigManager.getDbParameter(ConfigManager.DbParameter.URL), ConfigManager.getDbParameter(ConfigManager.DbParameter.USERNAME), ConfigManager.getDbParameter(ConfigManager.DbParameter.PASSWORD));
             String statement = "UPDATE `products` SET `name`=?, `description`=?, `vendor`=?, `urlSlug`=?, `price`=? WHERE `sku`=?";
 
             PreparedStatement dbStatement = db.prepareStatement(statement);
@@ -94,8 +94,7 @@ public class ProductDataMapper {
     public static void delete(Product product) throws DataMapperException {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection db = DriverManager.getConnection(ConfigManager.getDbUrl(), ConfigManager.getDbUsername(), ConfigManager.getDbPassword());
-
+            Connection db = DriverManager.getConnection(ConfigManager.getDbParameter(ConfigManager.DbParameter.URL), ConfigManager.getDbParameter(ConfigManager.DbParameter.USERNAME), ConfigManager.getDbParameter(ConfigManager.DbParameter.PASSWORD));
             String statement = "DELETE FROM `products` where `sku`=?";
             PreparedStatement dbStatement = db.prepareStatement(statement);
             dbStatement.setString(1, product.getSku().toString());
@@ -109,7 +108,7 @@ public class ProductDataMapper {
     public static boolean findByAttributes(String name, String description, String vendor, String urlSlug, double price) throws DataMapperException {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection db = DriverManager.getConnection(ConfigManager.getDbUrl(), ConfigManager.getDbUsername(), ConfigManager.getDbPassword());
+            Connection db = DriverManager.getConnection(ConfigManager.getDbParameter(ConfigManager.DbParameter.URL), ConfigManager.getDbParameter(ConfigManager.DbParameter.USERNAME), ConfigManager.getDbParameter(ConfigManager.DbParameter.PASSWORD));
             String statement = "SELECT * FROM `products` WHERE `name`=? AND `description`=? AND `vendor`=? AND `urlSlug`=? AND `price`=?";
 
             PreparedStatement dbStatement = db.prepareStatement(statement);
@@ -135,7 +134,7 @@ public class ProductDataMapper {
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection db = DriverManager.getConnection(ConfigManager.getDbUrl(), ConfigManager.getDbUsername(), ConfigManager.getDbPassword());
+            Connection db = DriverManager.getConnection(ConfigManager.getDbParameter(ConfigManager.DbParameter.URL), ConfigManager.getDbParameter(ConfigManager.DbParameter.USERNAME), ConfigManager.getDbParameter(ConfigManager.DbParameter.PASSWORD));
             String statement = "SELECT * FROM `products`";
             PreparedStatement dbStatement = db.prepareStatement(statement);
             ResultSet rs = dbStatement.executeQuery();

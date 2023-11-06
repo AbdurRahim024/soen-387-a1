@@ -2,10 +2,7 @@ package com.mywebapp.servlets;
 
 import com.mywebapp.ConfigManager;
 import com.mywebapp.logic.LogicFacade;
-import com.mywebapp.logic.custom_errors.CustomerOrderMismatchException;
-import com.mywebapp.logic.custom_errors.DataMapperException;
-import com.mywebapp.logic.custom_errors.OrderNotFoundException;
-import com.mywebapp.logic.custom_errors.UserNotFoundException;
+import com.mywebapp.logic.custom_errors.*;
 import com.mywebapp.logic.models.Order;
 import com.opencsv.CSVReader;
 import jakarta.servlet.RequestDispatcher;
@@ -25,7 +22,7 @@ public class OrdersServlet {
     LogicFacade logic = new LogicFacade();
     private String getCustomerID(String password){
         String customerId = "";
-        try (CSVReader reader = new CSVReader(new FileReader(ConfigManager.getCSVPath()))) {
+        try (CSVReader reader = new CSVReader(new FileReader(ConfigManager.getCsvPath()))) {
             String[] line;
             while ((line = reader.readNext()) != null) {
                 String newPass = line[0];
@@ -38,7 +35,7 @@ public class OrdersServlet {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(); //TODO: all exceptions should be (re)thrown until servlet method level, not caught
         }
         return customerId;
     }
@@ -54,7 +51,12 @@ public class OrdersServlet {
             String password = request.getParameter("password");
             String type = "user";
             boolean found = false;
-            File users_file = new File(ConfigManager.getCSVPath());
+            File users_file = null;
+            try {
+                users_file = new File(ConfigManager.getCsvPath());
+            } catch (FileDownloadException e) {
+                throw new RuntimeException(e);
+            }
             ArrayList<Order> orders = null;
             try (CSVReader reader = new CSVReader(new FileReader(users_file))) {
                 String[] line;

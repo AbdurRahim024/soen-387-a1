@@ -1,0 +1,10 @@
+{
+  "database": {
+    "url": "jdbc:mysql://localhost:3306/soen_387",
+    "username": "root",
+    "password": "killmenow"
+  },
+  "users_csv": {
+    "path": "/Users/emmuh/Documents/COMP/SOEN 387/soen-387-a1/MyWebApp/src/main/java/com/mywebapp/servlets/users.csv"
+  }
+}
