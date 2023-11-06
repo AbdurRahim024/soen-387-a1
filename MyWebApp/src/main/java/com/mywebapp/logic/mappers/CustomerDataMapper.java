@@ -12,7 +12,7 @@ public class CustomerDataMapper {
     public static void insert(Customer customer) throws DataMapperException {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection db = DriverManager.getConnection(ConfigManager.getDbUrl(), ConfigManager.getDbUsername(), ConfigManager.getDbPassword());
+            Connection db = DriverManager.getConnection(ConfigManager.getDbParameter(ConfigManager.DbParameter.URL), ConfigManager.getDbParameter(ConfigManager.DbParameter.USERNAME), ConfigManager.getDbParameter(ConfigManager.DbParameter.PASSWORD));
             String statement = "INSERT INTO `customers` (`customer_id`, `cart_id`) VALUES (?, ?)";
 
             PreparedStatement dbStatement = db.prepareStatement(statement);
@@ -29,7 +29,7 @@ public class CustomerDataMapper {
     public static Customer findByGuid(UUID customer_id) throws DataMapperException {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection db = DriverManager.getConnection(ConfigManager.getDbUrl(), ConfigManager.getDbUsername(), ConfigManager.getDbPassword());
+            Connection db = DriverManager.getConnection(ConfigManager.getDbParameter(ConfigManager.DbParameter.URL), ConfigManager.getDbParameter(ConfigManager.DbParameter.USERNAME), ConfigManager.getDbParameter(ConfigManager.DbParameter.PASSWORD));
             String statement = "SELECT * FROM `customers` WHERE `customer_id`=?";
             PreparedStatement dbStatement = db.prepareStatement(statement);
             dbStatement.setString(1, customer_id.toString());

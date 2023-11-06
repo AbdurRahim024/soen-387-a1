@@ -15,7 +15,7 @@ public class OrderDataMapper {
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection db = DriverManager.getConnection(ConfigManager.getDbUrl(), ConfigManager.getDbUsername(), ConfigManager.getDbPassword());
+            Connection db = DriverManager.getConnection(ConfigManager.getDbParameter(ConfigManager.DbParameter.URL), ConfigManager.getDbParameter(ConfigManager.DbParameter.USERNAME), ConfigManager.getDbParameter(ConfigManager.DbParameter.PASSWORD));
             String statement = "INSERT INTO `orders` (`customer_id`, `shipping_address`, `is_shipped`, `items`) VALUES (?, ?, ?, ?)";
 
             byte[] itemsBytes = serialize(order.getItems());
@@ -37,7 +37,7 @@ public class OrderDataMapper {
     public static void update(Order order) throws DataMapperException {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection db = DriverManager.getConnection(ConfigManager.getDbUrl(), ConfigManager.getDbUsername(), ConfigManager.getDbPassword());
+            Connection db = DriverManager.getConnection(ConfigManager.getDbParameter(ConfigManager.DbParameter.URL), ConfigManager.getDbParameter(ConfigManager.DbParameter.USERNAME), ConfigManager.getDbParameter(ConfigManager.DbParameter.PASSWORD));
             String statement = "UPDATE `orders` SET `is_shipped`=?, `tracking_number`=? WHERE `order_id`=?";
 
             PreparedStatement dbStatement = db.prepareStatement(statement);
@@ -57,7 +57,7 @@ public class OrderDataMapper {
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection db = DriverManager.getConnection(ConfigManager.getDbUrl(), ConfigManager.getDbUsername(), ConfigManager.getDbPassword());
+            Connection db = DriverManager.getConnection(ConfigManager.getDbParameter(ConfigManager.DbParameter.URL), ConfigManager.getDbParameter(ConfigManager.DbParameter.USERNAME), ConfigManager.getDbParameter(ConfigManager.DbParameter.PASSWORD));
             PreparedStatement dbStatement;
 
             if (orderId == -1 && customerId == null) { //get all orders

@@ -3,6 +3,7 @@ package com.mywebapp.servlets;
 import com.mywebapp.ConfigManager;
 import com.mywebapp.logic.LogicFacade;
 import com.mywebapp.logic.custom_errors.DataMapperException;
+import com.mywebapp.logic.custom_errors.FileDownloadException;
 import com.mywebapp.logic.models.Product;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
@@ -20,7 +21,7 @@ public class UsersServlet {
     LogicFacade logic = new LogicFacade();
     private void addToUsers(String customerId, String password, String type){
         try {
-            FileWriter fileWriter = new FileWriter(ConfigManager.getCSVPath(), true);
+            FileWriter fileWriter = new FileWriter(ConfigManager.getCsvPath(), true);
             BufferedWriter writer = new BufferedWriter(fileWriter);
 
             String newData = customerId + "," +  password + "," +  type;
@@ -29,8 +30,8 @@ public class UsersServlet {
             writer.newLine();
             writer.close();
 
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException | FileDownloadException e) {
+            throw new RuntimeException(e); //TODO: abdur set error code
         }
     }
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -66,12 +67,17 @@ public class UsersServlet {
         }
     }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException { //TODO: servlet methods should only throw servlet exception, ioexception should be caught
         String url = request.getRequestURI();
         //Checking if the user exists else adding the user to the text file
         if (url.equals("/registerUser")) {
             String password = request.getParameter("password");
-            File users_file = new File(ConfigManager.getCSVPath());
+            File users_file = null;
+            try {
+                users_file = new File(ConfigManager.getCsvPath());
+            } catch (FileDownloadException e) {
+                throw new RuntimeException(e); //TODO: abdur set error code
+            }
             boolean message = true;
             try (CSVReader reader = new CSVReader(new FileReader(users_file))) {
                 String[] line;
