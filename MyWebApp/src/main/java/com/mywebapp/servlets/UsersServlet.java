@@ -1,5 +1,6 @@
 package com.mywebapp.servlets;
 
+import com.mywebapp.ConfigManager;
 import com.mywebapp.logic.LogicFacade;
 import com.mywebapp.logic.custom_errors.DataMapperException;
 import com.mywebapp.logic.models.Product;
@@ -18,10 +19,8 @@ import java.util.Scanner;
 public class UsersServlet {
     LogicFacade logic = new LogicFacade();
     private void addToUsers(String customerId, String password, String type){
-        String csvFilePath = "/Users/abdurrahimgigani/Documents/SOEN 387/soen-387-a1/MyWebApp/src/main/java/com/mywebapp/servlets/users.csv";
-
         try {
-            FileWriter fileWriter = new FileWriter(csvFilePath, true);
+            FileWriter fileWriter = new FileWriter(ConfigManager.getCSVPath(), true);
             BufferedWriter writer = new BufferedWriter(fileWriter);
 
             String newData = customerId + "," +  password + "," +  type;
@@ -72,7 +71,7 @@ public class UsersServlet {
         //Checking if the user exists else adding the user to the text file
         if (url.equals("/registerUser")) {
             String password = request.getParameter("password");
-            File users_file = new File("/Users/abdurrahimgigani/Documents/SOEN 387/soen-387-a1/MyWebApp/src/main/java/com/mywebapp/servlets/users.csv");
+            File users_file = new File(ConfigManager.getCSVPath());
             boolean message = true;
             try (CSVReader reader = new CSVReader(new FileReader(users_file))) {
                 String[] line;

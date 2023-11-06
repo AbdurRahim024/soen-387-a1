@@ -2,6 +2,7 @@ package com.mywebapp.logic.mappers;
 
 import com.mywebapp.logic.custom_errors.DataMapperException;
 import com.mywebapp.logic.models.Customer;
+import com.mywebapp.ConfigManager;
 
 import java.sql.*;
 import java.util.UUID;
@@ -11,7 +12,7 @@ public class CustomerDataMapper {
     public static void insert(Customer customer) throws DataMapperException {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection db = DriverManager.getConnection("jdbc:mysql://localhost:3306/soen_387", "root", "killmenow");
+            Connection db = DriverManager.getConnection(ConfigManager.getDbUrl(), ConfigManager.getDbUsername(), ConfigManager.getDbPassword());
             String statement = "INSERT INTO `customers` (`customer_id`, `cart_id`) VALUES (?, ?)";
 
             PreparedStatement dbStatement = db.prepareStatement(statement);
@@ -28,7 +29,7 @@ public class CustomerDataMapper {
     public static Customer findByGuid(UUID customer_id) throws DataMapperException {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection db = DriverManager.getConnection("jdbc:mysql://localhost:3306/soen_387", "root", "killmenow");
+            Connection db = DriverManager.getConnection(ConfigManager.getDbUrl(), ConfigManager.getDbUsername(), ConfigManager.getDbPassword());
             String statement = "SELECT * FROM `customers` WHERE `customer_id`=?";
             PreparedStatement dbStatement = db.prepareStatement(statement);
             dbStatement.setString(1, customer_id.toString());

@@ -126,12 +126,9 @@
 <nav>
     <a href="/home">Home</a>
     <a href="/products">Products</a>
-    <a href="#">New Arrivals</a>
-    <a href="#">Men</a>
-    <a href="#">Women</a>
     <a href="/cart">Cart</a>
-    <a href="#" id="staff-login-button">Staff Login</a>
-    <a hidden href="#" id="logout-button">Staff Logout</a>
+    <a href="#" id="login-button">Login</a>
+    <a hidden href="#" id="logout-button">Logout</a>
     <a hidden href="/createProduct" id = "create-new-product">Create New Product</a>
     <a hidden href="/products/download" id = "download-catalog">Download Catalog</a>
 </nav>
@@ -172,37 +169,6 @@
 </div>
 </body>
 <script>
-    function isAdminUser() {
-        return document.cookie.split('; ').some((cookie) => cookie.includes('isAdmin=true'));
-    }
 
-    if (isAdminUser()) {
-        document.getElementById("staff-login-button").hidden = true;
-        document.getElementById("logout-button").hidden = false;
-        document.getElementById("create-new-product").hidden = false;
-        document.getElementById("download-catalog").hidden = false;
-        const formButtons = document.getElementsByClassName("formButtons");
-        for (let i = 0; i < formButtons.length; i++) {
-            formButtons[i].readOnly = false;
-        }
-        document.getElementById("submitButton").hidden = false;
-    } else {
-    }
-
-    document.getElementById("staff-login-button").addEventListener("click", function() {
-        const password = prompt("Please enter the staff password:");
-        if (password === "secret") {
-            document.cookie = "isAdmin=true; path=/";
-            location.reload();
-        } else {
-            alert("Incorrect password. You are not authorized.");
-        }
-    });
-
-
-    document.getElementById("logout-button").addEventListener("click", function() {
-        document.cookie = "isAdmin=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        window.location.href = "/home";
-    });
 </script>
 </html>

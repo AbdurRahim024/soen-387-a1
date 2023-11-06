@@ -5,6 +5,7 @@ import com.mywebapp.logic.custom_errors.DataMapperException;
 import com.mywebapp.logic.custom_errors.ProductNotFoundException;
 import com.mywebapp.logic.custom_errors.UserNotFoundException;
 import com.mywebapp.logic.models.Product;
+import com.mywebapp.ConfigManager;
 import com.opencsv.CSVReader;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -23,8 +24,7 @@ public class CartServlet extends HttpServlet {
     LogicFacade logic = new LogicFacade();
     private String getCustomerID(String password){
         String customerId = "";
-        String users_file = "/Users/abdurrahimgigani/Documents/SOEN 387/soen-387-a1/MyWebApp/src/main/java/com/mywebapp/servlets/users.csv";
-        try (CSVReader reader = new CSVReader(new FileReader(users_file))) {
+        try (CSVReader reader = new CSVReader(new FileReader(ConfigManager.getCSVPath()))) {
             String[] line;
             while ((line = reader.readNext()) != null) {
                 String newPass = line[0];

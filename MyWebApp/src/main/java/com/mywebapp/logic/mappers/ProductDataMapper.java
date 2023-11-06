@@ -2,6 +2,7 @@ package com.mywebapp.logic.mappers;
 
 import com.mywebapp.logic.custom_errors.DataMapperException;
 import com.mywebapp.logic.models.Product;
+import com.mywebapp.ConfigManager;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ public class ProductDataMapper {
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection db = DriverManager.getConnection("jdbc:mysql://localhost:3306/soen_387", "root", "killmenow");
+            Connection db = DriverManager.getConnection(ConfigManager.getDbUrl(), ConfigManager.getDbUsername(), ConfigManager.getDbPassword());
             String statement;
             PreparedStatement dbStatement;
 
@@ -52,7 +53,7 @@ public class ProductDataMapper {
     public static void insert(Product product) throws DataMapperException {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection db = DriverManager.getConnection("jdbc:mysql://localhost:3306/soen_387", "root", "killmenow");
+            Connection db = DriverManager.getConnection(ConfigManager.getDbUrl(), ConfigManager.getDbUsername(), ConfigManager.getDbPassword());
             String statement = "INSERT INTO `products` (`sku`, `name`, `description`, `vendor`, `urlSlug`, `price`) VALUES (?, ?, ?, ?, ?, ?)";
 
             PreparedStatement dbStatement = db.prepareStatement(statement);
@@ -73,7 +74,7 @@ public class ProductDataMapper {
     public static void update(Product product) throws DataMapperException {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection db = DriverManager.getConnection("jdbc:mysql://localhost:3306/soen_387", "root", "killmenow");
+            Connection db = DriverManager.getConnection(ConfigManager.getDbUrl(), ConfigManager.getDbUsername(), ConfigManager.getDbPassword());
             String statement = "UPDATE `products` SET `name`=?, `description`=?, `vendor`=?, `urlSlug`=?, `price`=? WHERE `sku`=?";
 
             PreparedStatement dbStatement = db.prepareStatement(statement);
@@ -93,7 +94,7 @@ public class ProductDataMapper {
     public static void delete(Product product) throws DataMapperException {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection db = DriverManager.getConnection("jdbc:mysql://localhost:3306/soen_387", "root", "killmenow");
+            Connection db = DriverManager.getConnection(ConfigManager.getDbUrl(), ConfigManager.getDbUsername(), ConfigManager.getDbPassword());
 
             String statement = "DELETE FROM `products` where `sku`=?";
             PreparedStatement dbStatement = db.prepareStatement(statement);
@@ -108,7 +109,7 @@ public class ProductDataMapper {
     public static boolean findByAttributes(String name, String description, String vendor, String urlSlug, double price) throws DataMapperException {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection db = DriverManager.getConnection("jdbc:mysql://localhost:3306/soen_387", "root", "killmenow");
+            Connection db = DriverManager.getConnection(ConfigManager.getDbUrl(), ConfigManager.getDbUsername(), ConfigManager.getDbPassword());
             String statement = "SELECT * FROM `products` WHERE `name`=? AND `description`=? AND `vendor`=? AND `urlSlug`=? AND `price`=?";
 
             PreparedStatement dbStatement = db.prepareStatement(statement);
@@ -134,7 +135,7 @@ public class ProductDataMapper {
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection db = DriverManager.getConnection("jdbc:mysql://localhost:3306/soen_387", "root", "killmenow");
+            Connection db = DriverManager.getConnection(ConfigManager.getDbUrl(), ConfigManager.getDbUsername(), ConfigManager.getDbPassword());
             String statement = "SELECT * FROM `products`";
             PreparedStatement dbStatement = db.prepareStatement(statement);
             ResultSet rs = dbStatement.executeQuery();

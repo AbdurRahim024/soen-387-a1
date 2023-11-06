@@ -3,6 +3,7 @@ package com.mywebapp.logic.mappers;
 import com.mywebapp.logic.custom_errors.DataMapperException;
 import com.mywebapp.logic.models.CartItem;
 import com.mywebapp.logic.models.Order;
+import com.mywebapp.ConfigManager;
 
 import java.io.*;
 import java.sql.*;
@@ -14,7 +15,7 @@ public class OrderDataMapper {
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection db = DriverManager.getConnection("jdbc:mysql://localhost:3306/soen_387", "root", "killmenow");
+            Connection db = DriverManager.getConnection(ConfigManager.getDbUrl(), ConfigManager.getDbUsername(), ConfigManager.getDbPassword());
             String statement = "INSERT INTO `orders` (`customer_id`, `shipping_address`, `is_shipped`, `items`) VALUES (?, ?, ?, ?)";
 
             byte[] itemsBytes = serialize(order.getItems());
@@ -36,7 +37,7 @@ public class OrderDataMapper {
     public static void update(Order order) throws DataMapperException {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection db = DriverManager.getConnection("jdbc:mysql://localhost:3306/soen_387", "root", "killmenow");
+            Connection db = DriverManager.getConnection(ConfigManager.getDbUrl(), ConfigManager.getDbUsername(), ConfigManager.getDbPassword());
             String statement = "UPDATE `orders` SET `is_shipped`=?, `tracking_number`=? WHERE `order_id`=?";
 
             PreparedStatement dbStatement = db.prepareStatement(statement);
@@ -56,7 +57,7 @@ public class OrderDataMapper {
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection db = DriverManager.getConnection("jdbc:mysql://localhost:3306/soen_387", "root", "killmenow");
+            Connection db = DriverManager.getConnection(ConfigManager.getDbUrl(), ConfigManager.getDbUsername(), ConfigManager.getDbPassword());
             PreparedStatement dbStatement;
 
             if (orderId == -1 && customerId == null) { //get all orders

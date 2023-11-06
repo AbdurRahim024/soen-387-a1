@@ -1,5 +1,6 @@
 package com.mywebapp.servlets;
 
+import com.mywebapp.ConfigManager;
 import com.mywebapp.logic.LogicFacade;
 import com.mywebapp.logic.custom_errors.CustomerOrderMismatchException;
 import com.mywebapp.logic.custom_errors.DataMapperException;
@@ -24,8 +25,7 @@ public class OrdersServlet {
     LogicFacade logic = new LogicFacade();
     private String getCustomerID(String password){
         String customerId = "";
-        String users_file = "/Users/abdurrahimgigani/Documents/SOEN 387/soen-387-a1/MyWebApp/src/main/java/com/mywebapp/servlets/users.csv";
-        try (CSVReader reader = new CSVReader(new FileReader(users_file))) {
+        try (CSVReader reader = new CSVReader(new FileReader(ConfigManager.getCSVPath()))) {
             String[] line;
             while ((line = reader.readNext()) != null) {
                 String newPass = line[0];
@@ -54,7 +54,7 @@ public class OrdersServlet {
             String password = request.getParameter("password");
             String type = "user";
             boolean found = false;
-            File users_file = new File("/Users/abdurrahimgigani/Documents/SOEN 387/soen-387-a1/MyWebApp/src/main/java/com/mywebapp/servlets/users.csv");
+            File users_file = new File(ConfigManager.getCSVPath());
             ArrayList<Order> orders = null;
             try (CSVReader reader = new CSVReader(new FileReader(users_file))) {
                 String[] line;

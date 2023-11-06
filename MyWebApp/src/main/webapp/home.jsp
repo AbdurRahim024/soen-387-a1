@@ -63,9 +63,6 @@
     }
 
     .product-grid {
-      /*display: grid;*/
-      /*grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));*/
-      /*gap: 20px;*/
       display: flex;
       justify-content: center;
     }
@@ -128,12 +125,9 @@
 <nav>
   <a href="/home">Home</a>
   <a href="/products">Products</a>
-  <a href="#">New Arrivals</a>
-  <a href="#">Men</a>
-  <a href="#">Women</a>
   <a href="/cart">Cart</a>
-  <a href="#" id="staff-login-button">Staff Login</a>
-  <a hidden href="#" id="logout-button">Staff Logout</a>
+  <a href="#" id="login-button">Login</a>
+  <a hidden href="#" id="logout-button">Logout</a>
   <a hidden href="/createProduct" id = "create-new-product">Create New Product</a>
   <a hidden href="/products/download" id = "download-catalog">Download Catalog</a>
 </nav>
@@ -206,35 +200,6 @@
 </body>
 
 <script>
-  function isAdminUser() {
-    return document.cookie.split('; ').some((cookie) => cookie.includes('isAdmin=true'));
-  }
 
-  document.getElementById("staff-login-button").addEventListener("click", function() {
-    const password = prompt("Please enter the staff password:");
-    if (password === "secret") {
-        document.cookie = "isAdmin=true; path=/";
-        location.reload();
-    } else {
-        alert("Incorrect password. You are not authorized.");
-    }
-});
-
-  if (isAdminUser()) {
-    // Display admin-specific options
-    document.getElementById("staff-login-button").hidden = true;
-    document.getElementById("logout-button").hidden = false;
-    document.getElementById("create-new-product").hidden = false;
-    document.getElementById("download-catalog").hidden = false;
-} else {
-    // Display customer options
-}
-
-  document.getElementById("logout-button").addEventListener("click", function() {
-    // Clear the isAdmin cookie on logout
-    document.cookie = "isAdmin=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    // Redirect to the home page or any other suitable page after logout
-    window.location.href = "/home"; // Replace "/home" with the desired URL
-});
 </script>
 </html>
