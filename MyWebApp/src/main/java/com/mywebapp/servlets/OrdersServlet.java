@@ -5,6 +5,7 @@ import com.mywebapp.logic.LogicFacade;
 import com.mywebapp.logic.custom_errors.*;
 import com.mywebapp.logic.models.Order;
 import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvValidationException;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -20,7 +21,7 @@ import java.util.ArrayList;
 @WebServlet(name = "ordersServlet", value = {"/orders/*", "/orderForm", "/createOrder", "/shipOrder"})
 public class OrdersServlet {
     LogicFacade logic = new LogicFacade();
-    private String getCustomerID(String password){
+    private String getCustomerID(String password) throws CsvValidationException, IOException, FileDownloadException {
         String customerId = "";
         try (CSVReader reader = new CSVReader(new FileReader(ConfigManager.getCsvPath()))) {
             String[] line;
@@ -34,8 +35,6 @@ public class OrdersServlet {
                     break;
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace(); //TODO: all exceptions should be (re)thrown until servlet method level, not caught
         }
         return customerId;
     }
@@ -44,7 +43,7 @@ public class OrdersServlet {
 
         if (url.equals("/orderForm")){
             response.setStatus(HttpServletResponse.SC_OK);
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/orders.jsp");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/ordersForm.jsp");
             dispatcher.forward(request, response);
         }
         else if (url.equals("/orders")){
@@ -52,10 +51,11 @@ public class OrdersServlet {
             String type = "user";
             boolean found = false;
             File users_file = null;
+            String customerId = null;
             try {
                 users_file = new File(ConfigManager.getCsvPath());
             } catch (FileDownloadException e) {
-                throw new RuntimeException(e);
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
             ArrayList<Order> orders = null;
             try (CSVReader reader = new CSVReader(new FileReader(users_file))) {
@@ -71,13 +71,18 @@ public class OrdersServlet {
                         break;
                     }
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (CsvValidationException e) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
+            try {
+                customerId = getCustomerID(password);
+            } catch (CsvValidationException | FileDownloadException e) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
             try {
                 if (found) {
                     if (type.equals("user")) {
-                        orders = logic.getOrdersByCustomer(password);
+                        orders = logic.getOrdersByCustomer(customerId);
                     }
                     else{
                         orders = logic.getAllOrders();
@@ -89,7 +94,8 @@ public class OrdersServlet {
             }
             response.setStatus(HttpServletResponse.SC_OK);
             request.setAttribute("orders", orders);
-            //TODO: Where do i redirect to after this?
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/ordersDisplay.jsp");
+            dispatcher.forward(request, response);
         }
 
         else if(url.startsWith("/orders/:")) {
@@ -98,7 +104,12 @@ public class OrdersServlet {
             String[] fullOrderId = urlSlug.split(":");
             int orderId = Integer.parseInt(fullOrderId[fullOrderId.length-1]);
             String password = request.getParameter("password");
-            String customerId = getCustomerID(password);
+            String customerId = null;
+            try {
+                customerId = getCustomerID(password);
+            } catch (CsvValidationException | FileDownloadException e) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
             Order order = null;
             try {
                 order = logic.getOrderDetails(customerId, orderId);
@@ -118,7 +129,12 @@ public class OrdersServlet {
 
         if (url.equals("/createOrder")){
             String password = request.getParameter("password");
-            String customerId = getCustomerID(password);
+            String customerId = null;
+            try {
+                customerId = getCustomerID(password);
+            } catch (CsvValidationException | FileDownloadException e) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
             String shippingAddress = request.getParameter("shippingAddress");
             try {
                 logic.createOrder(customerId, shippingAddress);
@@ -126,7 +142,8 @@ public class OrdersServlet {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
             response.setStatus(HttpServletResponse.SC_OK);
-            //TODO: Ask someone what to do after the order has been placed?
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/ordersDisplay.jsp");
+            dispatcher.forward(request, response);
         }
         if (url.equals("/shipOrder")){
             int orderId = Integer.parseInt(request.getParameter("orderId"));
@@ -136,7 +153,8 @@ public class OrdersServlet {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
             response.setStatus(HttpServletResponse.SC_OK);
-            //TODO: Ask what to do after this
+            RequestDispatcher dispatcher = request.getRequestDispatcher("displayOrders.jsp");
+            dispatcher.forward(request, response);
 
         }
     }
