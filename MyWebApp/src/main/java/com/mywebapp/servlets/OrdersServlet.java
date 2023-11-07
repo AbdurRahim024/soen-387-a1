@@ -21,7 +21,7 @@ import java.util.ArrayList;
 @WebServlet(name = "ordersServlet", value = {"/orders/*", "/orderForm", "/createOrder", "/shipOrder"})
 public class OrdersServlet {
     LogicFacade logic = new LogicFacade();
-    private String getCustomerID(String password) throws CsvValidationException, IOException, FileDownloadException {
+    private String getCustomerID(String password) throws CsvValidationException, IOException, FileDownloadException { //TODO: this seems to be the exact same method as the one in cartServlet, try to remove redundancy
         String customerId = "";
         try (CSVReader reader = new CSVReader(new FileReader(ConfigManager.getCsvPath()))) {
             String[] line;
@@ -79,7 +79,7 @@ public class OrdersServlet {
             } catch (CsvValidationException | FileDownloadException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
-            try {
+            try { //TODO: merge all try blocks
                 if (found) {
                     if (type.equals("user")) {
                         orders = logic.getOrdersByCustomer(customerId);

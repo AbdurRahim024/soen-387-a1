@@ -24,9 +24,9 @@ import java.util.ArrayList;
 @WebServlet(name = "cartServlet", value = {"/cart/*"})
 public class CartServlet extends HttpServlet {
     LogicFacade logic = new LogicFacade();
-    private String getCustomerID(String password) throws CsvValidationException, IOException, FileDownloadException {
+    private String getCustomerID(String password) throws CsvValidationException, IOException, FileDownloadException { //TODO: private methods should go at the bottom
         String customerId = "";
-        try (CSVReader reader = new CSVReader(new FileReader(ConfigManager.getCsvPath()))) {
+        try (CSVReader reader = new CSVReader(new FileReader(ConfigManager.getCsvPath()))) { //TODO: shouldn't have try block without catch, here you could catch and rethrow a custom exception while still showing the original exception message "throw new CustomerLoginError("Error while .." + e)"
             String[] line;
             while ((line = reader.readNext()) != null) {
                 String newPass = line[0];
@@ -41,7 +41,7 @@ public class CartServlet extends HttpServlet {
         }
         return customerId;
     }
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException { //TODO: ideally servlets should only throw servletException, catch everything else and set error codes of response
         String url = request.getRequestURI();
 
         if(url.equals("/cart")) {
@@ -53,7 +53,7 @@ public class CartServlet extends HttpServlet {
             } catch (CsvValidationException | FileDownloadException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
-            try {
+            try { //TODO: the two try blocks should be merged
                 cart = (ArrayList<Product>) logic.getCart(customerID);
                 request.setAttribute("cart", cart);
             } catch (UserNotFoundException e) {
@@ -106,7 +106,7 @@ public class CartServlet extends HttpServlet {
             }
             try {
                 logic.setProductQuantityInCart(customerId, sku, quantity);
-            } catch (UserNotFoundException | DataMapperException | ProductNotFoundException e) {
+            } catch (UserNotFoundException | DataMapperException | ProductNotFoundException e) { //TODO: all of these aren't server errors, usernotfound/productnotfound are both client errors
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
             response.setStatus(HttpServletResponse.SC_OK);
@@ -134,14 +134,14 @@ public class CartServlet extends HttpServlet {
                 logic.removeProductFromCart(customerId, product.getSku().toString());
                 request.setAttribute("cart", logic.getCart(customerId));
             } catch (UserNotFoundException | ProductNotFoundException e) {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST); //TODO: maybe 404?
             } catch (DataMapperException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
             response.setStatus(HttpServletResponse.SC_OK);
         }
 
-        //clear the entire cart
+        //clear the entire cart //TODO: either comment every endpoint or none
         if (url.equals("/cart/clearCart")){
             String password = request.getParameter("password");
             String customerId = null;
@@ -153,7 +153,7 @@ public class CartServlet extends HttpServlet {
             try {
                 logic.clearCart(customerId);
             } catch (UserNotFoundException | DataMapperException e) {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); //TODO: usernotfound is client error
             }
             response.setStatus(HttpServletResponse.SC_OK);
             RequestDispatcher dispatcher = request.getRequestDispatcher("/cart.jsp");
