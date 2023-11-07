@@ -32,7 +32,7 @@ public class UsersServlet {
     }
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String url = request.getRequestURI();
-        File users_file = new File("/Users/abdurrahimgigani/Documents/SOEN 387/soen-387-a1/MyWebApp/src/main/java/com/mywebapp/servlets/users.csv");
+        File users_file = new File("/Users/abdurrahimgigani/Documents/SOEN 387/soen-387-a1/MyWebApp/src/main/java/com/mywebapp/servlets/users.csv"); //TODO: use config file
         if(url.equals("/authenticateUser")){
             String password = request.getParameter("password");
             String type = "user";
@@ -53,7 +53,7 @@ public class UsersServlet {
                     }
                 }
                 request.setAttribute("message", message);
-            } catch (Exception e) {
+            } catch (Exception e) { //TODO: set error code
                 e.printStackTrace();
             }
             response.setStatus(HttpServletResponse.SC_OK);

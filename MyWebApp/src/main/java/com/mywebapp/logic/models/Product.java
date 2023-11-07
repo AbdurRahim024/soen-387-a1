@@ -153,7 +153,6 @@ public class Product {
             String[] header = {"sku", "name", "description", "vendor", "urlSlug", "price"};
             writer.writeNext(header);
 
-            // Write data
             for (Product product : products) {
                 String[] data = {
                         product.sku.toString(),
@@ -169,7 +168,7 @@ public class Product {
             System.out.println("CSV file written successfully!");
             return new File(csvFile);
         } catch (IOException e) {
-            throw new FileDownloadException("Error occurred while writing products file");
+            throw new FileDownloadException("Error occurred while writing products file " + e);
         }
     }
 
