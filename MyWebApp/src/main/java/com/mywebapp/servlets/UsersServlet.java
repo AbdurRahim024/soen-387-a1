@@ -47,7 +47,6 @@ public class UsersServlet extends HttpServlet {
             String password = request.getParameter("password");
             String type = "user";
             String isValid = "false";
-            String[] message = {isValid, type};
             try (CSVReader reader = new CSVReader(new FileReader(users_file))) {
                 String[] line;
                 while ((line = reader.readNext()) != null) {
@@ -118,7 +117,7 @@ public class UsersServlet extends HttpServlet {
                     String customer_id = logic.createCustomer();
                     addToUsers(customer_id, password, "user");
                 }
-            }  catch (FileNotFoundException | DataMapperException | CsvValidationException e) {
+            } catch (FileNotFoundException | DataMapperException | CsvValidationException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             } catch (FileDownloadException e) {
                 throw new RuntimeException(e);
