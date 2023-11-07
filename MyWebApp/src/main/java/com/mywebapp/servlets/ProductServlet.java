@@ -26,6 +26,8 @@ public class ProductServlet extends HttpServlet {
 
         // home page
         if(url.equals("/home")) {
+            request.setAttribute("isLoggedIn", UsersServlet.isValid);
+            request.setAttribute("userType", UsersServlet.type);
             response.setStatus(HttpServletResponse.SC_OK);
             RequestDispatcher dispatcher = request.getRequestDispatcher("/home.jsp");
             dispatcher.forward(request, response);
@@ -45,12 +47,15 @@ public class ProductServlet extends HttpServlet {
             } catch (DataMapperException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
-            response.setStatus(HttpServletResponse.SC_OK);
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/products.jsp");
             if (UsersServlet.isValid.equals("true")) {
                 request.setAttribute("isLoggedIn", UsersServlet.isValid);
                 request.setAttribute("userType", UsersServlet.type);
+            } else {
+                request.setAttribute("isLoggedIn", "Log in or register first to items to cart");
+                request.setAttribute("userType", UsersServlet.type);
             }
+            response.setStatus(HttpServletResponse.SC_OK);
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/products.jsp");
             dispatcher.forward(request, response);
         }
 
@@ -68,6 +73,8 @@ public class ProductServlet extends HttpServlet {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
             response.setStatus(HttpServletResponse.SC_OK);
+            request.setAttribute("isLoggedIn", UsersServlet.isValid);
+            request.setAttribute("userType", UsersServlet.type);
             RequestDispatcher dispatcher = request.getRequestDispatcher("/productListing.jsp");
             dispatcher.forward(request, response);
 
@@ -141,8 +148,7 @@ public class ProductServlet extends HttpServlet {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
             response.setStatus(HttpServletResponse.SC_OK);
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/products.jsp");
-            dispatcher.forward(request, response);
+            response.sendRedirect("/products");
         }
     }
 }

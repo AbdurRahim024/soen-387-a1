@@ -119,8 +119,8 @@
 <nav>
     <a href="/home">Home</a>
     <a href="/products">Products</a>
-<%  String isLoggedIn = (String) request.getSession().getAttribute("isLoggedIn");
-    String userType = (String) request.getSession().getAttribute("userType");
+<%  String isLoggedIn = (String) request.getAttribute("isLoggedIn");
+    String userType = (String) request.getAttribute("userType");
     if (isLoggedIn != null && isLoggedIn.equals("true")) { %>
         <% if (userType.equals("admin")) { %>
           <a href="/createProduct">Create New Product</a>
@@ -135,7 +135,7 @@
 
 
     <div class="d-flex">
-        <form action="/clearcart" method="get">
+        <form action="/cart/clearCart" method="get">
             <button type="submit" class="btn">Clear cart</button>
         </form>
     </div>

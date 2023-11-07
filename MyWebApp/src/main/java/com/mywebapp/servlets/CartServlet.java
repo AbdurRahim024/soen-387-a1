@@ -46,12 +46,25 @@ public class CartServlet extends HttpServlet {
             } catch (DataMapperException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
-            HttpSession session = request.getSession();
-            session.setAttribute("isLoggedIn", UsersServlet.isValid);
-            session.setAttribute("userType", UsersServlet.type);
+            request.setAttribute("isLoggedIn", UsersServlet.isValid);
+            request.setAttribute("userType", UsersServlet.type);
             RequestDispatcher dispatcher = request.getRequestDispatcher("/cart.jsp");
             response.setStatus(HttpServletResponse.SC_OK);
             dispatcher.forward(request, response);
+        }
+        if (url.equals("/cart/clearCart")){
+            String password = UsersServlet.pass;
+            String customerId = null;
+            try {
+                customerId = getCustomerID(password);
+                logic.clearCart(customerId);
+            } catch (CsvValidationException | FileDownloadException | DataMapperException e) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            } catch (UserNotFoundException e){
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            }
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.sendRedirect("/cart");
         }
 
 
@@ -66,23 +79,17 @@ public class CartServlet extends HttpServlet {
             String customerId = null;
             try {
                 customerId = getCustomerID(password);
-                logic.addProductToCart(customerId, sku); //TODO: Getting user not found exception?
+                logic.addProductToCart(customerId, sku);
                 cart = (ArrayList<Product>) logic.getCart(customerId);
             } catch (CsvValidationException | FileDownloadException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }catch (UserNotFoundException | ProductNotFoundException e) {
-                request.setAttribute("isLoggedIn", "Log in or register to add items to the cart");
-                response.sendRedirect("/products");
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             } catch (DataMapperException e) {
-                request.setAttribute("isLoggedIn", "Log in or register to add items to the cart");
-                response.sendRedirect("/products");
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
             response.setStatus(HttpServletResponse.SC_OK);
-            request.setAttribute("cart", cart);
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/cart.jsp");
-            dispatcher.forward(request, response);
+            response.sendRedirect("/cart");
         }
         if(url.equals("/cart/editQuantities")){
             String password = UsersServlet.pass;
@@ -126,21 +133,7 @@ public class CartServlet extends HttpServlet {
         }
 
         //clear the entire cart
-        if (url.equals("/cart/clearCart")){
-            String password = UsersServlet.pass;
-            String customerId = null;
-            try {
-                customerId = getCustomerID(password);
-                logic.clearCart(customerId);
-            } catch (CsvValidationException | FileDownloadException | DataMapperException e) {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            } catch (UserNotFoundException e){
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            }
-            response.setStatus(HttpServletResponse.SC_OK);
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/cart.jsp");
-            dispatcher.forward(request, response);
-        }
+
     }
     private String getCustomerID(String password) throws CsvValidationException, IOException, FileDownloadException {
         String customerId = "";

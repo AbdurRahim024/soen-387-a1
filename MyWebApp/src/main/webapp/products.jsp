@@ -133,8 +133,8 @@
 <nav>
     <a href="/home">Home</a>
     <a href="/products">Products</a>
-    <% String isLoggedIn = (String) request.getSession().getAttribute("isLoggedIn");
-     String userType = (String) request.getSession().getAttribute("userType");
+    <% String isLoggedIn = (String) request.getAttribute("isLoggedIn");
+     String userType = (String) request.getAttribute("userType");
      if (isLoggedIn != null && isLoggedIn.equals("true")) { %>
         <% if (userType.equals("admin")) { %>
           <a href="/createProduct">Create New Product</a>
@@ -159,20 +159,20 @@
                 <div class="button-container">
                     <form action="/cart/products/<%=product.getUrlSlug()%>" method="post">
                         <input type="hidden" name="productSku" value="<%=product.getSku()%>">
+                       <% if (isLoggedIn != null && isLoggedIn.equals("true")) { %>
                         <button class="btn" type="submit">Add to Cart</button>
+                        <% } else { %>
+                        <p>Log in to add items to cart</p>
+                        <% } %>
                     </form>
 
                     <form action="/products/<%=product.getUrlSlug()%>" method="get">
-<%--                        <input type="hidden" name="productSku" value="<%=product.getSku()%>">--%>
                         <button class="btn" type="submit">View Details</button>
                     </form>
                 </div>
             </div>
 
             <% } %>
-
-
-
     </div>
 
 </div>

@@ -45,8 +45,6 @@ public class UsersServlet extends HttpServlet {
         }
         if(url.equals("/authenticateUser")){
             String password = request.getParameter("password");
-            String type = "user";
-            String isValid = "false";
             try (CSVReader reader = new CSVReader(new FileReader(users_file))) {
                 String[] line;
                 while ((line = reader.readNext()) != null) {
@@ -57,7 +55,7 @@ public class UsersServlet extends HttpServlet {
                     }
 
                     if(password.equals(newPass)){
-                        isValid = "true";
+                        UsersServlet.isValid = "true";
                         pass = password;
                         break;
                     }
@@ -65,25 +63,25 @@ public class UsersServlet extends HttpServlet {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            HttpSession session = request.getSession();
             if (isValid.equals("true")) {
-                session.setAttribute("isLoggedIn", isValid);
-                session.setAttribute("userType", type);
+                request.setAttribute("isLoggedIn", isValid);
+                request.setAttribute("userType", type);
             } else {
-                session.setAttribute("isLoggedIn", "Incorrect password or password does not exist");
-                session.setAttribute("userType", type);
+                request.setAttribute("isLoggedIn", "Incorrect password or password does not exist");
+                request.setAttribute("userType", type);
             }
-            response.sendRedirect("/home");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/home.jsp");
             response.setStatus(HttpServletResponse.SC_OK);
+            dispatcher.forward(request, response);
         } else if (url.equals("/logout")) {
             isValid = "false";
             pass = "";
             type = "user";
-            HttpSession session = request.getSession();
-            session.setAttribute("isLoggedIn", "Successfully logged out");
-            session.setAttribute("userType", type);
-            response.sendRedirect("/home");
+            request.setAttribute("isLoggedIn", "Successfully logged out");
+            request.setAttribute("userType", type);
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/home.jsp");
             response.setStatus(HttpServletResponse.SC_OK);
+            dispatcher.forward(request, response);
         }
     }
 
@@ -117,15 +115,15 @@ public class UsersServlet extends HttpServlet {
                     String customer_id = logic.createCustomer();
                     addToUsers(customer_id, password, "user");
                 }
-            } catch (FileNotFoundException | DataMapperException | CsvValidationException e) {
+            }  catch (FileNotFoundException | DataMapperException | CsvValidationException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             } catch (FileDownloadException e) {
                 throw new RuntimeException(e);
             }
-            HttpSession session = request.getSession();
-            session.setAttribute("isLoggedIn", isRegistered);
+            request.setAttribute("isLoggedIn", isRegistered);
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/home.jsp");
             response.setStatus(HttpServletResponse.SC_OK);
-            response.sendRedirect("/home");
+            dispatcher.forward(request, response);
         }
     }
 
