@@ -47,7 +47,7 @@ public class OrdersServlet {
             dispatcher.forward(request, response);
         }
         else if (url.equals("/orders")){
-            String password = request.getParameter("password");
+            String password = UsersServlet.pass;
             String type = "user";
             boolean found = false;
             File users_file = null;

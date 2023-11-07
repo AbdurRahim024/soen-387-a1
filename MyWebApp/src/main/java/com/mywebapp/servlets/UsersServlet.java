@@ -10,15 +10,20 @@ import com.opencsv.exceptions.CsvValidationException;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.*;
 import java.util.Scanner;
 
-@WebServlet(name = "userServlet", value = {"/registerUser", "/authenticateUser"})
-public class UsersServlet {
+@WebServlet(name = "usersServlet", value = {"/registerUser", "/authenticateUser", "/logout"})
+public class UsersServlet extends HttpServlet {
     LogicFacade logic = new LogicFacade();
+    static String type = "user";
+    static String isValid = "false";
+    static String pass = "";
     private void addToUsers(String customerId, String password, String type) throws IOException, FileDownloadException{
         FileWriter fileWriter = new FileWriter(ConfigManager.getCsvPath(), true);
         BufferedWriter writer = new BufferedWriter(fileWriter);
@@ -32,7 +37,12 @@ public class UsersServlet {
     }
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String url = request.getRequestURI();
-        File users_file = new File("/Users/abdurrahimgigani/Documents/SOEN 387/soen-387-a1/MyWebApp/src/main/java/com/mywebapp/servlets/users.csv"); //TODO: use config file
+        File users_file = null;
+        try {
+            users_file = new File(ConfigManager.getCsvPath());
+        } catch (FileDownloadException e) {
+            throw new RuntimeException(e);
+        }
         if(url.equals("/authenticateUser")){
             String password = request.getParameter("password");
             String type = "user";
@@ -48,17 +58,33 @@ public class UsersServlet {
                     }
 
                     if(password.equals(newPass)){
-                        message[0] = "true";
-                        message[1] = type;
+                        isValid = "true";
+                        pass = password;
+                        break;
                     }
                 }
-                request.setAttribute("message", message);
-            } catch (Exception e) { //TODO: set error code
+            } catch (Exception e) {
                 e.printStackTrace();
             }
+            HttpSession session = request.getSession();
+            if (isValid.equals("true")) {
+                session.setAttribute("isLoggedIn", isValid);
+                session.setAttribute("userType", type);
+            } else {
+                session.setAttribute("isLoggedIn", "Incorrect password or password does not exist");
+                session.setAttribute("userType", type);
+            }
+            response.sendRedirect("/home");
             response.setStatus(HttpServletResponse.SC_OK);
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/home.jsp");
-            dispatcher.forward(request, response);
+        } else if (url.equals("/logout")) {
+            isValid = "false";
+            pass = "";
+            type = "user";
+            HttpSession session = request.getSession();
+            session.setAttribute("isLoggedIn", "Successfully logged out");
+            session.setAttribute("userType", type);
+            response.sendRedirect("/home");
+            response.setStatus(HttpServletResponse.SC_OK);
         }
     }
 
@@ -73,31 +99,34 @@ public class UsersServlet {
             } catch (FileDownloadException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
-            boolean message = true;
+            String isRegistered = "Successfully registered";
+
             try (CSVReader reader = new CSVReader(new FileReader(users_file))) {
                 String[] line;
                 while ((line = reader.readNext()) != null) {
-                    String newPass = line[0];
+                    String newPass = line[1];
                     if (newPass.equals("password")) { // skip if the first row (titles) is being read
                         continue;
                     }
                     if(password.equals(newPass)){
-                        message = false;
+                        isRegistered = "Password already exists, try registering with a different password";
+                        break;
                     }
                 }
 
-                if (message) {
+                if (isRegistered.equals("Successfully registered")) {
                     String customer_id = logic.createCustomer();
                     addToUsers(customer_id, password, "user");
                 }
-                request.setAttribute("message", message);
-            }  catch (FileNotFoundException | DataMapperException | CsvValidationException | FileDownloadException e) {
+            }  catch (FileNotFoundException | DataMapperException | CsvValidationException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            } catch (FileDownloadException e) {
+                throw new RuntimeException(e);
             }
+            HttpSession session = request.getSession();
+            session.setAttribute("isLoggedIn", isRegistered);
             response.setStatus(HttpServletResponse.SC_OK);
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/login.jsp");
-            dispatcher.forward(request, response);
-
+            response.sendRedirect("/home");
         }
     }
 

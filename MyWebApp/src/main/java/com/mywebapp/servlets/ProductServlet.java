@@ -47,6 +47,10 @@ public class ProductServlet extends HttpServlet {
             }
             response.setStatus(HttpServletResponse.SC_OK);
             RequestDispatcher dispatcher = request.getRequestDispatcher("/products.jsp");
+            if (UsersServlet.isValid.equals("true")) {
+                request.setAttribute("isLoggedIn", UsersServlet.isValid);
+                request.setAttribute("userType", UsersServlet.type);
+            }
             dispatcher.forward(request, response);
         }
 
@@ -71,13 +75,8 @@ public class ProductServlet extends HttpServlet {
 
         // [STAFF ONLY] download products list
         else if (url.equals("/products/download")) {
-            String isAdminCookie = Arrays.stream(request.getCookies())
-            .filter(cookie -> "isAdmin".equals(cookie.getName()))
-            .map(Cookie::getValue)
-            .findFirst()
-            .orElse(null);
 
-            if (isAdminCookie != null && isAdminCookie.equals("true")) {
+            if (UsersServlet.type.equals("admin") && UsersServlet.isValid.equals("true")) {
                 File catalog_path = null;
                 try {
                     catalog_path = logic.downloadProductCatalog();

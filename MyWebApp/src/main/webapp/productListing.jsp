@@ -137,7 +137,6 @@
 %>
 <div class="container">
     <form action="/updateProduct" method="post" class="product-form">
-
         <div class="form-group">
             <label for="productName">Product Name:</label>
             <input class="formButtons" type="text" id="productName" name="productName" required value="<%=product.getName()%>" readonly>

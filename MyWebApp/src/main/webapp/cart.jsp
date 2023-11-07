@@ -119,11 +119,16 @@
 <nav>
     <a href="/home">Home</a>
     <a href="/products">Products</a>
-    <a href="/cart">Cart</a>
-    <a href="#" id="login-button">Login</a>
-    <a hidden href="#" id="logout-button">Logout</a>
-    <a hidden href="/createProduct" id = "create-new-product">Create New Product</a>
-    <a hidden href="/products/download" id = "download-catalog">Download Catalog</a>
+<%  String isLoggedIn = (String) request.getSession().getAttribute("isLoggedIn");
+    String userType = (String) request.getSession().getAttribute("userType");
+    if (isLoggedIn != null && isLoggedIn.equals("true")) { %>
+        <% if (userType.equals("admin")) { %>
+          <a href="/createProduct">Create New Product</a>
+          <a href="/products/download">Download Catalog</a>
+        <% } %>
+        <a href="/cart">Cart</a>
+        <a href="/logout">Logout</a>
+ <% } %>
 </nav>
 <div class="container">
     <h1>My Cart</h1>

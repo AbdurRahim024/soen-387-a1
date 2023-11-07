@@ -19,7 +19,7 @@ public class ConfigManager {
     private static JSONObject getConfig() throws DataMapperException {
         String content;
         try {
-            content = new String(Files.readAllBytes(Paths.get("/Users/emmuh/Documents/COMP/SOEN 387/soen-387-a1/MyWebApp/src/main/java/com/mywebapp/db_config.json")));
+            content = new String(Files.readAllBytes(Paths.get("/Users/malshikh/git/soen-387-a1/MyWebApp/src/main/java/com/mywebapp/db_config.json")));
             return new JSONObject(content);
         } catch (IOException | JSONException e) {
             throw new DataMapperException("Error while reading the config file " + e);

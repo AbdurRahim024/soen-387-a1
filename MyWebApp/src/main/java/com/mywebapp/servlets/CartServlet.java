@@ -15,6 +15,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -29,7 +30,7 @@ public class CartServlet extends HttpServlet {
         try (CSVReader reader = new CSVReader(new FileReader(ConfigManager.getCsvPath()))) { //TODO: shouldn't have try block without catch, here you could catch and rethrow a custom exception while still showing the original exception message "throw new CustomerLoginError("Error while .." + e)"
             String[] line;
             while ((line = reader.readNext()) != null) {
-                String newPass = line[0];
+                String newPass = line[1];
                 if (newPass.equals("password")) { // skip if the first row (titles) is being read
                     continue;
                 }
@@ -46,7 +47,7 @@ public class CartServlet extends HttpServlet {
 
         if(url.equals("/cart")) {
             ArrayList<Product> cart;
-            String password = request.getParameter("password");
+            String password = UsersServlet.pass;
             String customerID = null;
             try {
                 customerID = getCustomerID(password);
@@ -61,8 +62,11 @@ public class CartServlet extends HttpServlet {
             } catch (DataMapperException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
-            response.setStatus(HttpServletResponse.SC_OK);
+            HttpSession session = request.getSession();
+            session.setAttribute("isLoggedIn", UsersServlet.isValid);
+            session.setAttribute("userType", UsersServlet.type);
             RequestDispatcher dispatcher = request.getRequestDispatcher("/cart.jsp");
+            response.setStatus(HttpServletResponse.SC_OK);
             dispatcher.forward(request, response);
         }
 
@@ -74,7 +78,7 @@ public class CartServlet extends HttpServlet {
         if (url.startsWith("/cart/products")) {
             String sku = request.getParameter("productSku");
             ArrayList<Product> cart = new ArrayList<>();
-            String password = request.getParameter("password");
+            String password = UsersServlet.pass;
             String customerId = null;
             try {
                 customerId = getCustomerID(password);
@@ -85,8 +89,12 @@ public class CartServlet extends HttpServlet {
                 logic.addProductToCart(customerId, sku);
                 cart = (ArrayList<Product>) logic.getCart(customerId);
             } catch (UserNotFoundException | ProductNotFoundException e) {
+                request.setAttribute("isLoggedIn", "Log in or register to add items to the cart");
+                response.sendRedirect("/products");
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             } catch (DataMapperException e) {
+                request.setAttribute("isLoggedIn", "Log in or register to add items to the cart");
+                response.sendRedirect("/products");
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
             response.setStatus(HttpServletResponse.SC_OK);
@@ -95,7 +103,7 @@ public class CartServlet extends HttpServlet {
             dispatcher.forward(request, response);
         }
         if(url.equals("/cart/editQuantities")){
-            String password = request.getParameter("password");
+            String password = UsersServlet.pass;
             String sku = request.getParameter("productSku");
             int quantity = Integer.parseInt(request.getParameter("quantity"));
             String customerId = null;
@@ -122,7 +130,7 @@ public class CartServlet extends HttpServlet {
         if (url.startsWith("/cart/products")) {
             String[] fullUrl = url.split("/");
             String urlSlug = fullUrl[fullUrl.length-1];
-            String password = request.getParameter("password");
+            String password = UsersServlet.pass;
             String customerId = null;
             try {
                 customerId = getCustomerID(password);
@@ -143,7 +151,7 @@ public class CartServlet extends HttpServlet {
 
         //clear the entire cart //TODO: either comment every endpoint or none
         if (url.equals("/cart/clearCart")){
-            String password = request.getParameter("password");
+            String password = UsersServlet.pass;
             String customerId = null;
             try {
                 customerId = getCustomerID(password);
