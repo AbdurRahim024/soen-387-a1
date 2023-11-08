@@ -125,10 +125,17 @@
 <nav>
     <a href="/home">Home</a>
     <a href="/products">Products</a>
+    <%  String isLoggedIn = (String) request.getAttribute("isLoggedIn");
+        String userType = (String) request.getAttribute("userType");
+        if (isLoggedIn != null && isLoggedIn.equals("true")) { %>
+    <% if (userType.equals("admin")) { %>
+    <a href="/createProduct">Create New Product</a>
+    <a href="/products/download">Download Catalog</a>
+    <% } %>
     <a href="/cart">Cart</a>
-    <a href="#" id="login-button">Staff Login</a>
-    <a hidden href="#" id="logout-button">Staff Logout</a>
-    <a hidden href="/createProduct" id = "create-new-product">Create New Product</a>
+    <a href="/logout">Logout</a>
+    <a href="/orders">View Orders</a>
+    <% } %>
 </nav>
 
 <h1>Create Product</h1>

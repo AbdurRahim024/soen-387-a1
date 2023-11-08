@@ -142,6 +142,7 @@
         <% } %>
         <a href="/cart">Cart</a>
         <a href="/logout">Logout</a>
+        <a href="/orders">View Orders</a>
   <% } else if (isLoggedIn != null && isLoggedIn.equals("Log in or register to add items to the cart")){ %>
         <br>
         <p>${isLoggedIn}</p>
@@ -154,8 +155,8 @@
             ArrayList<Product> list = (ArrayList<Product>) request.getAttribute("products");
             for (Product product : list){ %>
             <div class="product">
-                <h2><%=product.getName()%></h2>
-                <p><%=product.getPrice()%></p>
+                <h3><b>Name: </b> <%=product.getName()%></h3>
+                <p><b>Price: $</b><%=product.getPrice()%></p>
                 <div class="button-container">
                     <form action="/cart/products/<%=product.getUrlSlug()%>" method="post">
                         <input type="hidden" name="productSku" value="<%=product.getSku()%>">

@@ -160,7 +160,9 @@
         <% } %>
         <a href="/cart">Cart</a>
         <a href="/logout">Logout</a>
-  <% } else if (isLoggedIn != null && isLoggedIn.equals("Incorrect password or password does not exist")){ %>
+        <a href="/orders">View Orders</a>
+
+    <% } else if (isLoggedIn != null && isLoggedIn.equals("Incorrect password or password does not exist")){ %>
         <a href="#" id="login-button">Login</a>
         <a href="#" id="register-button">Register</a>
         <br>

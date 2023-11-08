@@ -129,6 +129,7 @@
         <% } %>
         <a href="/cart">Cart</a>
         <a href="/logout">Logout</a>
+        <a href="/orders">View Orders</a>
  <% } %>
 </nav>
 <div class="container">
@@ -165,7 +166,7 @@
                 String name = item.getName();
                 quantity = item.getQuantity();
 
-                total = total + price;
+                total = total + (quantity * price);
         %>
         <tr id="remove-row">
             <td></td>
@@ -202,7 +203,7 @@
 
 
 
-    <p>Total:</p> <p id="total"><%=total%></p>
+    <p>Total:</p> <p id="total"><%=String.format("%.2f", total)%></p>
     <a href="/orderForm" class="btn">Check out</a>
 </div>
 
