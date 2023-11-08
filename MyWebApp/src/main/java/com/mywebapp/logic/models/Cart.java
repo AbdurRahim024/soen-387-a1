@@ -20,7 +20,7 @@ public class Cart {
     //*******************************************************************************
     //* domain logic functions
     //*******************************************************************************
-    public void add(UUID sku) throws DataMapperException, ProductNotFoundException {
+    public void incrementItem(UUID sku) throws DataMapperException, ProductNotFoundException {
         CartItem item;
 
         if (Cart.isItemInCart(this.cartId, sku)) {
@@ -34,7 +34,7 @@ public class Cart {
         item.incrementQuantity();
     }
 
-    public void remove(UUID sku) throws DataMapperException, ProductNotFoundException {
+    public void decrementItem(UUID sku) throws DataMapperException, ProductNotFoundException {
         CartItem item = CartItem.findCartItemBySkuAndCartId(sku, this.cartId);
         item.decrementQuantity();
     }

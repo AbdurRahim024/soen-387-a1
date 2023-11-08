@@ -36,10 +36,12 @@ public class CartItem extends Product {
 
     public void decrementQuantity() throws DataMapperException {
         this.quantity -= 1;
-        CartItemDataMapper.update(this);
 
         if (this.quantity == 0) {
             CartItemDataMapper.delete(this);
+        }
+        else {
+            CartItemDataMapper.update(this);
         }
     }
     public static ArrayList<CartItem> findCartItemsByCartId(UUID cartId) throws DataMapperException {
