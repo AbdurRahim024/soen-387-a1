@@ -1,6 +1,7 @@
 <%@ page import="java.util.HashMap" %>
 <%@ page import="com.mywebapp.logic.models.Product" %>
 <%@ page import="java.util.ArrayList" %>
+<%@ page import="com.mywebapp.logic.models.CartItem" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -133,7 +134,6 @@
 <div class="container">
     <h1>My Cart</h1>
 
-
     <div class="d-flex">
         <form action="/cart/clearCart" method="get">
             <button type="submit" class="btn">Clear cart</button>
@@ -143,6 +143,7 @@
     <%
         double total = 0;
         double price = 0;
+        int quantity = 0;
     %>
     <table>
         <thead>
@@ -151,21 +152,44 @@
             <th>Product Name</th>
             <th>Price</th>
             <th></th>
+            <th style="text-align: center">Quantity</th>
+            <th style="width: 40%"></th>
+            <th style="text-align: left"></th>
         </tr>
         </thead>
         <tbody>
         <%
-            ArrayList<Product> list = (ArrayList<Product>) request.getAttribute("cart");
-            for (Product product : list) {
-                price = product.getPrice();
-                String name = product.getName();
+            ArrayList<CartItem> list = (ArrayList<CartItem>) request.getAttribute("cart");
+            for (CartItem item : list) {
+                price = item.getPrice();
+                String name = item.getName();
+                quantity = item.getQuantity();
+
                 total = total + price;
         %>
         <tr id="remove-row">
+            <td></td>
             <td><%=name%></td>
             <td id="price"><%=price%></td>
-            <td>
-                <button class="btn-remove" onclick="removeFromCart('<%=product.getUrlSlug()%>');">
+            <td style="text-align: right">
+                <form method="post" action="/cart/decrementQuantities" name="dec-<%=item.getSku()%>">
+                    <input name="productSku" hidden type="text" value="<%=item.getSku()%>">
+                    <button type="submit" style="width: 30px; height: 30px; font-size: 22px" class="btn-decrement">
+                        -
+                    </button>
+                </form>
+            </td>
+            <td style="text-align: center" id="quantity"><%=quantity%></td>
+            <td style="width: 40%">
+                <form method="post" action="/cart/incrementQuantities" name="inc-<%=item.getSku()%>">
+                    <input name="productSku" hidden type="text" value="<%=item.getSku()%>">
+                    <button type="submit" style="width: 30px; height: 30px; font-size: 22px" class="btn-increment">
+                        +
+                    </button>
+                </form>
+            </td>
+            <td style="text-align: left">
+                <button class="btn-remove" onclick="removeFromCart('<%=item.getUrlSlug()%>');">
                     Remove
                 </button>
             </td>
@@ -179,7 +203,7 @@
 
 
     <p>Total:</p> <p id="total"><%=total%></p>
-    <a href="/buy" class="btn">Check out</a>
+    <a href="/orderForm" class="btn">Check out</a>
 </div>
 
 <div class="footer">
@@ -187,6 +211,5 @@
 </div>
 </body>
 <script>
-
 </script>
 </html>

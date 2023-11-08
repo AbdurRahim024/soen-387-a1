@@ -5,6 +5,7 @@ import com.mywebapp.logic.custom_errors.DataMapperException;
 import com.mywebapp.logic.custom_errors.FileDownloadException;
 import com.mywebapp.logic.custom_errors.ProductNotFoundException;
 import com.mywebapp.logic.custom_errors.UserNotFoundException;
+import com.mywebapp.logic.models.CartItem;
 import com.mywebapp.logic.models.Product;
 import com.mywebapp.ConfigManager;
 import com.opencsv.CSVReader;
@@ -29,22 +30,19 @@ public class CartServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException { //TODO: ideally servlets should only throw servletException, catch everything else and set error codes of response
         String url = request.getRequestURI();
 
+        //Displaying the cart
         if(url.equals("/cart")) {
             ArrayList<Product> cart;
             String password = UsersServlet.pass;
             String customerID = null;
             try {
                 customerID = getCustomerID(password);
-            } catch (CsvValidationException | FileDownloadException e) {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            }
-            try { //TODO: the two try blocks should be merged
                 cart = (ArrayList<Product>) logic.getCart(customerID);
                 request.setAttribute("cart", cart);
-            } catch (UserNotFoundException e) {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            } catch (DataMapperException e) {
+            } catch (CsvValidationException | DataMapperException | FileDownloadException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }catch (UserNotFoundException e) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             }
             request.setAttribute("isLoggedIn", UsersServlet.isValid);
             request.setAttribute("userType", UsersServlet.type);
@@ -52,6 +50,8 @@ public class CartServlet extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_OK);
             dispatcher.forward(request, response);
         }
+
+        //Clears the cart
         if (url.equals("/cart/clearCart")){
             String password = UsersServlet.pass;
             String customerId = null;
@@ -72,41 +72,60 @@ public class CartServlet extends HttpServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String url = request.getRequestURI();
 
+        //Adds a particular product to the cart
         if (url.startsWith("/cart/products")) {
             String sku = request.getParameter("productSku");
-            ArrayList<Product> cart = new ArrayList<>();
+            ArrayList<CartItem> cart = new ArrayList<>();
             String password = UsersServlet.pass;
             String customerId = null;
             try {
                 customerId = getCustomerID(password);
                 logic.addProductToCart(customerId, sku);
-                cart = (ArrayList<Product>) logic.getCart(customerId);
+                cart = (ArrayList<CartItem>) logic.getCart(customerId);
             } catch (CsvValidationException | FileDownloadException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }catch (UserNotFoundException | ProductNotFoundException e) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            } catch (DataMapperException e) {
+            }catch (DataMapperException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
             response.setStatus(HttpServletResponse.SC_OK);
             response.sendRedirect("/cart");
         }
-        if(url.equals("/cart/editQuantities")){
+
+        //Changes the quantity of a particular product
+        if(url.equals("/cart/incrementQuantities")){
             String password = UsersServlet.pass;
             String sku = request.getParameter("productSku");
-            int quantity = Integer.parseInt(request.getParameter("quantity"));
             String customerId = null;
             try {
                 customerId = getCustomerID(password);
-                logic.setProductQuantityInCart(customerId, sku, quantity);
+                logic.addProductToCart(customerId, sku);
+            } catch (CsvValidationException | FileDownloadException | DataMapperException e) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            } catch (UserNotFoundException | ProductNotFoundException e) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            }
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.sendRedirect("/cart");
+        }
+
+
+
+        if(url.equals("/cart/decrementQuantities")){
+            String password = UsersServlet.pass;
+            String sku = request.getParameter("productSku");
+            String customerId = null;
+            try {
+                customerId = getCustomerID(password);
+                logic.decrementProductInCart(customerId, sku);
             }catch (CsvValidationException | FileDownloadException | DataMapperException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }catch (UserNotFoundException | ProductNotFoundException e) {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             }
             response.setStatus(HttpServletResponse.SC_OK);
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/cart.jsp");
-            dispatcher.forward(request, response);
+            response.sendRedirect("/cart");
         }
 
     }
@@ -132,9 +151,10 @@ public class CartServlet extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_OK);
         }
 
-        //clear the entire cart
 
     }
+
+    //This method helps to get the customerID associated with a given password
     private String getCustomerID(String password) throws CsvValidationException, IOException, FileDownloadException {
         String customerId = "";
         try (CSVReader reader = new CSVReader(new FileReader(ConfigManager.getCsvPath()))) { //TODO: shouldn't have try block without catch, here you could catch and rethrow a custom exception while still showing the original exception message "throw new CustomerLoginError("Error while .." + e)"

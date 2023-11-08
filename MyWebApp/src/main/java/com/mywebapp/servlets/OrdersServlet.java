@@ -19,19 +19,21 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 @WebServlet(name = "ordersServlet", value = {"/orders/*", "/orderForm", "/createOrder", "/shipOrder"})
-public class OrdersServlet {
+public class OrdersServlet extends HttpServlet{
     LogicFacade logic = new LogicFacade();
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
         String url = request.getRequestURI();
 
         if (url.equals("/orderForm")){
+            request.setAttribute("isLoggedIn", UsersServlet.isValid);
+            request.setAttribute("userType", UsersServlet.type);
             response.setStatus(HttpServletResponse.SC_OK);
             RequestDispatcher dispatcher = request.getRequestDispatcher("/ordersForm.jsp");
             dispatcher.forward(request, response);
         }
         else if (url.equals("/orders")){
-            String password = request.getParameter("password");
-            String type = "user";
+            String password = UsersServlet.pass;
+            String type = UsersServlet.type;
             boolean found = false;
             File users_file = null;
             String customerId = null;
@@ -64,13 +66,15 @@ public class OrdersServlet {
                         orders = logic.getAllOrders();
                     }
                 }
-            } catch (FileDownloadException | CsvValidationException | UserNotFoundException | DataMapperException | OrderNotFoundException e) {
+            } catch (FileDownloadException | CsvValidationException | DataMapperException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            } catch(UserNotFoundException | OrderNotFoundException e){
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             }
 
             response.setStatus(HttpServletResponse.SC_OK);
             request.setAttribute("orders", orders);
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/ordersDisplay.jsp");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/orders.jsp");
             dispatcher.forward(request, response);
 
         }
@@ -102,11 +106,13 @@ public class OrdersServlet {
         String url = request.getRequestURI();
 
         if (url.equals("/createOrder")){
-            String password = request.getParameter("password");
+            String password = UsersServlet.pass;
             String customerId = null;
             String shippingAddress = request.getParameter("shippingAddress");
+            System.out.println(shippingAddress);
             try {
                 customerId = getCustomerID(password);
+                System.out.println(customerId);
                 logic.createOrder(customerId, shippingAddress);
             } catch (CsvValidationException | FileDownloadException | DataMapperException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -114,8 +120,7 @@ public class OrdersServlet {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             }
             response.setStatus(HttpServletResponse.SC_OK);
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/ordersDisplay.jsp");
-            dispatcher.forward(request, response);
+            response.sendRedirect("/cart");
         }
         if (url.equals("/shipOrder")){
             int orderId = Integer.parseInt(request.getParameter("orderId"));
@@ -135,7 +140,7 @@ public class OrdersServlet {
         try (CSVReader reader = new CSVReader(new FileReader(ConfigManager.getCsvPath()))) {
             String[] line;
             while ((line = reader.readNext()) != null) {
-                String newPass = line[0];
+                String newPass = line[1];
                 if (newPass.equals("password")) { // skip if the first row (titles) is being read
                     continue;
                 }
