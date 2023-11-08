@@ -131,22 +131,43 @@
 </head>
 <body>
 <nav>
-    <a href="/home">Home</a>
-    <a href="/products">Products</a>
-    <% String isLoggedIn = (String) request.getAttribute("isLoggedIn");
-     String userType = (String) request.getAttribute("userType");
-     if (isLoggedIn != null && isLoggedIn.equals("true")) { %>
-        <% if (userType.equals("admin")) { %>
-          <a href="/createProduct">Create New Product</a>
-          <a href="/products/download">Download Catalog</a>
-        <% } %>
-        <a href="/cart">Cart</a>
-        <a href="/logout">Logout</a>
-        <a href="/orders">View Orders</a>
-  <% } else if (isLoggedIn != null && isLoggedIn.equals("Log in or register to add items to the cart")){ %>
-        <br>
-        <p>${isLoggedIn}</p>
-  <% } %>
+<a href="/home">Home</a>
+<a href="/products">Products</a>
+<% String isLoggedIn = (String) request.getAttribute("isLoggedIn");
+    String userType = (String) request.getAttribute("userType");
+    if (isLoggedIn != null && isLoggedIn.equals("true")) { %>
+<% if (userType.equals("admin")) { %>
+<a href="/createProduct">Create New Product</a>
+<a href="/products/download">Download Catalog</a>
+<% } %>
+<a href="/cart">Cart</a>
+<a href="/logout">Logout</a>
+<a href="/orders">View Orders</a>
+
+<% } else if (isLoggedIn != null && isLoggedIn.equals("Incorrect password or password does not exist")){ %>
+<a href="#" id="login-button">Login</a>
+<a href="#" id="register-button">Register</a>
+<br>
+<p>${isLoggedIn}</p>
+<% } else if (isLoggedIn != null && isLoggedIn.equals("Successfully logged out")){ %>
+<a href="#" id="login-button">Login</a>
+<a href="#" id="register-button">Register</a>
+<br>
+<p>${isLoggedIn}</p>
+<% } else if (isLoggedIn != null && isLoggedIn.equals("Successfully registered")){ %>
+<a href="#" id="login-button">Login</a>
+<a href="#" id="register-button">Register</a>
+<br>
+<p>${isLoggedIn}</p>
+<% } else if (isLoggedIn != null && isLoggedIn.equals("Password already exists, try registering with a different password")){ %>
+<a href="#" id="login-button">Login</a>
+<a href="#" id="register-button">Register</a>
+<br>
+<p>${isLoggedIn}</p>
+<% }  else { %>
+<a href="#" id="login-button">Login</a>
+<a href="#" id="register-button">Register</a>
+<% } %>
 </nav>
 <div class="container">
     <h1>Product Listing</h1>

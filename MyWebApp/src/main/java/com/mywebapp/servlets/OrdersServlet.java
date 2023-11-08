@@ -132,12 +132,10 @@ public class OrdersServlet extends HttpServlet{
             String password = UsersServlet.pass;
             String customerId = null;
             String shippingAddress = request.getParameter("shippingAddress");
-            System.out.println(shippingAddress);
             response.setStatus(HttpServletResponse.SC_OK);
 
             try {
                 customerId = getCustomerID(password);
-                System.out.println(customerId);
                 logic.createOrder(customerId, shippingAddress);
             } catch (CsvValidationException | FileDownloadException | DataMapperException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -171,7 +169,7 @@ public class OrdersServlet extends HttpServlet{
             String[] line;
             while ((line = reader.readNext()) != null) {
                 String newPass = line[1];
-                if (newPass.equals("password")) { // skip if the first row (titles) is being read
+                if (newPass.equals("password")) {
                     continue;
                 }
                 if(password.equals(newPass)){
