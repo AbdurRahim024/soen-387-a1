@@ -48,7 +48,7 @@ public class LogicFacade {
     public void addProductToCart(String customer_id, String sku) throws UserNotFoundException, ProductNotFoundException, DataMapperException {
         Customer customer = Customer.getCustomer(customer_id);
         Cart cart = new Cart(customer.getCartId());
-        cart.add(UUID.fromString(sku));
+        cart.incrementItem(UUID.fromString(sku));
     }
 
     public void removeProductFromCart(String customer_id, String sku) throws UserNotFoundException, ProductNotFoundException, DataMapperException {
@@ -57,7 +57,13 @@ public class LogicFacade {
 
         CartItem item = CartItem.findCartItemBySkuAndCartId(UUID.fromString(sku), customer.getCartId());
         item.setQuantity(1);
-        cart.remove(UUID.fromString(sku));
+        cart.decrementItem(UUID.fromString(sku));
+    }
+
+    public void decrementProductInCart(String customer_id, String sku) throws UserNotFoundException, ProductNotFoundException, DataMapperException {
+        Customer customer = Customer.getCustomer(customer_id);
+        Cart cart = new Cart(customer.getCartId());
+        cart.decrementItem(UUID.fromString(sku));
     }
 
     public void setProductQuantityInCart(String customer_id, String sku, int quantity) throws UserNotFoundException, DataMapperException, ProductNotFoundException {
