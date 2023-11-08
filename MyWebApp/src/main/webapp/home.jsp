@@ -198,7 +198,7 @@
   <div class="modal-content">
     <span class="close" id="loginClose">&times;</span>
     <h2>Login</h2>
-    <form action="/authenticateUser" method="GET">
+    <form action="/authenticateUser" method="post">
       <label for="loginPassword">Password:</label>
       <input type="password" id="loginPassword" name="password" required>
       <input type="submit" value="Login">

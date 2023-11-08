@@ -36,13 +36,28 @@ public class UsersServlet extends HttpServlet {
     }
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String url = request.getRequestURI();
-        File users_file = null;
-        try {
-            users_file = new File(ConfigManager.getCsvPath());
-        } catch (FileDownloadException e) {
-            throw new RuntimeException(e);
+        if (url.equals("/logout")) {
+            isValid = "false";
+            pass = "";
+            type = "user";
+            request.setAttribute("isLoggedIn", "Successfully logged out");
+            request.setAttribute("userType", type);
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/home.jsp");
+            response.setStatus(HttpServletResponse.SC_OK);
+            dispatcher.forward(request, response);
         }
+    }
+
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        String url = request.getRequestURI();
+
         if(url.equals("/authenticateUser")){
+            File users_file = null;
+            try {
+                users_file = new File(ConfigManager.getCsvPath());
+            } catch (FileDownloadException e) {
+                throw new RuntimeException(e);
+            }
             String password = request.getParameter("password");
             response.setStatus(HttpServletResponse.SC_OK);
             try (CSVReader reader = new CSVReader(new FileReader(users_file))) {
@@ -72,20 +87,8 @@ public class UsersServlet extends HttpServlet {
             }
             RequestDispatcher dispatcher = request.getRequestDispatcher("/home.jsp");
             dispatcher.forward(request, response);
-        } else if (url.equals("/logout")) {
-            isValid = "false";
-            pass = "";
-            type = "user";
-            request.setAttribute("isLoggedIn", "Successfully logged out");
-            request.setAttribute("userType", type);
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/home.jsp");
-            response.setStatus(HttpServletResponse.SC_OK);
-            dispatcher.forward(request, response);
         }
-    }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException { //TODO: servlet methods should only throw servlet exception, ioexception should be caught
-        String url = request.getRequestURI();
         //Checking if the user exists else adding the user to the text file
         if (url.equals("/registerUser")) {
             String password = request.getParameter("password");

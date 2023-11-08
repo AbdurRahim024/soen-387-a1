@@ -13,7 +13,6 @@
             padding: 0;
             font-family: 'Arial', sans-serif;
             background-color: rgba(0, 0, 0, 0.5);
-            color: #fff;
         }
 
         nav {
@@ -24,12 +23,6 @@
 
         nav a {
             color: #fff;
-            text-decoration: none;
-            margin: 0 15px;
-            font-size: 18px;
-        }
-        .link {
-            color: black;
             text-decoration: none;
             margin: 0 15px;
             font-size: 18px;
@@ -127,6 +120,30 @@
         button {
             padding: 10px 20px;
         }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            border-radius: 5px;
+            width: 300px;
+        }
+
+        .close {
+            float: right;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -169,6 +186,30 @@
 <a href="#" id="register-button">Register</a>
 <% } %>
 </nav>
+<div id="loginModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="loginClose">&times;</span>
+        <h2>Login</h2>
+        <form action="/authenticateUser" method="post">
+            <label for="loginPassword">Password:</label>
+            <input type="password" id="loginPassword" name="password" required>
+            <input type="submit" value="Login">
+        </form>
+    </div>
+</div>
+
+<!-- Register Modal -->
+<div id="registerModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="registerClose">&times;</span>
+        <h2>Register</h2>
+        <form action="/registerUser" method="POST">
+            <label for="registerPassword">Password:</label>
+            <input type="password" id="registerPassword" name="password" required>
+            <input type="submit" value="Register">
+        </form>
+    </div>
+</div>
 <div class="container">
     <h1>Product Listing</h1>
     <div id="product-container">
@@ -204,6 +245,27 @@
 </div>
 </body>
 <script>
+    const loginModal = document.getElementById("loginModal");
+    const registerModal = document.getElementById("registerModal");
+    const loginButton = document.getElementById("login-button");
+    const registerButton = document.getElementById("register-button");
+    const loginClose = document.getElementById("loginClose");
+    const registerClose = document.getElementById("registerClose");
 
+    loginButton.addEventListener("click", () => {
+        loginModal.style.display = "block";
+    });
+
+    registerButton.addEventListener("click", () => {
+        registerModal.style.display = "block";
+    });
+
+    loginClose.addEventListener("click", () => {
+        loginModal.style.display = "none";
+    });
+
+    registerClose.addEventListener("click", () => {
+        registerModal.style.display = "none";
+    });
 </script>
 </html>
