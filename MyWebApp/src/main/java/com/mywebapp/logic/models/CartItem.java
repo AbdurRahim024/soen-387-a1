@@ -79,6 +79,12 @@ public class CartItem extends Product {
 
     public void setQuantity(int quantity) throws DataMapperException {
         this.quantity = quantity;
-        CartItemDataMapper.update(this);
+
+        if (this.quantity == 0) {
+            CartItemDataMapper.delete(this);
+        }
+        else {
+            CartItemDataMapper.update(this);
+        }
     }
 }
