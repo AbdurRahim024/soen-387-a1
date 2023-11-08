@@ -79,9 +79,8 @@ public class LogicFacade {
 
     public void createOrder(String customer_id, String shippingAddress) throws UserNotFoundException, DataMapperException {
         Customer customer = Customer.getCustomer(customer_id);
-        Order order = new Order(customer.getCartId(), shippingAddress);
+        Order order = new Order(customer.getCustomerId(), shippingAddress);
         order.placeOrder(customer.getCartId());
-
         customer.clearCart();
     }
 
@@ -117,8 +116,6 @@ public class LogicFacade {
     }
 
     public ArrayList<Product> getProducts() throws DataMapperException {
-        String classpath = System.getProperty("java.class.path");
-        System.out.println(classpath);
         return Product.getAllProducts();
     }
 

@@ -82,7 +82,7 @@ public class OrderDataMapper {
                 int order_id = rs.getInt("order_id");
                 UUID customer_id = UUID.fromString(rs.getString("customer_id"));
                 String shipping_address = rs.getString("shipping_address");
-                UUID tracking_number = UUID.fromString(rs.getString("tracking_number"));
+                UUID tracking_number = rs.getString("tracking_number") == null ? null : UUID.fromString(rs.getString("tracking_number"));
                 boolean is_shipped = rs.getBoolean("is_shipped");
                 ArrayList<CartItem> items = deserialize(rs.getBinaryStream("items"));
 
@@ -104,7 +104,7 @@ public class OrderDataMapper {
             oos = new ObjectOutputStream(baos);
             oos.writeObject(items);
         } catch (IOException e) {
-            throw new DataMapperException("Error occurred while serializing order items");
+            throw new DataMapperException("Error occurred while serializing order items: " + e);
         }
         return baos.toByteArray();
     }
@@ -114,7 +114,7 @@ public class OrderDataMapper {
             ObjectInputStream ois = new ObjectInputStream(is);
             return (ArrayList<CartItem>) ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            throw new DataMapperException("Error occurred while deserializing order items");
+            throw new DataMapperException("Error occurred while deserializing order items: " + e);
         }
 
     }
