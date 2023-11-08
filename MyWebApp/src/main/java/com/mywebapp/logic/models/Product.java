@@ -9,10 +9,11 @@ import com.opencsv.CSVWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class Product {
+public class Product implements Serializable {
     private String name;
     private String description;
     private String vendor;

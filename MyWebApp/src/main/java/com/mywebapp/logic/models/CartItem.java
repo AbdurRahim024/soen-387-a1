@@ -4,10 +4,11 @@ import com.mywebapp.logic.custom_errors.DataMapperException;
 import com.mywebapp.logic.custom_errors.ProductNotFoundException;
 import com.mywebapp.logic.mappers.CartItemDataMapper;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class CartItem extends Product {
+public class CartItem extends Product implements Serializable {
     private UUID cartId; //foreign key + primary key
     private int quantity;
 
