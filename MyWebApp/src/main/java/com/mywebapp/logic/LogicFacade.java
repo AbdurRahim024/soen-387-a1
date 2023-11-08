@@ -89,10 +89,10 @@ public class LogicFacade {
         return Order.getOrdersByCustomer(customer.getCustomerId());
     }
 
-    public Order getOrderDetails(String customer_id, int orderId) throws DataMapperException, CustomerOrderMismatchException, UserNotFoundException, OrderNotFoundException {
+    public Order getOrderDetails(String userType, String customer_id, int orderId) throws DataMapperException, CustomerOrderMismatchException, UserNotFoundException, OrderNotFoundException {
         Order order = Order.getOrderByGuid(orderId);
 
-        if (!customer_id.isEmpty()) {
+        if (!customer_id.isEmpty() && userType.equals("user")) {
             Customer customer = Customer.getCustomer(customer_id);
             if (!order.getCustomerId().equals(customer.getCustomerId())) {
                 throw new CustomerOrderMismatchException("This order does not belong to this customer");

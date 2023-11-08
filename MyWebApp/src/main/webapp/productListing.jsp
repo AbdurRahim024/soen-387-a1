@@ -126,16 +126,16 @@
 <nav>
     <a href="/home">Home</a>
     <a href="/products">Products</a>
-<%  String isLoggedIn = (String) request.getAttribute("isLoggedIn");
-    String userType = (String) request.getAttribute("userType");
-    if (isLoggedIn != null && isLoggedIn.equals("true")) { %>
-        <% if (userType.equals("admin")) { %>
-          <a href="/createProduct">Create New Product</a>
-          <a href="/products/download">Download Catalog</a>
-        <% } %>
-        <a href="/cart">Cart</a>
-        <a href="/logout">Logout</a>
- <% } %>
+    <%  String isLoggedIn = (String) request.getAttribute("isLoggedIn");
+        String userType = (String) request.getAttribute("userType");
+        if (isLoggedIn != null && isLoggedIn.equals("true")) { %>
+    <% if (userType.equals("admin")) { %>
+    <a href="/createProduct">Create New Product</a>
+    <a href="/products/download">Download Catalog</a>
+    <% } %>
+    <a href="/cart">Cart</a>
+    <a href="/logout">Logout</a>
+    <% } %>
 </nav>
 <% Product product = (Product) request.getAttribute("product");
 
@@ -144,26 +144,26 @@
     <% if (userType.equals("admin")) { %>
     <form action="/updateProduct" method="post" class="product-form">
         <div class="form-group">
-            <label for="productName">Product Name:</label>
-            <input class="formButtons" type="text" id="productName" name="productName" required value="<%=product.getName()%>">
+            <label for="AdminproductName">Product Name:</label>
+            <input class="formButtons" type="text" id="AdminproductName" name="productName" required value="<%=product.getName()%>">
         </div>
         <div class="form-group">
             <label for="productDescription">Product Description:</label>
-            <input class="formButtons" type="text" id="productDescription" name="productDescription"  required value="<%=product.getDescription()%>">
+            <input class="formButtons" type="text" id="AdminproductDescription" name="productDescription"  required value="<%=product.getDescription()%>">
         </div>
         <div class="form-group">
-            <label for="productVendor">Vendor:</label>
-            <input class="formButtons" type="text" id="productVendor" name="productVendor" required value="<%=product.getVendor()%>">
+            <label for="AdminproductVendor">Vendor:</label>
+            <input class="formButtons" type="text" id="AdminproductVendor" name="productVendor" required value="<%=product.getVendor()%>">
         </div>
         <div class="form-group">
-            <label for="productUrlSlug">URL Slug:</label>
-            <input class="formButtons" type="text" id="productUrlSlug" name="productUrlSlug" required value="<%=product.getUrlSlug()%>">
+            <label for="AdminproductUrlSlug">URL Slug:</label>
+            <input class="formButtons" type="text" id="AdminproductUrlSlug" name="productUrlSlug" required value="<%=product.getUrlSlug()%>">
         </div>
         <div class="form-group">
-            <label for="productPrice">Price:</label>
-            <input class="formButtons" type="number" id="productPrice" name="productPrice" step="0.01" required value="<%=product.getPrice()%>">
+            <label for="AdminproductPrice">Price:</label>
+            <input class="formButtons" type="number" id="AdminproductPrice" name="productPrice" step="0.01" required value="<%=product.getPrice()%>">
         </div>
-        <input hidden class="formButtons" type="text" id="productSku" name="productSku" required value="<%=product.getSku()%>">
+        <input hidden class="formButtons" type="text" id="AdminproductSku" name="productSku" required value="<%=product.getSku()%>">
 
         <button id="submitButton" type="submit" class="btn formButtons">Update Product</button>
     </form>

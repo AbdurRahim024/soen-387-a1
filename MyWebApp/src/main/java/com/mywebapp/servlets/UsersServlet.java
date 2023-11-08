@@ -4,7 +4,6 @@ import com.mywebapp.ConfigManager;
 import com.mywebapp.logic.LogicFacade;
 import com.mywebapp.logic.custom_errors.DataMapperException;
 import com.mywebapp.logic.custom_errors.FileDownloadException;
-import com.mywebapp.logic.models.Product;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 import jakarta.servlet.RequestDispatcher;
@@ -13,13 +12,13 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 import java.io.*;
 import java.util.Scanner;
 
 @WebServlet(name = "usersServlet", value = {"/registerUser", "/authenticateUser", "/logout"})
 public class UsersServlet extends HttpServlet {
+
     LogicFacade logic = new LogicFacade();
     static String type = "user";
     static String isValid = "false";
@@ -45,6 +44,7 @@ public class UsersServlet extends HttpServlet {
         }
         if(url.equals("/authenticateUser")){
             String password = request.getParameter("password");
+            response.setStatus(HttpServletResponse.SC_OK);
             try (CSVReader reader = new CSVReader(new FileReader(users_file))) {
                 String[] line;
                 while ((line = reader.readNext()) != null) {
@@ -60,8 +60,8 @@ public class UsersServlet extends HttpServlet {
                         break;
                     }
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (CsvValidationException e) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
             if (isValid.equals("true")) {
                 request.setAttribute("isLoggedIn", isValid);
@@ -71,7 +71,6 @@ public class UsersServlet extends HttpServlet {
                 request.setAttribute("userType", type);
             }
             RequestDispatcher dispatcher = request.getRequestDispatcher("/home.jsp");
-            response.setStatus(HttpServletResponse.SC_OK);
             dispatcher.forward(request, response);
         } else if (url.equals("/logout")) {
             isValid = "false";
@@ -91,6 +90,8 @@ public class UsersServlet extends HttpServlet {
         if (url.equals("/registerUser")) {
             String password = request.getParameter("password");
             File users_file = null;
+            response.setStatus(HttpServletResponse.SC_OK);
+
             try {
                 users_file = new File(ConfigManager.getCsvPath());
             } catch (FileDownloadException e) {
@@ -101,6 +102,9 @@ public class UsersServlet extends HttpServlet {
             try (CSVReader reader = new CSVReader(new FileReader(users_file))) {
                 String[] line;
                 while ((line = reader.readNext()) != null) {
+                    if (line.length < 2) {
+                        break;
+                    }
                     String newPass = line[1];
                     if (newPass.equals("password")) { // skip if the first row (titles) is being read
                         continue;
@@ -115,14 +119,11 @@ public class UsersServlet extends HttpServlet {
                     String customer_id = logic.createCustomer();
                     addToUsers(customer_id, password, "user");
                 }
-            }  catch (FileNotFoundException | DataMapperException | CsvValidationException e) {
+            }  catch (FileNotFoundException | DataMapperException | CsvValidationException | FileDownloadException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            } catch (FileDownloadException e) {
-                throw new RuntimeException(e);
             }
             request.setAttribute("isLoggedIn", isRegistered);
             RequestDispatcher dispatcher = request.getRequestDispatcher("/home.jsp");
-            response.setStatus(HttpServletResponse.SC_OK);
             dispatcher.forward(request, response);
         }
     }

@@ -65,15 +65,15 @@ public class OrderDataMapper {
                 dbStatement = db.prepareStatement(statement);
 
             }
-            else if (customerId == null) { // get a customer's orders
-                String statement = "SELECT * FROM `orders` WHERE `customer_id`=?";
-                dbStatement = db.prepareStatement(statement);
-                dbStatement.setString(1, customerId.toString());
-            }
-            else { // get a specific order
+            else if (customerId == null) { // get a specific order
                 String statement = "SELECT * FROM `orders` WHERE `order_id`=?";
                 dbStatement = db.prepareStatement(statement);
                 dbStatement.setInt(1, orderId);
+            }
+            else { // get a customer's orders
+                String statement = "SELECT * FROM `orders` WHERE `customer_id`=?";
+                dbStatement = db.prepareStatement(statement);
+                dbStatement.setString(1, customerId.toString());
             }
 
             ResultSet rs = dbStatement.executeQuery();

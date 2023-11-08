@@ -9,12 +9,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.Cookie;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Scanner;
 
 @WebServlet(name = "productServlet", value = {"/home", "/products/*", "/addProductToList", "/createProduct", "/updateProduct"})
 public class ProductServlet extends HttpServlet {
@@ -35,6 +31,8 @@ public class ProductServlet extends HttpServlet {
 
         // [STAFF ONLY] create product page
         else if (url.equals("/createProduct")) {
+            request.setAttribute("IsLoggedIn", UsersServlet.isValid);
+            request.setAttribute("userType", UsersServlet.type);
             response.setStatus(HttpServletResponse.SC_OK);
             RequestDispatcher dispatcher = request.getRequestDispatcher("/createProduct.jsp");
             dispatcher.forward(request, response);
@@ -42,6 +40,9 @@ public class ProductServlet extends HttpServlet {
 
         // view all products
         else if (url.equals("/products")) {
+            request.setAttribute("isLoggedIn", UsersServlet.isValid);
+            request.setAttribute("userType", UsersServlet.type);
+            response.setStatus(HttpServletResponse.SC_OK);
             try {
                 request.setAttribute("products", logic.getProducts());
             } catch (DataMapperException e) {
@@ -54,7 +55,7 @@ public class ProductServlet extends HttpServlet {
                 request.setAttribute("isLoggedIn", "Log in or register first to items to cart");
                 request.setAttribute("userType", UsersServlet.type);
             }
-            response.setStatus(HttpServletResponse.SC_OK);
+
             RequestDispatcher dispatcher = request.getRequestDispatcher("/products.jsp");
             dispatcher.forward(request, response);
         }
@@ -64,6 +65,7 @@ public class ProductServlet extends HttpServlet {
             String[] fullUrl = url.split("/");
             String urlSlug = fullUrl[fullUrl.length-1];
             Product product;
+            response.setStatus(HttpServletResponse.SC_OK);
             try {
                 product = logic.getProductBySlug(urlSlug);
                 request.setAttribute("product", product);
@@ -72,7 +74,6 @@ public class ProductServlet extends HttpServlet {
             } catch (DataMapperException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
-            response.setStatus(HttpServletResponse.SC_OK);
             request.setAttribute("isLoggedIn", UsersServlet.isValid);
             request.setAttribute("userType", UsersServlet.type);
             RequestDispatcher dispatcher = request.getRequestDispatcher("/productListing.jsp");
@@ -85,12 +86,12 @@ public class ProductServlet extends HttpServlet {
 
             if (UsersServlet.type.equals("admin") && UsersServlet.isValid.equals("true")) {
                 File catalog_path = null;
+                response.setStatus(HttpServletResponse.SC_OK);
                 try {
                     catalog_path = logic.downloadProductCatalog();
                 } catch (DataMapperException | FileDownloadException e) {
                     response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 }
-                response.setStatus(HttpServletResponse.SC_OK);
                 response.setContentType("text/csv");
                 response.setHeader("Content-Disposition", "attachment; filename=\"product_catalog.csv\"");
                 try (InputStream fileInputStream = new FileInputStream(catalog_path);
@@ -117,6 +118,7 @@ public class ProductServlet extends HttpServlet {
             String vendor = request.getParameter("productVendor");
             String urlSlug = request.getParameter("productUrlSlug");
             double price = Double.parseDouble(request.getParameter("productPrice"));
+            response.setStatus(HttpServletResponse.SC_OK);
 
             try {
                 logic.createProduct(name, description, vendor, urlSlug, price);
@@ -125,7 +127,6 @@ public class ProductServlet extends HttpServlet {
             } catch (DataMapperException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
-            response.setStatus(HttpServletResponse.SC_OK);
             RequestDispatcher dispatcher = request.getRequestDispatcher("/createProduct.jsp");
             dispatcher.forward(request, response);
         }
@@ -138,6 +139,7 @@ public class ProductServlet extends HttpServlet {
             String vendor = request.getParameter("productVendor");
             String urlSlug = request.getParameter("productUrlSlug");
             double price = Double.parseDouble(request.getParameter("productPrice"));
+            response.setStatus(HttpServletResponse.SC_OK);
 
             try {
                 logic.updateProduct(name, description, vendor, urlSlug, sku, price);
@@ -147,7 +149,6 @@ public class ProductServlet extends HttpServlet {
             } catch (DataMapperException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
-            response.setStatus(HttpServletResponse.SC_OK);
             response.sendRedirect("/products");
         }
     }

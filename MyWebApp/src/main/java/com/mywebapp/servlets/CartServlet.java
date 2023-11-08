@@ -5,7 +5,6 @@ import com.mywebapp.logic.custom_errors.DataMapperException;
 import com.mywebapp.logic.custom_errors.FileDownloadException;
 import com.mywebapp.logic.custom_errors.ProductNotFoundException;
 import com.mywebapp.logic.custom_errors.UserNotFoundException;
-import com.mywebapp.logic.models.CartItem;
 import com.mywebapp.logic.models.Product;
 import com.mywebapp.ConfigManager;
 import com.opencsv.CSVReader;
@@ -16,7 +15,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -39,6 +37,7 @@ public class CartServlet extends HttpServlet {
                 customerID = getCustomerID(password);
                 cart = (ArrayList<Product>) logic.getCart(customerID);
                 request.setAttribute("cart", cart);
+                response.setStatus(HttpServletResponse.SC_OK);
             } catch (CsvValidationException | DataMapperException | FileDownloadException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }catch (UserNotFoundException e) {
@@ -47,7 +46,6 @@ public class CartServlet extends HttpServlet {
             request.setAttribute("isLoggedIn", UsersServlet.isValid);
             request.setAttribute("userType", UsersServlet.type);
             RequestDispatcher dispatcher = request.getRequestDispatcher("/cart.jsp");
-            response.setStatus(HttpServletResponse.SC_OK);
             dispatcher.forward(request, response);
         }
 
@@ -58,12 +56,12 @@ public class CartServlet extends HttpServlet {
             try {
                 customerId = getCustomerID(password);
                 logic.clearCart(customerId);
+                response.setStatus(HttpServletResponse.SC_OK);
             } catch (CsvValidationException | FileDownloadException | DataMapperException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             } catch (UserNotFoundException e){
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             }
-            response.setStatus(HttpServletResponse.SC_OK);
             response.sendRedirect("/cart");
         }
 
@@ -75,21 +73,17 @@ public class CartServlet extends HttpServlet {
         //Adds a particular product to the cart
         if (url.startsWith("/cart/products")) {
             String sku = request.getParameter("productSku");
-            ArrayList<CartItem> cart = new ArrayList<>();
             String password = UsersServlet.pass;
             String customerId = null;
             try {
                 customerId = getCustomerID(password);
                 logic.addProductToCart(customerId, sku);
-                cart = (ArrayList<CartItem>) logic.getCart(customerId);
-            } catch (CsvValidationException | FileDownloadException e) {
+                response.setStatus(HttpServletResponse.SC_OK);
+            } catch (CsvValidationException | FileDownloadException | DataMapperException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }catch (UserNotFoundException | ProductNotFoundException e) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            }catch (DataMapperException e) {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
-            response.setStatus(HttpServletResponse.SC_OK);
             response.sendRedirect("/cart");
         }
 
@@ -101,16 +95,14 @@ public class CartServlet extends HttpServlet {
             try {
                 customerId = getCustomerID(password);
                 logic.addProductToCart(customerId, sku);
+                response.setStatus(HttpServletResponse.SC_OK);
             } catch (CsvValidationException | FileDownloadException | DataMapperException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             } catch (UserNotFoundException | ProductNotFoundException e) {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             }
-            response.setStatus(HttpServletResponse.SC_OK);
             response.sendRedirect("/cart");
         }
-
-
 
         if(url.equals("/cart/decrementQuantities")){
             String password = UsersServlet.pass;
@@ -119,12 +111,12 @@ public class CartServlet extends HttpServlet {
             try {
                 customerId = getCustomerID(password);
                 logic.decrementProductInCart(customerId, sku);
+                response.setStatus(HttpServletResponse.SC_OK);
             }catch (CsvValidationException | FileDownloadException | DataMapperException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }catch (UserNotFoundException | ProductNotFoundException e) {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             }
-            response.setStatus(HttpServletResponse.SC_OK);
             response.sendRedirect("/cart");
         }
 
@@ -143,12 +135,12 @@ public class CartServlet extends HttpServlet {
                 Product product = logic.getProductBySlug(urlSlug);
                 logic.removeProductFromCart(customerId, product.getSku().toString());
                 request.setAttribute("cart", logic.getCart(customerId));
+                response.setStatus(HttpServletResponse.SC_OK);
             } catch (CsvValidationException | FileDownloadException | DataMapperException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             } catch (UserNotFoundException | ProductNotFoundException e) {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             }
-            response.setStatus(HttpServletResponse.SC_OK);
         }
 
 
