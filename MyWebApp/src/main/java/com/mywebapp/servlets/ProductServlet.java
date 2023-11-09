@@ -31,7 +31,7 @@ public class ProductServlet extends HttpServlet {
 
         // [STAFF ONLY] create product page
         else if (url.equals("/createProduct")) {
-            request.setAttribute("IsLoggedIn", UsersServlet.isValid);
+            request.setAttribute("isLoggedIn", UsersServlet.isValid);
             request.setAttribute("userType", UsersServlet.type);
             response.setStatus(HttpServletResponse.SC_OK);
             RequestDispatcher dispatcher = request.getRequestDispatcher("/createProduct.jsp");
