@@ -153,38 +153,44 @@
   <a href="/products">Products</a>
   <% String isLoggedIn = (String) request.getAttribute("isLoggedIn");
      String userType = (String) request.getAttribute("userType");
+     String isChanged = (String) request.getAttribute("isChanged");
      if (isLoggedIn != null && isLoggedIn.equals("true")) { %>
         <% if (userType.equals("admin")) { %>
           <a href="/createProduct">Create New Product</a>
           <a href="/products/download">Download Catalog</a>
+          <a href="/users">User Control</a>
         <% } %>
         <a href="/cart">Cart</a>
-        <a href="/logout">Logout</a>
         <a href="/orders">View Orders</a>
-
+        <a href="#" id="change-button">Change passcode</a>
+        <a href="/logout">Logout</a>
+        <% if (isChanged != null) { %>
+        <br>
+        <p>${isChanged}</p>
+        <% } %>
     <% } else if (isLoggedIn != null && isLoggedIn.equals("Incorrect password or password does not exist")){ %>
         <a href="#" id="login-button">Login</a>
-        <a href="#" id="register-button">Register</a>
+        <a href="#" id="register-button">Set Passcode</a>
         <br>
         <p>${isLoggedIn}</p>
   <% } else if (isLoggedIn != null && isLoggedIn.equals("Successfully logged out")){ %>
         <a href="#" id="login-button">Login</a>
-        <a href="#" id="register-button">Register</a>
+        <a href="#" id="register-button">Set Passcode</a>
         <br>
         <p>${isLoggedIn}</p>
   <% } else if (isLoggedIn != null && isLoggedIn.equals("Successfully registered")){ %>
         <a href="#" id="login-button">Login</a>
-        <a href="#" id="register-button">Register</a>
+        <a href="#" id="register-button">Set Passcode</a>
         <br>
         <p>${isLoggedIn}</p>
   <% } else if (isLoggedIn != null && isLoggedIn.equals("Password already exists, try registering with a different password")){ %>
         <a href="#" id="login-button">Login</a>
-        <a href="#" id="register-button">Register</a>
+        <a href="#" id="register-button">Set Passcode</a>
         <br>
         <p>${isLoggedIn}</p>
   <% }  else { %>
         <a href="#" id="login-button">Login</a>
-        <a href="#" id="register-button">Register</a>
+        <a href="#" id="register-button">Set Passcode</a>
   <% } %>
 </nav>
 
@@ -206,15 +212,30 @@
   </div>
 </div>
 
-<!-- Register Modal -->
+<!-- Set Passcode Modal -->
 <div id="registerModal" class="modal">
   <div class="modal-content">
     <span class="close" id="registerClose">&times;</span>
-    <h2>Register</h2>
-    <form action="/registerUser" method="POST">
+    <h2>Set Passcode</h2>
+    <form id="reg" action="/registerUser" method="POST">
       <label for="registerPassword">Password:</label>
       <input type="password" id="registerPassword" name="password" required>
-      <input type="submit" value="Register">
+      <span id="passwordError" class="error-message"></span>
+      <input type="submit" value="Set Passcode">
+    </form>
+  </div>
+</div>
+
+<!-- Change Passcode Modal -->
+<div id="changePassModal" class="modal">
+  <div class="modal-content">
+    <span class="close" id="changePassClose">&times;</span>
+    <h2>Change Current Passcode</h2>
+    <form id="change" action="/changePasscode" method="POST">
+      <label for="changePassword">Password:</label>
+      <input type="password" id="changePassword" name="password" required>
+      <span id="passwordChangeError" class="error-change-message"></span>
+      <input type="submit" value="Change Passcode">
     </form>
   </div>
 </div>
@@ -274,6 +295,18 @@
 <script>
   const loginModal = document.getElementById("loginModal");
   const registerModal = document.getElementById("registerModal");
+  if (document.getElementById("change-button") != null) {
+      const changePassModal = document.getElementById("changePassModal");
+      const changePassButton = document.getElementById("change-button");
+      const changePassClose = document.getElementById("changePassClose");
+      changePassButton.addEventListener("click", () => {
+          changePassModal.style.display = "block";
+      });
+
+      changePassClose.addEventListener("click", () => {
+        changePassModal.style.display = "none";
+      });
+  }
   const loginButton = document.getElementById("login-button");
   const registerButton = document.getElementById("register-button");
   const loginClose = document.getElementById("loginClose");
@@ -295,4 +328,43 @@
     registerModal.style.display = "none";
   });
 </script>
+<script>
+        document.getElementById("reg").addEventListener("submit", function(event) {
+            var passwordInput = document.getElementById("registerPassword");
+            var passwordError = document.getElementById("passwordError");
+
+            // Regular expression for alphanumeric characters
+            var alphanumericRegex = /^[a-zA-Z0-9]+$/;
+
+            if (!alphanumericRegex.test(passwordInput.value)) {
+                passwordError.textContent = "Passcode must contain only alphanumeric characters.";
+                event.preventDefault();
+            } else if (passwordInput.value.length < 4) {
+                passwordError.textContent = "Passcode must be at least 4 characters long.";
+                event.preventDefault();
+            } else {
+                passwordError.textContent = "";
+            }
+        });
+</script>
+<script>
+        document.getElementById("change").addEventListener("submit", function(event) {
+            var passwordChangeInput = document.getElementById("changePassword");
+            var passwordChangeError = document.getElementById("passwordChangeError");
+
+            // Regular expression for alphanumeric characters
+            var alphanumericChangeRegex = /^[a-zA-Z0-9]+$/;
+
+            if (!alphanumericChangeRegex.test(passwordChangeInput.value)) {
+                passwordChangeError.textContent = "Passcode must contain only alphanumeric characters.";
+                event.preventDefault();
+            } else if (passwordChangeInput.value.length < 4) {
+                passwordChangeError.textContent = "Passcode must be at least 4 characters long.";
+                event.preventDefault();
+            } else {
+                passwordChangeError.textContent = "";
+            }
+        });
+</script>
+
 </html>

@@ -140,10 +140,11 @@
     <% if (userType.equals("admin")) { %>
     <a href="/createProduct">Create New Product</a>
     <a href="/products/download">Download Catalog</a>
+    <a href="/users">User Control</a>
     <% } %>
     <a href="/cart">Cart</a>
-    <a href="/logout">Logout</a>
     <a href="/orders">View Orders</a>
+    <a href="/logout">Logout</a>
     <% } else if (isLoggedIn != null && isLoggedIn.equals("Log in or register to add items to the cart")){ %>
     <br>
     <p>${isLoggedIn}</p>

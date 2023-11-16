@@ -4,6 +4,8 @@ import com.mywebapp.ConfigManager;
 import com.mywebapp.logic.LogicFacade;
 import com.mywebapp.logic.custom_errors.DataMapperException;
 import com.mywebapp.logic.custom_errors.FileDownloadException;
+import com.mywebapp.logic.custom_errors.UserNotFoundException;
+import com.mywebapp.logic.models.Product;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 import jakarta.servlet.RequestDispatcher;
@@ -14,9 +16,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Scanner;
 
-@WebServlet(name = "usersServlet", value = {"/registerUser", "/authenticateUser", "/logout"})
+@WebServlet(name = "usersServlet", value = {"/registerUser", "/authenticateUser", "/logout", "/changePasscode", "/users"})
 public class UsersServlet extends HttpServlet {
 
     LogicFacade logic = new LogicFacade();
@@ -45,6 +48,22 @@ public class UsersServlet extends HttpServlet {
             RequestDispatcher dispatcher = request.getRequestDispatcher("/home.jsp");
             response.setStatus(HttpServletResponse.SC_OK);
             dispatcher.forward(request, response);
+        }
+
+        if (url.equals("/users")) {
+            if (type.equals("admin")) {
+            try {
+//                TODO: GET USERS LIST
+//                request.setAttribute("users", users);
+                response.setStatus(HttpServletResponse.SC_OK);
+            } catch (Exception e) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
+            request.setAttribute("isLoggedIn", UsersServlet.isValid);
+            request.setAttribute("userType", UsersServlet.type);
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/users.jsp");
+            dispatcher.forward(request, response);
+            }
         }
     }
 
@@ -126,6 +145,48 @@ public class UsersServlet extends HttpServlet {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
             request.setAttribute("isLoggedIn", isRegistered);
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/home.jsp");
+            dispatcher.forward(request, response);
+        }
+
+        //Changing user's passcode
+        if (url.equals("/changePasscode")) {
+            String password = request.getParameter("password");
+            File users_file = null;
+            response.setStatus(HttpServletResponse.SC_OK);
+
+            try {
+                users_file = new File(ConfigManager.getCsvPath());
+            } catch (FileDownloadException e) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
+            String isChanged = "Successfully changed passcode";
+
+            try (CSVReader reader = new CSVReader(new FileReader(users_file))) {
+                String[] line;
+                while ((line = reader.readNext()) != null) {
+                    if (line.length < 2) {
+                        break;
+                    }
+                    String newPass = line[1];
+                    if (newPass.equals("password")) { // skip if the first row (titles) is being read
+                        continue;
+                    }
+                    if(password.equals(newPass)){
+                        isChanged = "Password already exists, try changing to a different password";
+                        break;
+                    }
+                }
+
+                if (isChanged.equals("Successfully changed passcode")) {
+                    // TODO: to change passcode call logic method()
+                }
+            }  catch (FileNotFoundException | CsvValidationException e) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
+            request.setAttribute("isLoggedIn", isValid);
+            request.setAttribute("userType", type);
+            request.setAttribute("isChanged", isChanged);
             RequestDispatcher dispatcher = request.getRequestDispatcher("/home.jsp");
             dispatcher.forward(request, response);
         }
