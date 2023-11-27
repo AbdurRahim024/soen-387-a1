@@ -14,15 +14,15 @@ public class OrderDataMapper {
     public static void insert(Order order) throws DataMapperException {
 
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection db = DriverManager.getConnection(ConfigManager.getDbParameter(ConfigManager.DbParameter.URL), ConfigManager.getDbParameter(ConfigManager.DbParameter.USERNAME), ConfigManager.getDbParameter(ConfigManager.DbParameter.PASSWORD));
+            Class.forName("org.sqlite.JDBC");
+            Connection db = DriverManager.getConnection(ConfigManager.getDbParameter(ConfigManager.DbParameter.URL));
             String statement = "INSERT INTO `orders` (`customer_id`, `shipping_address`, `is_shipped`, `items`) VALUES (?, ?, ?, ?)";
 
             byte[] itemsBytes = serialize(order.getItems());
             ByteArrayInputStream bais = new ByteArrayInputStream(itemsBytes);
 
             PreparedStatement dbStatement = db.prepareStatement(statement);
-            dbStatement.setString(1, order.getCustomerId().toString());
+            dbStatement.setString(1, order.getUserId().toString());
             dbStatement.setString(2, order.getShippingAddress());
             dbStatement.setBoolean(3, order.isShipped());
             dbStatement.setBinaryStream(4, bais, itemsBytes.length);
@@ -36,8 +36,8 @@ public class OrderDataMapper {
 
     public static void update(Order order) throws DataMapperException {
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection db = DriverManager.getConnection(ConfigManager.getDbParameter(ConfigManager.DbParameter.URL), ConfigManager.getDbParameter(ConfigManager.DbParameter.USERNAME), ConfigManager.getDbParameter(ConfigManager.DbParameter.PASSWORD));
+            Class.forName("org.sqlite.JDBC");
+            Connection db = DriverManager.getConnection(ConfigManager.getDbParameter(ConfigManager.DbParameter.URL));
             String statement = "UPDATE `orders` SET `is_shipped`=?, `tracking_number`=? WHERE `order_id`=?";
 
             PreparedStatement dbStatement = db.prepareStatement(statement);
@@ -56,8 +56,8 @@ public class OrderDataMapper {
         ArrayList<Order> orders = new ArrayList<>();
 
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection db = DriverManager.getConnection(ConfigManager.getDbParameter(ConfigManager.DbParameter.URL), ConfigManager.getDbParameter(ConfigManager.DbParameter.USERNAME), ConfigManager.getDbParameter(ConfigManager.DbParameter.PASSWORD));
+            Class.forName("org.sqlite.JDBC");
+            Connection db = DriverManager.getConnection(ConfigManager.getDbParameter(ConfigManager.DbParameter.URL));
             PreparedStatement dbStatement;
 
             if (orderId == -1 && customerId == null) { //get all orders

@@ -69,7 +69,7 @@ public class OrdersServlet extends HttpServlet{
 
                 if (found) {
                     if (type.equals("user")) {
-                        orders = logic.getOrdersByCustomer(customerId);
+                        orders = logic.getOrdersByUser(customerId);
                     } else {
                         orders = logic.getAllOrders();
                     }

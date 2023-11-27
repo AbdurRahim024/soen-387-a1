@@ -4,6 +4,7 @@ import com.mywebapp.ConfigManager;
 import com.mywebapp.logic.LogicFacade;
 import com.mywebapp.logic.custom_errors.DataMapperException;
 import com.mywebapp.logic.custom_errors.FileDownloadException;
+import com.mywebapp.logic.custom_errors.UserAlreadyExistsException;
 import com.mywebapp.logic.custom_errors.UserNotFoundException;
 import com.mywebapp.logic.models.Product;
 import com.opencsv.CSVReader;
@@ -138,10 +139,11 @@ public class UsersServlet extends HttpServlet {
                 }
 
                 if (isRegistered.equals("Successfully registered")) {
-                    String customer_id = logic.createCustomer();
-                    addToUsers(customer_id, password, "user");
+                    logic.createUser("emma");
+                    addToUsers("000001", password, "user");
                 }
-            }  catch (FileNotFoundException | DataMapperException | CsvValidationException | FileDownloadException e) {
+            }  catch (FileNotFoundException | DataMapperException | CsvValidationException | FileDownloadException |
+                      UserAlreadyExistsException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
             request.setAttribute("isLoggedIn", isRegistered);
