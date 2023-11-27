@@ -2,6 +2,7 @@ package com.mywebapp.logic.mappers;
 
 import com.mywebapp.logic.custom_errors.DataMapperException;
 import com.mywebapp.logic.models.CartItem;
+import com.mywebapp.logic.models.Order;
 import com.mywebapp.logic.models.User;
 import com.mywebapp.ConfigManager;
 
@@ -28,30 +29,7 @@ public class UserDataMapper {
         }
     }
 
-    public static User findByGuid(UUID user_id) throws DataMapperException {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection db = DriverManager.getConnection(ConfigManager.getDbParameter(ConfigManager.DbParameter.URL), ConfigManager.getDbParameter(ConfigManager.DbParameter.USERNAME), ConfigManager.getDbParameter(ConfigManager.DbParameter.PASSWORD));
-            String statement = "SELECT * FROM `customers` WHERE `customer_id`=?";
-            PreparedStatement dbStatement = db.prepareStatement(statement);
-            dbStatement.setString(1, user_id.toString());
-
-            ResultSet rs = dbStatement.executeQuery();
-
-            while (rs.next()) {
-                UUID userId = UUID.fromString(rs.getString("customer_id"));
-                UUID cartId = UUID.fromString(rs.getString("cart_id"));
-
-                return new User(userId, cartId, "passcode", "STAFF");
-            }
-        } catch (SQLException | ClassNotFoundException e) {
-            throw new DataMapperException("Error occurred while getting a row in the CartItems table: " + e);
-        }
-
-        return null;
-    }
-
-    //TODO: fill these up
+    //TODO: update db so it contains user id as well
     public static void update(User user) throws DataMapperException {
         try {
 
@@ -71,17 +49,46 @@ public class UserDataMapper {
         }
     }
 
-    public static boolean passcodeAlreadyInDb(String passcode) {
-        return false;
-    }
+    public static ArrayList<User> findUsers(UUID user_id, String passcode) throws DataMapperException {
+        ArrayList<User> users = new ArrayList<>();
 
-    public static User findUserByPasscode(String passcode) {
-        return null;
-    }
+        try {
+            Class.forName("org.sqlite.JDBC");
+            Connection db = DriverManager.getConnection(ConfigManager.getDbParameter(ConfigManager.DbParameter.URL));
+            PreparedStatement dbStatement;
 
-    public static ArrayList<User> getAllUsers() {
-        return null;
-    }
+            if (user_id == null && passcode.isEmpty()) { //get all users
+                String statement = "SELECT * FROM `users`";
+                dbStatement = db.prepareStatement(statement);
 
+            }
+            else if (passcode.isEmpty()) { // get a user by id
+                String statement = "SELECT * FROM `users` WHERE `user_id`=?";
+                dbStatement = db.prepareStatement(statement);
+                dbStatement.setString(1, user_id.toString());
+            }
+            else { // get a user by passcode
+                String statement = "SELECT * FROM `users` WHERE `passcode`=?";
+                dbStatement = db.prepareStatement(statement);
+                dbStatement.setString(1, passcode);
+            }
+
+            ResultSet rs = dbStatement.executeQuery();
+
+            while (rs.next()) {
+                UUID userId = UUID.fromString(rs.getString("user_id"));
+                UUID cartId = UUID.fromString(rs.getString("cart_id"));
+                String passCode = rs.getString("passcode");
+                String userType = rs.getString("user_type");
+
+                User user = new User(userId, cartId, passCode, userType);
+                users.add(user);
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DataMapperException("Error occurred while retrieving orders: " + e);
+        }
+
+        return users;
+    }
 
 }

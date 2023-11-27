@@ -133,7 +133,7 @@ public class LogicFacade {
         User.changePasscode(oldPasscode, newPasscode);
     }
     
-    public ArrayList<User> getUsers() {
+    public ArrayList<User> getUsers() throws DataMapperException {
         return User.getAllUsers();
     }
 

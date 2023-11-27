@@ -46,7 +46,7 @@ public class User {
     }
 
     public static void addUserToDb(String passcode) throws DataMapperException, UserAlreadyExistsException {
-        if (UserDataMapper.passcodeAlreadyInDb(passcode)) {
+        if (!UserDataMapper.findUsers(null, passcode).isEmpty()) {
             throw new UserAlreadyExistsException("This passcode is taken");
         }
 
@@ -55,36 +55,40 @@ public class User {
     }
 
     public static User getUser(String userId) throws UserNotFoundException, DataMapperException {
-        User user = UserDataMapper.findByGuid(UUID.fromString(userId));
+        ArrayList<User> users = UserDataMapper.findUsers(UUID.fromString(userId), "");
 
-        if (user == null) {
-            throw new UserNotFoundException("This customer was not found.");
+        if (users.isEmpty()) {
+            throw new UserNotFoundException("This user was not found.");
         }
-        return user;
+        return users.get(0);
     }
 
     public static void changePasscode(String oldPasscode, String newPasscode) throws UserNotFoundException, DataMapperException {
-        if (!UserDataMapper.passcodeAlreadyInDb(oldPasscode)) {
+        if (!UserDataMapper.findUsers(null, oldPasscode).isEmpty()) {
             throw new UserNotFoundException("This user does not exist");
         }
 
-        User user = UserDataMapper.findUserByPasscode(oldPasscode);
-        if (user != null) {
-            user.passcode = newPasscode;
+        ArrayList<User> users = UserDataMapper.findUsers(null, oldPasscode);
+        if (users.isEmpty()) {
+            throw new UserNotFoundException("This user was not found.");
         }
+
+        User user = users.get(0);
+        user.passcode = newPasscode;
         UserDataMapper.update(user);
     }
 
-    public static ArrayList<User> getAllUsers() {
-        return UserDataMapper.getAllUsers();
+    public static ArrayList<User> getAllUsers() throws DataMapperException {
+        return UserDataMapper.findUsers(null, "");
     }
 
     public static void changeRole(String passcode) throws UserNotFoundException, DataMapperException {
-        User user = UserDataMapper.findUserByPasscode(passcode);
-
-        if (user == null) {
-            throw new UserNotFoundException("This user does not exist");
+        ArrayList<User> users = UserDataMapper.findUsers(null, passcode);
+        if (users.isEmpty()) {
+            throw new UserNotFoundException("This user was not found.");
         }
+
+        User user = users.get(0);
 
         if (user.userType == UserType.CUSTOMER) {
             user.userType = UserType.STAFF;
@@ -104,7 +108,7 @@ public class User {
         return userId;
     }
 
-    public void setCustomerId(UUID customerId) {
+    public void setUserId(UUID userId) {
         this.userId = userId;
     }
 
@@ -114,10 +118,6 @@ public class User {
 
     public void setCartId(UUID cartId) {
         this.cartId = cartId;
-    }
-
-    public void setUserId(UUID userId) {
-        this.userId = userId;
     }
 
     public String getPasscode() {
