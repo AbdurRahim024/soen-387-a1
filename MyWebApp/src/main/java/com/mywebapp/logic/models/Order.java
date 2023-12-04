@@ -1,6 +1,7 @@
 package com.mywebapp.logic.models;
 
 import com.mywebapp.logic.custom_errors.DataMapperException;
+import com.mywebapp.logic.custom_errors.OrderAlreadyBelongsToCustomerException;
 import com.mywebapp.logic.custom_errors.OrderNotFoundException;
 import com.mywebapp.logic.mappers.OrderDataMapper;
 import java.util.ArrayList;
@@ -8,21 +9,21 @@ import java.util.UUID;
 
 public class Order {
     private int orderId; //primary key
-    private UUID customerId; //foreign key
+    private UUID userId; //foreign key
     private ArrayList<CartItem> items; //BLOB
     private String shippingAddress;
     private UUID trackingNumber;
     private boolean isShipped;
 
-    public Order(UUID customerId, String shippingAddress) {
-        this.customerId = customerId;
+    public Order(UUID userId, String shippingAddress) {
+        this.userId = userId;
         this.shippingAddress = shippingAddress;
         this.isShipped = false;
     }
 
-    public Order(int orderId, UUID customerId, String shippingAddress, UUID trackingNumber, boolean isShipped, ArrayList<CartItem> items) {
+    public Order(int orderId, UUID userId, String shippingAddress, UUID trackingNumber, boolean isShipped, ArrayList<CartItem> items) {
         this.orderId = orderId;
-        this.customerId = customerId;
+        this.userId = userId;
         this.shippingAddress = shippingAddress;
         this.trackingNumber = trackingNumber;
         this.isShipped = isShipped;
@@ -44,6 +45,23 @@ public class Order {
         OrderDataMapper.update(this);
     }
 
+    public void setOrderOwner(UUID user_id) throws DataMapperException, OrderNotFoundException, OrderAlreadyBelongsToCustomerException {
+
+        ArrayList<Order> ordersResult = OrderDataMapper.getOrders(this.orderId, null);
+
+        if (ordersResult.isEmpty()) {
+            throw new OrderNotFoundException("No order was found with this order_id.");
+        }
+
+        Order order = ordersResult.get(0);
+        if (order.userId != null) {
+            throw new OrderAlreadyBelongsToCustomerException("This order is already assigned to a customer.");
+        }
+
+        this.userId = user_id;
+        OrderDataMapper.update(this);
+    }
+
     public static ArrayList<Order> getAllOrders() throws DataMapperException {
         return OrderDataMapper.getOrders(-1, null);
     }
@@ -56,8 +74,8 @@ public class Order {
         return ordersResult.get(0);
     }
 
-    public static ArrayList<Order> getOrdersByCustomer(UUID customerId) throws DataMapperException {
-        return OrderDataMapper.getOrders(-1, customerId);
+    public static ArrayList<Order> getOrdersByUser(UUID userId) throws DataMapperException {
+        return OrderDataMapper.getOrders(-1, userId);
     }
 
 
@@ -65,12 +83,12 @@ public class Order {
     //* getters and setters
     //*******************************************************************************
 
-    public UUID getCustomerId() {
-        return customerId;
+    public UUID getUserId() {
+        return userId;
     }
 
-    public void setCustomer(UUID customerId) {
-        this.customerId = customerId;
+    public void setUser(UUID userId) {
+        this.userId = userId;
     }
 
     public int getOrderId() {
@@ -105,8 +123,8 @@ public class Order {
         isShipped = shipped;
     }
 
-    public void setCustomerId(UUID customerId) {
-        this.customerId = customerId;
+    public void setUserId(UUID userId) {
+        this.userId = userId;
     }
 
     public ArrayList<CartItem> getItems() {

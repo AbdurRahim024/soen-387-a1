@@ -18,7 +18,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-@WebServlet(name = "ordersServlet", value = {"/orders/*", "/orderForm", "/createOrder", "/shipOrder"})
+@WebServlet(name = "ordersServlet", value = {"/orders/*", "/orderForm", "/createOrder", "/shipOrder", "/claim"})
 public class OrdersServlet extends HttpServlet{
     LogicFacade logic = new LogicFacade();
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException{
@@ -69,7 +69,7 @@ public class OrdersServlet extends HttpServlet{
 
                 if (found) {
                     if (type.equals("user")) {
-                        orders = logic.getOrdersByCustomer(customerId);
+                        orders = logic.getOrdersByUser(customerId);
                     } else {
                         orders = logic.getAllOrders();
                     }
@@ -162,6 +162,13 @@ public class OrdersServlet extends HttpServlet{
             dispatcher.forward(request, response);
 
         }
+
+        //TODO: /claim
+        else if (url.equals("/claim")) {
+            String shipping_address = (String) request.getAttribute("shipping_address");
+
+        }
+
     }
     private String getCustomerID(String password) throws CsvValidationException, IOException, FileDownloadException {
         String customerId = "";

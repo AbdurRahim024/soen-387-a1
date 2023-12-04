@@ -25,7 +25,7 @@ import java.util.ArrayList;
 public class CartServlet extends HttpServlet {
     LogicFacade logic = new LogicFacade();
 
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException { //TODO: ideally servlets should only throw servletException, catch everything else and set error codes of response
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String url = request.getRequestURI();
 
         //Displaying the cart
@@ -81,7 +81,7 @@ public class CartServlet extends HttpServlet {
                 response.setStatus(HttpServletResponse.SC_OK);
             } catch (CsvValidationException | FileDownloadException | DataMapperException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            }catch (UserNotFoundException | ProductNotFoundException e) {
+            } catch (UserNotFoundException | ProductNotFoundException e) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             }
             response.sendRedirect("/cart");
@@ -149,7 +149,7 @@ public class CartServlet extends HttpServlet {
     //This method helps to get the customerID associated with a given password
     private String getCustomerID(String password) throws CsvValidationException, IOException, FileDownloadException {
         String customerId = "";
-        try (CSVReader reader = new CSVReader(new FileReader(ConfigManager.getCsvPath()))) { //TODO: shouldn't have try block without catch, here you could catch and rethrow a custom exception while still showing the original exception message "throw new CustomerLoginError("Error while .." + e)"
+        try (CSVReader reader = new CSVReader(new FileReader(ConfigManager.getCsvPath()))) {
             String[] line;
             while ((line = reader.readNext()) != null) {
                 String newPass = line[1];
