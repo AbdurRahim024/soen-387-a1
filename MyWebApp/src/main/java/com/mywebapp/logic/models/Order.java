@@ -1,6 +1,7 @@
 package com.mywebapp.logic.models;
 
 import com.mywebapp.logic.custom_errors.DataMapperException;
+import com.mywebapp.logic.custom_errors.OrderAlreadyBelongsToCustomerException;
 import com.mywebapp.logic.custom_errors.OrderNotFoundException;
 import com.mywebapp.logic.mappers.OrderDataMapper;
 import java.util.ArrayList;
@@ -44,8 +45,19 @@ public class Order {
         OrderDataMapper.update(this);
     }
 
-    public void setOrderOwner(UUID user_id) throws DataMapperException {
-        //TODO: check if the owner already belongs to someone, if so throw error
+    public void setOrderOwner(UUID user_id) throws DataMapperException, OrderNotFoundException, OrderAlreadyBelongsToCustomerException {
+
+        ArrayList<Order> ordersResult = OrderDataMapper.getOrders(this.orderId, null);
+
+        if (ordersResult.isEmpty()) {
+            throw new OrderNotFoundException("No order was found with this order_id.");
+        }
+
+        Order order = ordersResult.get(0);
+        if (order.userId != null) {
+            throw new OrderAlreadyBelongsToCustomerException("This order is already assigned to a customer.");
+        }
+
         this.userId = user_id;
         OrderDataMapper.update(this);
     }

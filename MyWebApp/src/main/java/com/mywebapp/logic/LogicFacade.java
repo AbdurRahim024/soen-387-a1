@@ -124,7 +124,7 @@ public class LogicFacade {
         User.addUserToDb(passcode);
     }
 
-    public void setOrderOwner(int orderId, String userId) throws OrderNotFoundException, DataMapperException {
+    public void setOrderOwner(int orderId, String userId) throws OrderNotFoundException, DataMapperException, OrderAlreadyBelongsToCustomerException {
         Order order = Order.getOrderByGuid(orderId);
         order.setOrderOwner(UUID.fromString(userId));
     }

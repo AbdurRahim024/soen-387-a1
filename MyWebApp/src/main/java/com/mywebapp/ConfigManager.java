@@ -16,6 +16,7 @@ public class ConfigManager {
         PASSWORD
     }
 
+    //TODO: update this so it works for sqlite db
     private static JSONObject getConfig() throws DataMapperException {
         String content;
         try {

@@ -29,7 +29,7 @@ public class UserDataMapper {
         }
     }
 
-    //TODO: update db so it contains user id as well
+
     public static void update(User user) throws DataMapperException {
         try {
 
