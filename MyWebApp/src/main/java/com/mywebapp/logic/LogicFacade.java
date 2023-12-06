@@ -137,7 +137,7 @@ public class LogicFacade {
         return User.getAllUsers();
     }
 
-    public void changeRole(String passcode) throws UserNotFoundException, DataMapperException {
+    public void changeRole(String passcode) throws UserNotFoundException, DataMapperException, UserNotAuthorized {
         User.changeRole(passcode);
 
     }
