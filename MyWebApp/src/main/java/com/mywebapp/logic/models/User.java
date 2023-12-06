@@ -2,6 +2,7 @@ package com.mywebapp.logic.models;
 
 import com.mywebapp.logic.custom_errors.UserAlreadyExistsException;
 import com.mywebapp.logic.custom_errors.DataMapperException;
+import com.mywebapp.logic.custom_errors.UserNotAuthorized;
 import com.mywebapp.logic.custom_errors.UserNotFoundException;
 import com.mywebapp.logic.mappers.UserDataMapper;
 
@@ -82,13 +83,20 @@ public class User {
         return UserDataMapper.findUsers(null, "");
     }
 
-    public static void changeRole(String passcode) throws UserNotFoundException, DataMapperException {
+    public static void changeRole(String passcode) throws UserNotFoundException, DataMapperException, UserNotAuthorized {
         ArrayList<User> users = UserDataMapper.findUsers(null, passcode);
         if (users.isEmpty()) {
             throw new UserNotFoundException("This user was not found.");
         }
 
+        //TODO: check that the user is staff otherwise they cant assign roles
+
+
         User user = users.get(0);
+
+        if (user.userType != UserType.STAFF) {
+            throw new UserNotAuthorized("This user is not allowed to grant or revoke staff privileges");
+        }
 
         if (user.userType == UserType.CUSTOMER) {
             user.userType = UserType.STAFF;
