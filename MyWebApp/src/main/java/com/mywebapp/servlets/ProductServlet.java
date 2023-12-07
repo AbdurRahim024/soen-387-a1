@@ -51,14 +51,6 @@ public class ProductServlet extends HttpServlet {
             } catch (DataMapperException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
-            if (UsersServlet.isValid.equals("true")) {
-                request.setAttribute("isLoggedIn", UsersServlet.isValid);
-                request.setAttribute("userType", UsersServlet.type);
-            } else {
-                request.setAttribute("isLoggedIn", "Log in or register first to items to cart");
-                request.setAttribute("userType", UsersServlet.type);
-            }
-
             RequestDispatcher dispatcher = request.getRequestDispatcher("/products.jsp");
             dispatcher.forward(request, response);
         }
