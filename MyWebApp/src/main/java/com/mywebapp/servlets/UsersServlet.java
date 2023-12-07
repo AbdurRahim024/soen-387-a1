@@ -23,9 +23,10 @@ public class UsersServlet extends HttpServlet {
     static String type = "user";
     static String isValid = "false";
     static String pass = "guest";
+
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String url = request.getRequestURI();
-        
+
         if (url.equals("/logout")) {
             isValid = "false";
             pass = "guest";
@@ -35,9 +36,7 @@ public class UsersServlet extends HttpServlet {
             RequestDispatcher dispatcher = request.getRequestDispatcher("/home.jsp");
             response.setStatus(HttpServletResponse.SC_OK);
             dispatcher.forward(request, response);
-        }
-
-        else if (url.equals("/users")) {
+        } else if (url.equals("/users")) {
             if (type.equals("admin")) {
                 try {
                     ArrayList<User> users = logic.getUsers();
@@ -51,12 +50,12 @@ public class UsersServlet extends HttpServlet {
                 RequestDispatcher dispatcher = request.getRequestDispatcher("/users.jsp");
                 dispatcher.forward(request, response);
             }
-        }
-
-        else if (url.equals("/grant") || url.equals("/revoke")) {
+        } else if (url.equals("/grant") || url.equals("/revoke")) {
             if (type.equals("admin")) {
                 String isAllowed = "You are not authorized!";
                 String password = request.getParameter("password");
+                request.setAttribute("isLoggedIn", UsersServlet.isValid);
+                request.setAttribute("userType", UsersServlet.type);
                 response.setStatus(HttpServletResponse.SC_OK);
 
                 try {
@@ -82,7 +81,7 @@ public class UsersServlet extends HttpServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String url = request.getRequestURI();
 
-        if(url.equals("/authenticateUser")){
+        if (url.equals("/authenticateUser")) {
             String password = request.getParameter("password");
             boolean exist;
             try {
@@ -91,18 +90,17 @@ public class UsersServlet extends HttpServlet {
                 throw new RuntimeException(e);
             }
 
-            if (exist){
-                isValid = "true";
+            if (exist) {
+                UsersServlet.isValid = "true";
                 try {
                     type = logic.getUserType(password);
                 } catch (UserNotFoundException | DataMapperException e) {
                     throw new RuntimeException(e);
                 }
+            } else {
+                UsersServlet.isValid = "false";
             }
-            else{
-                isValid = "false";
-            }
-            pass = password;
+            UsersServlet.pass = password;
             response.setStatus(HttpServletResponse.SC_OK);
 
             if (isValid.equals("true")) {
@@ -161,5 +159,4 @@ public class UsersServlet extends HttpServlet {
             dispatcher.forward(request, response);
         }
     }
-
 }

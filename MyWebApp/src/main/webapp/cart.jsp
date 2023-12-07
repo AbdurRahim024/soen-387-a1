@@ -14,7 +14,6 @@
             padding: 0;
             font-family: 'Arial', sans-serif;
             background-color: rgba(0, 0, 0, 0.5);
-            color: #fff;
         }
 
         nav {
@@ -97,6 +96,30 @@
             border-radius: 5px;
             cursor: pointer;
         }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            border-radius: 5px;
+            width: 300px;
+        }
+
+        .close {
+            float: right;
+            cursor: pointer;
+        }
     </style>
 </head>
 <script>
@@ -108,9 +131,10 @@
 
         let totalElement = document.getElementById("total").innerText;
         let priceElement = document.getElementById("price").innerText;
+        let quantityElement = document.getElementById("quantity").innerText;
         console.log(totalElement);
         console.log(priceElement);
-        document.getElementById("total").innerText = parseFloat(totalElement) - parseFloat(priceElement);
+        document.getElementById("total").innerText = parseFloat(totalElement) - (parseFloat(priceElement) * parseFloat(quantityElement));
         document.getElementById("remove-row").remove();
 
     }
@@ -131,7 +155,11 @@
         <a href="/cart">Cart</a>
         <a href="/orders">View Orders</a>
         <a href="/logout">Logout</a>
- <% } %>
+ <% } else { %>
+    <a href="/cart">Cart</a>
+    <a href="#" id="login-button">Login</a>
+    <a href="#" id="register-button">Set Passcode</a>
+    <% } %>
 </nav>
 <div class="container">
     <h1>My Cart</h1>
@@ -140,6 +168,32 @@
         <form action="/cart/clearCart" method="get">
             <button type="submit" class="btn">Clear cart</button>
         </form>
+    </div>
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="loginClose">&times;</span>
+            <h2>Login</h2>
+            <form action="/authenticateUser" method="post">
+                <label for="loginPassword">Password:</label>
+                <input type="password" id="loginPassword" name="password" required>
+                <input type="submit" value="Login">
+            </form>
+        </div>
+    </div>
+
+    <!-- Set Passcode Modal -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="registerClose">&times;</span>
+            <h2>Set Passcode</h2>
+            <form id="reg" action="/registerUser" method="POST">
+                <label for="registerPassword">Password:</label>
+                <input type="password" id="registerPassword" name="password" required>
+                <span id="passwordError" class="error-message"></span>
+                <input type="submit" value="Set Passcode">
+            </form>
+        </div>
     </div>
 
     <%
@@ -213,5 +267,39 @@
 </div>
 </body>
 <script>
+    const loginModal = document.getElementById("loginModal");
+    const registerModal = document.getElementById("registerModal");
+    if (document.getElementById("change-button") != null) {
+        const changePassModal = document.getElementById("changePassModal");
+        const changePassButton = document.getElementById("change-button");
+        const changePassClose = document.getElementById("changePassClose");
+        changePassButton.addEventListener("click", () => {
+            changePassModal.style.display = "block";
+        });
+
+        changePassClose.addEventListener("click", () => {
+            changePassModal.style.display = "none";
+        });
+    }
+    const loginButton = document.getElementById("login-button");
+    const registerButton = document.getElementById("register-button");
+    const loginClose = document.getElementById("loginClose");
+    const registerClose = document.getElementById("registerClose");
+
+    loginButton.addEventListener("click", () => {
+        loginModal.style.display = "block";
+    });
+
+    registerButton.addEventListener("click", () => {
+        registerModal.style.display = "block";
+    });
+
+    loginClose.addEventListener("click", () => {
+        loginModal.style.display = "none";
+    });
+
+    registerClose.addEventListener("click", () => {
+        registerModal.style.display = "none";
+    });
 </script>
 </html>
