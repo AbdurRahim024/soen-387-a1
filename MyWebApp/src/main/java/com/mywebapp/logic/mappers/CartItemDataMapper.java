@@ -22,6 +22,7 @@ public class CartItemDataMapper {
             dbStatement.setString(2, cart_id.toString());
 
             ResultSet rs = dbStatement.executeQuery();
+            CartItem item = null;
 
             while (rs.next()) {
                 UUID sku = UUID.fromString(rs.getString("sku"));
@@ -29,18 +30,18 @@ public class CartItemDataMapper {
                 int quantity = rs.getInt("quantity");
 
                 Product product = ProductDataMapper.findBySkuOrSlug(sku, "");
-                return new CartItem(product, cartId, quantity);
+                item = new CartItem(product, cartId, quantity);
             }
 
 
             dbStatement.close();
             rs.close();
             db.close();
+            return item;
         } catch (SQLException | ClassNotFoundException e) {
             throw new DataMapperException("Error occurred while getting a row in the CartItems table: " + e);
         }
 
-        return null;
     }
 
     

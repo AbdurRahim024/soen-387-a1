@@ -155,6 +155,16 @@ public class LogicFacade {
         return User.doesUserExist(passcode);
     }
 
+    public String getUserType(String passcode) throws UserNotFoundException, DataMapperException {
+        User user = User.getUserByPasscode(passcode);
+        if (user.getUserType().equals(User.UserType.CUSTOMER)) {
+            return "user";
+        }
+        else {
+            return "admin";
+        }
+    }
+
     //TODO: add unit tests
     
 }
