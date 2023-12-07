@@ -30,7 +30,7 @@ public class ProductDataMapper {
             }
 
             ResultSet rs = dbStatement.executeQuery();
-            Product product;
+            Product product = null;
 
             while (rs.next()) {
                 UUID sku = UUID.fromString(rs.getString("sku"));
@@ -41,18 +41,18 @@ public class ProductDataMapper {
                 double price = rs.getDouble("price");
 
                 product = new Product(sku, name, description, vendor, urlSlug, price);
-                return product;
-            }
 
+            }
 
             dbStatement.close();
             rs.close();
             db.close();
+
+            return product;
         } catch (SQLException | ClassNotFoundException e) {
             throw new DataMapperException("Error occurred while getting a row in the Products table" + e);
         }
 
-        return null;
     }
 
     public static void insert(Product product) throws DataMapperException {
@@ -135,19 +135,19 @@ public class ProductDataMapper {
             dbStatement.setDouble(5, price);
             ResultSet rs = dbStatement.executeQuery();
 
+            boolean productExists = false;
             while (rs.next()) {
-                return true;
+                productExists = true;
             }
 
             dbStatement.close();
             rs.close();
             db.close();
+            return productExists;
 
         } catch (SQLException | ClassNotFoundException e) {
             throw new DataMapperException("Error occurred while searching for a row in the Products table: " + e);
         }
-
-        return false;
     }
 
     public static ArrayList<Product> getAllProducts() throws DataMapperException {

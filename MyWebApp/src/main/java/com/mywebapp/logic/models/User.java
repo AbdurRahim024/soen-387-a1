@@ -88,8 +88,6 @@ public class User {
             throw new UserNotFoundException("This user was not found.");
         }
 
-        //TODO: check that the user is staff otherwise they cant assign roles
-
         User user = users.get(0);
 
         if (user.userType == UserType.CUSTOMER) {
@@ -118,7 +116,7 @@ public class User {
     }
     public static boolean doesUserExist(String passcode) throws DataMapperException {
         ArrayList<User> users = UserDataMapper.findUsers(null, passcode);
-        return users.isEmpty();
+        return !users.isEmpty();
     }
 
 

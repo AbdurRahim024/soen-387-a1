@@ -39,18 +39,15 @@ public class OrdersServlet extends HttpServlet{
         else if (url.equals("/orders")){
             request.setAttribute("isLoggedIn", UsersServlet.isValid);
             request.setAttribute("userType", UsersServlet.type);
-            String password = UsersServlet.pass;
-            String type = UsersServlet.type;
-            String customerId;
+
             ArrayList<Order> orders = null;
-            response.setStatus(HttpServletResponse.SC_OK);
             try {
-                customerId = logic.getUserIdByPasscode(password);
-                if (type.equals("user")) {
-                    orders = logic.getOrdersByUser(customerId);
+                if (UsersServlet.type.equals("user")) {
+                    orders = logic.getOrdersByUser(UsersServlet.pass);
                 } else {
                     orders = logic.getAllOrders();
                 }
+                response.setStatus(HttpServletResponse.SC_OK);
             } catch (UserNotFoundException e) {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             } catch (DataMapperException | OrderNotFoundException e) {
@@ -74,14 +71,11 @@ public class OrdersServlet extends HttpServlet{
             String urlSlug = fullUrl[fullUrl.length-1];
             String[] fullOrderId = urlSlug.split(":");
             int orderId = Integer.parseInt(fullOrderId[fullOrderId.length-1]);
-            String password = UsersServlet.pass;
-            String customerId = null;
             Order order = null;
             response.setStatus(HttpServletResponse.SC_OK);
 
             try {
-                customerId = logic.getUserIdByPasscode(password);
-                order = logic.getOrderDetails(UsersServlet.type, customerId, orderId);
+                order = logic.getOrderDetails(UsersServlet.type, UsersServlet.pass, orderId);
             } catch (DataMapperException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             } catch (UserNotFoundException | OrderNotFoundException e) {
@@ -103,15 +97,14 @@ public class OrdersServlet extends HttpServlet{
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
         String url = request.getRequestURI();
         ArrayList<Order> orders = null;
+
+
         if (url.equals("/createOrder")){
-            String password = UsersServlet.pass;
-            String customerId = null;
             String shippingAddress = request.getParameter("shippingAddress");
-            response.setStatus(HttpServletResponse.SC_OK);
 
             try {
-                customerId = logic.getUserIdByPasscode(password);
-                logic.createOrder(customerId, shippingAddress);
+                logic.createOrder(UsersServlet.pass, shippingAddress);
+                response.setStatus(HttpServletResponse.SC_OK);
             } catch (DataMapperException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             } catch (UserNotFoundException e) {
@@ -119,7 +112,8 @@ public class OrdersServlet extends HttpServlet{
             }
             response.sendRedirect("/cart");
         }
-        if (url.equals("/shipOrder")){
+
+        else if (url.equals("/shipOrder")){
             request.setAttribute("isLoggedIn", UsersServlet.isValid);
             request.setAttribute("userType", UsersServlet.type);
             int orderId = Integer.parseInt(request.getParameter("orderId"));

@@ -25,6 +25,7 @@ public class UsersServlet extends HttpServlet {
     static String pass = "guest";
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String url = request.getRequestURI();
+        
         if (url.equals("/logout")) {
             isValid = "false";
             pass = "guest";
@@ -38,21 +39,20 @@ public class UsersServlet extends HttpServlet {
 
         else if (url.equals("/users")) {
             if (type.equals("admin")) {
-            try {
-                ArrayList<User> users = logic.getUsers();
-                request.setAttribute("users", users);
-                response.setStatus(HttpServletResponse.SC_OK);
-            } catch (Exception e) {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            }
-            request.setAttribute("isLoggedIn", UsersServlet.isValid);
-            request.setAttribute("userType", UsersServlet.type);
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/users.jsp");
-            dispatcher.forward(request, response);
+                try {
+                    ArrayList<User> users = logic.getUsers();
+                    request.setAttribute("users", users);
+                    response.setStatus(HttpServletResponse.SC_OK);
+                } catch (Exception e) {
+                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                }
+                request.setAttribute("isLoggedIn", UsersServlet.isValid);
+                request.setAttribute("userType", UsersServlet.type);
+                RequestDispatcher dispatcher = request.getRequestDispatcher("/users.jsp");
+                dispatcher.forward(request, response);
             }
         }
 
-        //TODO: check dispatched
         else if (url.equals("/grant") || url.equals("/revoke")) {
             if (type.equals("admin")) {
                 String isAllowed = "You are not authorized!";
@@ -90,14 +90,21 @@ public class UsersServlet extends HttpServlet {
             } catch (DataMapperException e) {
                 throw new RuntimeException(e);
             }
+
             if (exist){
                 isValid = "true";
+                try {
+                    type = logic.getUserType(password);
+                } catch (UserNotFoundException | DataMapperException e) {
+                    throw new RuntimeException(e);
+                }
             }
             else{
                 isValid = "false";
             }
             pass = password;
             response.setStatus(HttpServletResponse.SC_OK);
+
             if (isValid.equals("true")) {
                 request.setAttribute("isLoggedIn", isValid);
                 request.setAttribute("userType", type);

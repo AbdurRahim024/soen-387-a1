@@ -16,7 +16,7 @@ public class OrderDataMapper {
         try {
             Class.forName("org.sqlite.JDBC");
             Connection db = DriverManager.getConnection(ConfigManager.getDbParameter(ConfigManager.DbParameter.URL));
-            String statement = "INSERT INTO `orders` (`customer_id`, `shipping_address`, `is_shipped`, `items`) VALUES (?, ?, ?, ?)";
+            String statement = "INSERT INTO `orders` (`user_id`, `shipping_address`, `is_shipped`, `items`) VALUES (?, ?, ?, ?)";
 
             byte[] itemsBytes = serialize(order.getItems());
             ByteArrayInputStream bais = new ByteArrayInputStream(itemsBytes);
@@ -58,7 +58,7 @@ public class OrderDataMapper {
 
     }
 
-    public static ArrayList<Order> getOrders(int orderId, UUID customerId) throws DataMapperException {
+    public static ArrayList<Order> getOrders(int orderId, UUID userId) throws DataMapperException {
         ArrayList<Order> orders = new ArrayList<>();
 
         try {
@@ -66,33 +66,33 @@ public class OrderDataMapper {
             Connection db = DriverManager.getConnection(ConfigManager.getDbParameter(ConfigManager.DbParameter.URL));
             PreparedStatement dbStatement;
 
-            if (orderId == -1 && customerId == null) { //get all orders
+            if (orderId == -1 && userId == null) { //get all orders
                 String statement = "SELECT * FROM `orders`";
                 dbStatement = db.prepareStatement(statement);
 
             }
-            else if (customerId == null) { // get a specific order
+            else if (userId == null) { // get a specific order
                 String statement = "SELECT * FROM `orders` WHERE `order_id`=?";
                 dbStatement = db.prepareStatement(statement);
                 dbStatement.setInt(1, orderId);
             }
             else { // get a customer's orders
-                String statement = "SELECT * FROM `orders` WHERE `customer_id`=?";
+                String statement = "SELECT * FROM `orders` WHERE `user_id`=?";
                 dbStatement = db.prepareStatement(statement);
-                dbStatement.setString(1, customerId.toString());
+                dbStatement.setString(1, userId.toString());
             }
 
             ResultSet rs = dbStatement.executeQuery();
 
             while (rs.next()) {
                 int order_id = rs.getInt("order_id");
-                UUID customer_id = UUID.fromString(rs.getString("customer_id"));
+                UUID user_id = UUID.fromString(rs.getString("user_id"));
                 String shipping_address = rs.getString("shipping_address");
                 UUID tracking_number = rs.getString("tracking_number") == null ? null : UUID.fromString(rs.getString("tracking_number"));
                 boolean is_shipped = rs.getBoolean("is_shipped");
                 ArrayList<CartItem> items = deserialize(rs.getBinaryStream("items"));
 
-                Order order = new Order(order_id, customer_id, shipping_address, tracking_number, is_shipped, items);
+                Order order = new Order(order_id, user_id, shipping_address, tracking_number, is_shipped, items);
                 orders.add(order);
             }
 
