@@ -148,44 +148,51 @@
 </head>
 <body>
 <nav>
-<a href="/home">Home</a>
-<a href="/products">Products</a>
-<% String isLoggedIn = (String) request.getAttribute("isLoggedIn");
-    String userType = (String) request.getAttribute("userType");
-    if (isLoggedIn != null && isLoggedIn.equals("true")) { %>
-<% if (userType.equals("admin")) { %>
-<a href="/createProduct">Create New Product</a>
-<a href="/products/download">Download Catalog</a>
-<a href="/users">User Control</a>
-<% } %>
-<a href="/cart">Cart</a>
-<a href="/orders">View Orders</a>
-<a href="/logout">Logout</a>
+    <a href="/home">Home</a>
+    <a href="/products">Products</a>
+    <% String isLoggedIn = (String) request.getAttribute("isLoggedIn");
+        String userType = (String) request.getAttribute("userType");
+        String isChanged = (String) request.getAttribute("isChanged");
+        if (isLoggedIn != null && isLoggedIn.equals("true")) { %>
+    <% if (userType.equals("admin")) { %>
+    <a href="/createProduct">Create New Product</a>
+    <a href="/products/download">Download Catalog</a>
+    <a href="/users">User Control</a>
+    <% }  %>
+    <a href="/cart">Cart</a>
+    <a href="/orders">View Orders</a>
+    <a href="#" id="change-button">Change passcode</a>
+    <a href="/logout">Logout</a>
 
-<% } else if (isLoggedIn != null && isLoggedIn.equals("Incorrect password or password does not exist")){ %>
-<a href="#" id="login-button">Login</a>
-<a href="#" id="register-button">Register</a>
-<br>
-<p>${isLoggedIn}</p>
-<% } else if (isLoggedIn != null && isLoggedIn.equals("Successfully logged out")){ %>
-<a href="#" id="login-button">Login</a>
-<a href="#" id="register-button">Register</a>
-<br>
-<p>${isLoggedIn}</p>
-<% } else if (isLoggedIn != null && isLoggedIn.equals("Successfully registered")){ %>
-<a href="#" id="login-button">Login</a>
-<a href="#" id="register-button">Register</a>
-<br>
-<p>${isLoggedIn}</p>
-<% } else if (isLoggedIn != null && isLoggedIn.equals("Password already exists, try registering with a different password")){ %>
-<a href="#" id="login-button">Login</a>
-<a href="#" id="register-button">Register</a>
-<br>
-<p>${isLoggedIn}</p>
-<% }  else { %>
-<a href="#" id="login-button">Login</a>
-<a href="#" id="register-button">Register</a>
-<% } %>
+    <% if (isChanged != null) { %>
+    <br>
+    <p>${isChanged}</p>
+    <% } %>
+    <% } else if (isLoggedIn != null && isLoggedIn.equals("Incorrect password or password does not exist")){ %>
+    <a href="#" id="login-button">Login</a>
+    <a href="#" id="register-button">Set Passcode</a>
+    <br>
+    <p>${isLoggedIn}</p>
+    <% } else if (isLoggedIn != null && isLoggedIn.equals("Successfully logged out")){ %>
+    <a href="#" id="login-button">Login</a>
+    <a href="#" id="register-button">Set Passcode</a>
+    <br>
+    <p>${isLoggedIn}</p>
+    <% } else if (isLoggedIn != null && isLoggedIn.equals("Successfully registered")){ %>
+    <a href="#" id="login-button">Login</a>
+    <a href="#" id="register-button">Set Passcode</a>
+    <br>
+    <p>${isLoggedIn}</p>
+    <% } else if (isLoggedIn != null && isLoggedIn.equals("Password already exists, try registering with a different password")){ %>
+    <a href="#" id="login-button">Login</a>
+    <a href="#" id="register-button">Set Passcode</a>
+    <br>
+    <p>${isLoggedIn}</p>
+    <% }  else { %>
+    <a href="/cart">Cart</a>
+    <a href="#" id="login-button">Login</a>
+    <a href="#" id="register-button">Set Passcode</a>
+    <% } %>
 </nav>
 <div id="loginModal" class="modal">
     <div class="modal-content">
@@ -223,7 +230,7 @@
                 <div class="button-container">
                     <form action="/cart/products/<%=product.getUrlSlug()%>" method="post">
                         <input type="hidden" name="productSku" value="<%=product.getSku()%>">
-                       <% if (isLoggedIn != null && isLoggedIn.equals("true")) { %>
+                       <% if (isLoggedIn != null) { %>
                         <button class="btn" type="submit">Add to Cart</button>
                         <% } else { %>
                         <p>Log in to add items to cart</p>

@@ -64,7 +64,7 @@ public class OrdersServlet extends HttpServlet{
                             break;
                         }
                     }
-                    customerId = getCustomerID(password);
+                    customerId = logic.getUserIdByPasscode(password);
                 }
 
                 if (found) {
@@ -104,9 +104,9 @@ public class OrdersServlet extends HttpServlet{
             response.setStatus(HttpServletResponse.SC_OK);
 
             try {
-                customerId = getCustomerID(password);
+                customerId = logic.getUserIdByPasscode(password);
                 order = logic.getOrderDetails(UsersServlet.type, customerId, orderId);
-            } catch (IOException | CsvValidationException | FileDownloadException | DataMapperException e) {
+            } catch (DataMapperException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             } catch (UserNotFoundException | OrderNotFoundException e) {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -135,9 +135,9 @@ public class OrdersServlet extends HttpServlet{
             response.setStatus(HttpServletResponse.SC_OK);
 
             try {
-                customerId = getCustomerID(password);
+                customerId = logic.getUserIdByPasscode(password);
                 logic.createOrder(customerId, shippingAddress);
-            } catch (CsvValidationException | FileDownloadException | DataMapperException e) {
+            } catch (DataMapperException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             } catch (UserNotFoundException e) {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -182,22 +182,5 @@ public class OrdersServlet extends HttpServlet{
 
 
 
-    }
-    private String getCustomerID(String password) throws CsvValidationException, IOException, FileDownloadException {
-        String customerId = "";
-        try (CSVReader reader = new CSVReader(new FileReader(ConfigManager.getCsvPath()))) {
-            String[] line;
-            while ((line = reader.readNext()) != null) {
-                String newPass = line[1];
-                if (newPass.equals("password")) {
-                    continue;
-                }
-                if(password.equals(newPass)){
-                    customerId = line[0];
-                    break;
-                }
-            }
-        }
-        return customerId;
     }
 }
