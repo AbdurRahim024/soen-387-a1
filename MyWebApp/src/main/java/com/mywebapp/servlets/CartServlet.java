@@ -75,10 +75,9 @@ public class CartServlet extends HttpServlet {
             String sku = request.getParameter("productSku");
             String passcode = UsersServlet.pass;
             try {
-                customerId = getCustomerID(password);
-                logic.addProductToCart(customerId, sku);
+                logic.addProductToCart(passcode, sku);
                 response.setStatus(HttpServletResponse.SC_OK);
-            } catch (CsvValidationException | FileDownloadException | DataMapperException e) {
+            } catch (DataMapperException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             } catch (UserNotFoundException | ProductNotFoundException e) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -139,8 +138,6 @@ public class CartServlet extends HttpServlet {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             } catch (UserNotFoundException | ProductNotFoundException e) {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            } catch (DataMapperException e) {
-                throw new RuntimeException(e);
             }
         }
 
