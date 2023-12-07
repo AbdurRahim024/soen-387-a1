@@ -1,3 +1,5 @@
+<%@ page import="com.mywebapp.logic.models.User" %>
+<%@ page import="java.util.ArrayList" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -101,13 +103,14 @@
         </tr>
         </thead>
         <tbody>
-        <%
-//            ArrayList<CartItem> list = (ArrayList<CartItem>) request.getAttribute("cart");
-//            for (CartItem item : list) {
-//                price = item.getPrice();
-//                String name = item.getName();
-//            TODO: GET USERS LIST ATTRIBUTE
-        %>
+<%--        <%--%>
+<%--            ArrayList<User> list = (ArrayList<User>) request.getAttribute("users");--%>
+<%--            String name =--%>
+<%--            for (User user : list) {--%>
+<%--                price = item.getPrice();--%>
+<%--                String name = item.getName();--%>
+<%--            TODO: GET USERS LIST ATTRIBUTE--%>
+<%--        %>--%>
         <tr id="remove-row">
             <td></td>
             <td>Placeholder</td>
