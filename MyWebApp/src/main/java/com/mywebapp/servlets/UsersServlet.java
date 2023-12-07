@@ -5,8 +5,6 @@ import com.mywebapp.logic.LogicFacade;
 import com.mywebapp.logic.custom_errors.*;
 import com.mywebapp.logic.models.Product;
 import com.mywebapp.logic.models.User;
-import com.opencsv.CSVReader;
-import com.opencsv.exceptions.CsvValidationException;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -25,17 +23,6 @@ public class UsersServlet extends HttpServlet {
     static String type = "user";
     static String isValid = "false";
     static String pass = "guest";
-    private void addToUsers(String customerId, String password, String type) throws IOException, FileDownloadException{
-        FileWriter fileWriter = new FileWriter(ConfigManager.getCsvPath(), true);
-        BufferedWriter writer = new BufferedWriter(fileWriter);
-
-        String newData = customerId + "," +  password + "," +  type;
-
-        writer.write(newData);
-        writer.newLine();
-        writer.close();
-
-    }
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String url = request.getRequestURI();
         if (url.equals("/logout")) {
@@ -68,16 +55,18 @@ public class UsersServlet extends HttpServlet {
         //TODO: check dispatched
         else if (url.equals("/grant") || url.equals("/revoke")) {
             if (type.equals("admin")) {
-                String passcode = request.getParameter("passcode");
+                String isAllowed = "You are not authorized!";
+                String password = request.getParameter("password");
                 response.setStatus(HttpServletResponse.SC_OK);
 
                 try {
-                    logic.changeRole(passcode);
+                    logic.changeRole(password);
                 } catch (UserNotFoundException e) {
                     response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 } catch (DataMapperException e) {
                     response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 } catch (UserNotAuthorized e) {
+                    request.setAttribute("isAllowed", isAllowed);
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 }
 
@@ -94,35 +83,31 @@ public class UsersServlet extends HttpServlet {
         String url = request.getRequestURI();
 
         if(url.equals("/authenticateUser")){
-            File users_file = null;
+            String password = request.getParameter("password");
+            boolean exist;
             try {
-                users_file = new File(ConfigManager.getCsvPath());
-            } catch (FileDownloadException e) {
+                exist = logic.doesUserExist(password);
+            } catch (DataMapperException e) {
                 throw new RuntimeException(e);
             }
-            String password = request.getParameter("password");
-            response.setStatus(HttpServletResponse.SC_OK);
-            try (CSVReader reader = new CSVReader(new FileReader(users_file))) {
-                String[] line;
-                while ((line = reader.readNext()) != null) {
-                    String newPass = line[1];
-                    type = line[2];
-                    if (newPass.equals("password")) { // skip if the first row (titles) is being read
-                        continue;
-                    }
-
-                    if(password.equals(newPass)){
-                        UsersServlet.isValid = "true";
-                        pass = password;
-                        break;
-                    }
-                }
-            } catch (CsvValidationException e) {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            if (exist){
+                isValid = "true";
             }
+            else{
+                isValid = "false";
+            }
+            pass = password;
+            response.setStatus(HttpServletResponse.SC_OK);
             if (isValid.equals("true")) {
                 request.setAttribute("isLoggedIn", isValid);
                 request.setAttribute("userType", type);
+                try {
+                    logic.clearUnknownCart();
+                } catch (UserNotFoundException e) {
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                } catch (DataMapperException e) {
+                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                }
             } else {
                 request.setAttribute("isLoggedIn", "Incorrect password or password does not exist");
                 request.setAttribute("userType", type);
@@ -134,39 +119,14 @@ public class UsersServlet extends HttpServlet {
         //Checking if the user exists else adding the user to the text file
         if (url.equals("/registerUser")) {
             String password = request.getParameter("password");
-            File users_file = null;
-            response.setStatus(HttpServletResponse.SC_OK);
-
-            try {
-                users_file = new File(ConfigManager.getCsvPath());
-            } catch (FileDownloadException e) {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            }
             String isRegistered = "Successfully registered";
-
-            try (CSVReader reader = new CSVReader(new FileReader(users_file))) {
-                String[] line;
-                while ((line = reader.readNext()) != null) {
-                    if (line.length < 2) {
-                        break;
-                    }
-                    String newPass = line[1];
-                    if (newPass.equals("password")) { // skip if the first row (titles) is being read
-                        continue;
-                    }
-                    if(password.equals(newPass)){
-                        isRegistered = "Password already exists, try registering with a different password";
-                        break;
-                    }
-                }
-
-                if (isRegistered.equals("Successfully registered")) {
-                    logic.createUser("emma");
-                    addToUsers("000001", password, "user");
-                }
-            }  catch (FileNotFoundException | DataMapperException | CsvValidationException | FileDownloadException |
-                      UserAlreadyExistsException e) {
+            response.setStatus(HttpServletResponse.SC_OK);
+            try {
+                logic.createUser(password);
+            } catch (DataMapperException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            } catch (UserAlreadyExistsException e) {
+                isRegistered = "Password already exists, try registering with a different password";
             }
             request.setAttribute("isLoggedIn", isRegistered);
             RequestDispatcher dispatcher = request.getRequestDispatcher("/home.jsp");
@@ -176,37 +136,16 @@ public class UsersServlet extends HttpServlet {
         //Changing user's passcode
         if (url.equals("/changePasscode")) {
             String password = request.getParameter("password");
-            File users_file = null;
             response.setStatus(HttpServletResponse.SC_OK);
-
-            try {
-                users_file = new File(ConfigManager.getCsvPath());
-            } catch (FileDownloadException e) {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            }
             String isChanged = "Successfully changed passcode";
-
-            try (CSVReader reader = new CSVReader(new FileReader(users_file))) {
-                String[] line;
-                while ((line = reader.readNext()) != null) {
-                    if (line.length < 2) {
-                        break;
-                    }
-                    String newPass = line[1];
-                    if (newPass.equals("password")) { // skip if the first row (titles) is being read
-                        continue;
-                    }
-                    if(password.equals(newPass)){
-                        isChanged = "Password already exists, try changing to a different password";
-                        break;
-                    }
-                }
-
-                if (isChanged.equals("Successfully changed passcode")) {
-                    //logic.setPasscode();
-                }
-            }  catch (FileNotFoundException | CsvValidationException e) {
+            try {
+                logic.setPasscode(pass, password);
+            } catch (UserNotFoundException e) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            } catch (DataMapperException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            } catch (UserAlreadyExistsException e) {
+                isChanged = "Password already exists, try changing to a different password";
             }
             request.setAttribute("isLoggedIn", isValid);
             request.setAttribute("userType", type);
