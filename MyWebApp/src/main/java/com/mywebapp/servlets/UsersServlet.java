@@ -24,7 +24,7 @@ public class UsersServlet extends HttpServlet {
     LogicFacade logic = new LogicFacade();
     static String type = "user";
     static String isValid = "false";
-    static String pass = "";
+    static String pass = "guest";
     private void addToUsers(String customerId, String password, String type) throws IOException, FileDownloadException{
         FileWriter fileWriter = new FileWriter(ConfigManager.getCsvPath(), true);
         BufferedWriter writer = new BufferedWriter(fileWriter);
@@ -40,7 +40,7 @@ public class UsersServlet extends HttpServlet {
         String url = request.getRequestURI();
         if (url.equals("/logout")) {
             isValid = "false";
-            pass = "";
+            pass = "guest";
             type = "user";
             request.setAttribute("isLoggedIn", "Successfully logged out");
             request.setAttribute("userType", type);
@@ -203,7 +203,7 @@ public class UsersServlet extends HttpServlet {
                 }
 
                 if (isChanged.equals("Successfully changed passcode")) {
-                    // TODO: to change passcode call logic method()
+                    //logic.setPasscode();
                 }
             }  catch (FileNotFoundException | CsvValidationException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

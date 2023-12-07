@@ -159,11 +159,12 @@
           <a href="/createProduct">Create New Product</a>
           <a href="/products/download">Download Catalog</a>
           <a href="/users">User Control</a>
-        <% } %>
+        <% }  %>
         <a href="/cart">Cart</a>
         <a href="/orders">View Orders</a>
         <a href="#" id="change-button">Change passcode</a>
         <a href="/logout">Logout</a>
+
         <% if (isChanged != null) { %>
         <br>
         <p>${isChanged}</p>
@@ -189,6 +190,7 @@
         <br>
         <p>${isLoggedIn}</p>
   <% }  else { %>
+        <a href="/cart">Cart</a>
         <a href="#" id="login-button">Login</a>
         <a href="#" id="register-button">Set Passcode</a>
   <% } %>
