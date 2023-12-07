@@ -91,12 +91,7 @@ public class User {
 
         //TODO: check that the user is staff otherwise they cant assign roles
 
-
         User user = users.get(0);
-
-        if (user.userType != UserType.STAFF) {
-            throw new UserNotAuthorized("This user is not allowed to grant or revoke staff privileges");
-        }
 
         if (user.userType == UserType.CUSTOMER) {
             user.userType = UserType.STAFF;
@@ -105,6 +100,22 @@ public class User {
         }
 
         UserDataMapper.update(user);
+    }
+
+    public static String getUserIdByPasscode(String passcode) throws DataMapperException, UserNotFoundException {
+        ArrayList<User> users = UserDataMapper.findUsers(null, passcode);
+        if (users.isEmpty()) {
+            throw new UserNotFoundException("This user was not found.");
+        }
+        return users.get(0).getUserId().toString();
+    }
+
+    public static User getUserByPasscode(String passcode) throws UserNotFoundException, DataMapperException {
+        ArrayList<User> users = UserDataMapper.findUsers(null, passcode);
+        if (users.isEmpty()) {
+            throw new UserNotFoundException("This user was not found.");
+        }
+        return users.get(0);
     }
 
 

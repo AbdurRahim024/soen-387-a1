@@ -2,11 +2,9 @@ package com.mywebapp.servlets;
 
 import com.mywebapp.ConfigManager;
 import com.mywebapp.logic.LogicFacade;
-import com.mywebapp.logic.custom_errors.DataMapperException;
-import com.mywebapp.logic.custom_errors.FileDownloadException;
-import com.mywebapp.logic.custom_errors.UserAlreadyExistsException;
-import com.mywebapp.logic.custom_errors.UserNotFoundException;
+import com.mywebapp.logic.custom_errors.*;
 import com.mywebapp.logic.models.Product;
+import com.mywebapp.logic.models.User;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 import jakarta.servlet.RequestDispatcher;
@@ -20,7 +18,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-@WebServlet(name = "usersServlet", value = {"/registerUser", "/authenticateUser", "/logout", "/changePasscode", "/users"})
+@WebServlet(name = "usersServlet", value = {"/registerUser", "/authenticateUser", "/logout", "/changePasscode", "/users", "/grant", "/revoke"})
 public class UsersServlet extends HttpServlet {
 
     LogicFacade logic = new LogicFacade();
@@ -51,11 +49,11 @@ public class UsersServlet extends HttpServlet {
             dispatcher.forward(request, response);
         }
 
-        if (url.equals("/users")) {
+        else if (url.equals("/users")) {
             if (type.equals("admin")) {
             try {
-//                TODO: GET USERS LIST
-//                request.setAttribute("users", users);
+                ArrayList<User> users = logic.getUsers();
+                request.setAttribute("users", users);
                 response.setStatus(HttpServletResponse.SC_OK);
             } catch (Exception e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -66,6 +64,30 @@ public class UsersServlet extends HttpServlet {
             dispatcher.forward(request, response);
             }
         }
+
+        //TODO: check dispatched
+        else if (url.equals("/grant") || url.equals("/revoke")) {
+            if (type.equals("admin")) {
+                String passcode = request.getParameter("passcode");
+                response.setStatus(HttpServletResponse.SC_OK);
+
+                try {
+                    logic.changeRole(passcode);
+                } catch (UserNotFoundException e) {
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                } catch (DataMapperException e) {
+                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                } catch (UserNotAuthorized e) {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                }
+
+                RequestDispatcher dispatcher = request.getRequestDispatcher("/users.jsp");
+                dispatcher.forward(request, response);
+
+            }
+        }
+
+
     }
 
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {

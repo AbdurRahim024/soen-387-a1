@@ -43,6 +43,11 @@ public class ProductDataMapper {
                 product = new Product(sku, name, description, vendor, urlSlug, price);
                 return product;
             }
+
+
+            dbStatement.close();
+            rs.close();
+            db.close();
         } catch (SQLException | ClassNotFoundException e) {
             throw new DataMapperException("Error occurred while getting a row in the Products table" + e);
         }
@@ -65,6 +70,10 @@ public class ProductDataMapper {
             dbStatement.setDouble(6, product.getPrice());
             dbStatement.executeUpdate();
 
+
+            dbStatement.close();
+            db.close();
+
         } catch (SQLException | ClassNotFoundException e) {
             throw new DataMapperException("Error occurred while inserting a row in the Products table: " + e);
         }
@@ -86,6 +95,9 @@ public class ProductDataMapper {
             dbStatement.setString(6, product.getSku().toString());
             dbStatement.executeUpdate();
 
+            dbStatement.close();
+            db.close();
+
         } catch (SQLException | ClassNotFoundException e) {
             throw new DataMapperException("Error occurred while updating a row in the Products table: " + e);
         }
@@ -99,6 +111,10 @@ public class ProductDataMapper {
             PreparedStatement dbStatement = db.prepareStatement(statement);
             dbStatement.setString(1, product.getSku().toString());
             dbStatement.executeUpdate();
+
+
+            dbStatement.close();
+            db.close();
 
         } catch (SQLException | ClassNotFoundException e) {
             throw new DataMapperException("Error occurred while deleting a row from the Products table: " + e);
@@ -122,6 +138,11 @@ public class ProductDataMapper {
             while (rs.next()) {
                 return true;
             }
+
+            dbStatement.close();
+            rs.close();
+            db.close();
+
         } catch (SQLException | ClassNotFoundException e) {
             throw new DataMapperException("Error occurred while searching for a row in the Products table: " + e);
         }
@@ -150,6 +171,12 @@ public class ProductDataMapper {
                 Product product = new Product(sku, name, description, vendor, urlSlug, price);
                 products.add(product);
             }
+
+
+            dbStatement.close();
+            rs.close();
+            db.close();
+
         } catch (SQLException | ClassNotFoundException e) {
             throw new DataMapperException("Error occurred while getting a row in the Products table: " + e);
         }
