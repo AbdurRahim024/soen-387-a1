@@ -64,14 +64,13 @@ public class User {
         return users.get(0);
     }
 
-    public static void changePasscode(String oldPasscode, String newPasscode) throws UserNotFoundException, DataMapperException {
-        if (!UserDataMapper.findUsers(null, oldPasscode).isEmpty()) {
-            throw new UserNotFoundException("This user does not exist");
-        }
-
+    public static void changePasscode(String oldPasscode, String newPasscode) throws UserNotFoundException, DataMapperException, UserAlreadyExistsException {
         ArrayList<User> users = UserDataMapper.findUsers(null, oldPasscode);
         if (users.isEmpty()) {
             throw new UserNotFoundException("This user was not found.");
+        }
+        if (!UserDataMapper.findUsers(null, newPasscode).isEmpty()) {
+            throw new UserAlreadyExistsException("This passcode is already taken");
         }
 
         User user = users.get(0);
@@ -116,6 +115,10 @@ public class User {
             throw new UserNotFoundException("This user was not found.");
         }
         return users.get(0);
+    }
+    public static boolean doesUserExist(String passcode) throws DataMapperException {
+        ArrayList<User> users = UserDataMapper.findUsers(null, passcode);
+        return users.isEmpty();
     }
 
 

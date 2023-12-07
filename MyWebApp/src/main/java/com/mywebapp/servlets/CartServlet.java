@@ -6,9 +6,6 @@ import com.mywebapp.logic.custom_errors.FileDownloadException;
 import com.mywebapp.logic.custom_errors.ProductNotFoundException;
 import com.mywebapp.logic.custom_errors.UserNotFoundException;
 import com.mywebapp.logic.models.Product;
-import com.mywebapp.ConfigManager;
-import com.opencsv.CSVReader;
-import com.opencsv.exceptions.CsvValidationException;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -134,7 +131,7 @@ public class CartServlet extends HttpServlet {
                 logic.removeProductFromCart(customerId, product.getSku().toString());
                 request.setAttribute("cart", logic.getCart(customerId));
                 response.setStatus(HttpServletResponse.SC_OK);
-            } catch (UserNotFoundException | ProductNotFoundException e) {
+            } catch (UserNotFoundException | ProductNotFoundException | DataMapperException e) {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             }
         }

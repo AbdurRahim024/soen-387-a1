@@ -1,6 +1,7 @@
 package com.mywebapp.logic;
 
 import com.mywebapp.logic.custom_errors.*;
+import com.mywebapp.logic.mappers.CartItemDataMapper;
 import com.mywebapp.logic.mappers.UserDataMapper;
 import com.mywebapp.logic.models.*;
 
@@ -124,12 +125,12 @@ public class LogicFacade {
         User.addUserToDb(passcode);
     }
 
-    public void setOrderOwner(int orderId, String userId) throws OrderNotFoundException, DataMapperException, OrderAlreadyBelongsToCustomerException {
+    public void setOrderOwner(int orderId, String passcode) throws OrderNotFoundException, DataMapperException, OrderAlreadyBelongsToCustomerException, UserNotFoundException {
         Order order = Order.getOrderByGuid(orderId);
-        order.setOrderOwner(UUID.fromString(userId));
+        order.setOrderOwner(passcode);
     }
 
-    public void setPasscode(String oldPasscode, String newPasscode) throws UserNotFoundException, DataMapperException {
+    public void setPasscode(String oldPasscode, String newPasscode) throws UserNotFoundException, DataMapperException, UserAlreadyExistsException {
         User.changePasscode(oldPasscode, newPasscode);
     }
     
@@ -142,12 +143,16 @@ public class LogicFacade {
 
     }
 
-    public void clearUnknownCart() {
-        //TODO: remove all the "unknown" cart's cart items
+    public void clearUnknownCart() throws UserNotFoundException, DataMapperException {
+        User user = User.getUserByPasscode("guest");
+        CartItemDataMapper.deleteAllItemsInCart(user.getCartId());
     }
 
     public String getUserIdByPasscode(String passcode) throws UserNotFoundException, DataMapperException {
         return User.getUserIdByPasscode(passcode);
+    }
+    public boolean doesUserExist(String passcode) throws DataMapperException {
+        return User.doesUserExist(passcode);
     }
 
     //TODO: add unit tests
