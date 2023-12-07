@@ -28,6 +28,9 @@ public class OrderDataMapper {
             dbStatement.setBinaryStream(4, bais, itemsBytes.length);
             dbStatement.executeUpdate();
 
+
+            dbStatement.close();
+            db.close();
         } catch (SQLException | ClassNotFoundException e) {
             throw new DataMapperException("Error occurred while inserting a new order: " + e);
         }
@@ -46,6 +49,9 @@ public class OrderDataMapper {
             dbStatement.setInt(3, order.getOrderId());
             dbStatement.executeUpdate();
 
+
+            dbStatement.close();
+            db.close();
         } catch (SQLException | ClassNotFoundException e) {
             throw new DataMapperException("Error occurred while updating an order: " + e);
         }
@@ -89,6 +95,11 @@ public class OrderDataMapper {
                 Order order = new Order(order_id, customer_id, shipping_address, tracking_number, is_shipped, items);
                 orders.add(order);
             }
+
+
+            dbStatement.close();
+            rs.close();
+            db.close();
         } catch (SQLException | ClassNotFoundException e) {
             throw new DataMapperException("Error occurred while retrieving orders: " + e);
         }

@@ -2,7 +2,9 @@ package com.mywebapp.servlets;
 
 import com.mywebapp.logic.*;
 import com.mywebapp.logic.custom_errors.*;
+import com.mywebapp.logic.mappers.UserDataMapper;
 import com.mywebapp.logic.models.Product;
+import com.mywebapp.logic.models.User;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -11,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.*;
+import java.util.UUID;
 
 @WebServlet(name = "productServlet", value = {"/home", "/products/*", "/addProductToList", "/createProduct", "/updateProduct"})
 public class ProductServlet extends HttpServlet {

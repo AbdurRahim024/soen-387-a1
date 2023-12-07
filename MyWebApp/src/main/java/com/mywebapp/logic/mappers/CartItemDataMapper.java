@@ -31,6 +31,11 @@ public class CartItemDataMapper {
                 Product product = ProductDataMapper.findBySkuOrSlug(sku, "");
                 return new CartItem(product, cartId, quantity);
             }
+
+
+            dbStatement.close();
+            rs.close();
+            db.close();
         } catch (SQLException | ClassNotFoundException e) {
             throw new DataMapperException("Error occurred while getting a row in the CartItems table: " + e);
         }
@@ -52,6 +57,9 @@ public class CartItemDataMapper {
 
             dbStatement.executeUpdate();
 
+            dbStatement.close();
+            db.close();
+
         } catch (SQLException | ClassNotFoundException e) {
             throw new DataMapperException("Error occurred while inserting a row in the CartItems table: " + e);
         }
@@ -72,6 +80,9 @@ public class CartItemDataMapper {
             dbStatement.setString(3, item.getCartId().toString());
             dbStatement.executeUpdate();
 
+            dbStatement.close();
+            db.close();
+
         } catch (SQLException | ClassNotFoundException e) {
             throw new DataMapperException("Error occurred while updating a row in the CartItems table: " + e);
         }
@@ -86,6 +97,10 @@ public class CartItemDataMapper {
             dbStatement.setString(1, item.getSku().toString());
             dbStatement.setString(2, item.getCartId().toString());
             dbStatement.executeUpdate();
+
+
+            dbStatement.close();
+            db.close();
 
         } catch (SQLException | ClassNotFoundException e) {
             throw new DataMapperException("Error occurred while deleting a row from the CartItems table: " + e);
@@ -113,6 +128,10 @@ public class CartItemDataMapper {
                 CartItem item = new CartItem(product, cartId, quantity);
                 items.add(item);
             }
+
+            dbStatement.close();
+            rs.close();
+            db.close();
         } catch (SQLException | ClassNotFoundException e) {
             throw new DataMapperException("Error occurred while retrieving all items in the cart: " + e);
         }
@@ -129,6 +148,8 @@ public class CartItemDataMapper {
             dbStatement.setString(1, cart_id.toString());
             dbStatement.executeUpdate();
 
+            dbStatement.close();
+            db.close();
         } catch (SQLException | ClassNotFoundException e) {
             throw new DataMapperException("Error occurred while deleting all items in the cart: " + e);
         }

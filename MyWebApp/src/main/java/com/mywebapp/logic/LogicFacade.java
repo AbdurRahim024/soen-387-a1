@@ -41,19 +41,19 @@ public class LogicFacade {
         return Product.findProductBySlug(urlSlug);
     }
 
-    public ArrayList<? extends Product> getCart(String user_id) throws UserNotFoundException, DataMapperException {
-        User user = User.getUser(user_id);
+    public ArrayList<? extends Product> getCart(String passcode) throws UserNotFoundException, DataMapperException {
+        User user = User.getUserByPasscode(passcode);
         return CartItem.findCartItemsByCartId(user.getCartId());
     }
 
-    public void addProductToCart(String user_id, String sku) throws UserNotFoundException, ProductNotFoundException, DataMapperException {
-        User user = User.getUser(user_id);
+    public void addProductToCart(String passcode, String sku) throws UserNotFoundException, ProductNotFoundException, DataMapperException {
+        User user = User.getUserByPasscode(passcode);
         Cart cart = new Cart(user.getCartId());
         cart.incrementItem(UUID.fromString(sku));
     }
 
-    public void removeProductFromCart(String user_id, String sku) throws UserNotFoundException, ProductNotFoundException, DataMapperException {
-        User user = User.getUser(user_id);
+    public void removeProductFromCart(String passcode, String sku) throws UserNotFoundException, ProductNotFoundException, DataMapperException {
+        User user = User.getUserByPasscode(passcode);
         Cart cart = new Cart(user.getCartId());
 
         CartItem item = CartItem.findCartItemBySkuAndCartId(UUID.fromString(sku), user.getCartId());
@@ -61,40 +61,40 @@ public class LogicFacade {
         cart.decrementItem(UUID.fromString(sku));
     }
 
-    public void decrementProductInCart(String user_id, String sku) throws UserNotFoundException, ProductNotFoundException, DataMapperException {
-        User user = User.getUser(user_id);
+    public void decrementProductInCart(String passcode, String sku) throws UserNotFoundException, ProductNotFoundException, DataMapperException {
+        User user = User.getUserByPasscode(passcode);
         Cart cart = new Cart(user.getCartId());
         cart.decrementItem(UUID.fromString(sku));
     }
 
-    public void setProductQuantityInCart(String user_id, String sku, int quantity) throws UserNotFoundException, DataMapperException, ProductNotFoundException {
-        User user = User.getUser(user_id);
+    public void setProductQuantityInCart(String passcode, String sku, int quantity) throws UserNotFoundException, DataMapperException, ProductNotFoundException {
+        User user = User.getUserByPasscode(passcode);
         CartItem item = CartItem.findCartItemBySkuAndCartId(UUID.fromString(sku), user.getCartId());
         item.setQuantity(quantity);
     }
 
-    public void clearCart(String user_id) throws UserNotFoundException, DataMapperException {
-        User user = User.getUser(user_id);
+    public void clearCart(String passcode) throws UserNotFoundException, DataMapperException {
+        User user = User.getUserByPasscode(passcode);
         user.clearCart();
     }
 
-    public void createOrder(String user_id, String shippingAddress) throws UserNotFoundException, DataMapperException {
-        User user = User.getUser(user_id);
+    public void createOrder(String passcode, String shippingAddress) throws UserNotFoundException, DataMapperException {
+        User user = User.getUserByPasscode(passcode);
         Order order = new Order(user.getUserId(), shippingAddress);
         order.placeOrder(user.getCartId());
         user.clearCart();
     }
 
-    public ArrayList<Order> getOrdersByUser(String user_id) throws UserNotFoundException, DataMapperException {
-        User user = User.getUser(user_id);
+    public ArrayList<Order> getOrdersByUser(String passcode) throws UserNotFoundException, DataMapperException {
+        User user = User.getUserByPasscode(passcode);
         return Order.getOrdersByUser(user.getUserId());
     }
 
-    public Order getOrderDetails(String userType, String user_id, int orderId) throws DataMapperException, CustomerOrderMismatchException, UserNotFoundException, OrderNotFoundException {
+    public Order getOrderDetails(String userType, String passcode, int orderId) throws DataMapperException, CustomerOrderMismatchException, UserNotFoundException, OrderNotFoundException {
         Order order = Order.getOrderByGuid(orderId);
 
-        if (!user_id.isEmpty() && userType.equals("user")) {
-            User user = User.getUser(user_id);
+        if (!passcode.isEmpty() && userType.equals("user")) {
+            User user = User.getUserByPasscode(passcode);
             if (!order.getUserId().equals(user.getUserId())) {
                 throw new CustomerOrderMismatchException("This order does not belong to this customer");
             }
@@ -140,6 +140,14 @@ public class LogicFacade {
     public void changeRole(String passcode) throws UserNotFoundException, DataMapperException, UserNotAuthorized {
         User.changeRole(passcode);
 
+    }
+
+    public void clearUnknownCart() {
+        //TODO: remove all the "unknown" cart's cart items
+    }
+
+    public String getUserIdByPasscode(String passcode) throws UserNotFoundException, DataMapperException {
+        return User.getUserIdByPasscode(passcode);
     }
 
     //TODO: add unit tests

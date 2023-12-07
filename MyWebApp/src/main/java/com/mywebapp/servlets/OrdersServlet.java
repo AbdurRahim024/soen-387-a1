@@ -163,11 +163,24 @@ public class OrdersServlet extends HttpServlet{
 
         }
 
-        //TODO: /claim
+        //TODO: test /claim
         else if (url.equals("/claim")) {
-            String shipping_address = (String) request.getAttribute("shipping_address");
+            int order_id = (Integer) request.getAttribute("order_id");
+            response.setStatus(HttpServletResponse.SC_OK);
 
+            try {
+                logic.setOrderOwner(order_id, UsersServlet.pass);
+            } catch (OrderNotFoundException | OrderAlreadyBelongsToCustomerException e) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            } catch (DataMapperException e) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
+
+            RequestDispatcher dispatcher = request.getRequestDispatcher("orders.jsp");
+            dispatcher.forward(request, response);
         }
+
+
 
     }
     private String getCustomerID(String password) throws CsvValidationException, IOException, FileDownloadException {

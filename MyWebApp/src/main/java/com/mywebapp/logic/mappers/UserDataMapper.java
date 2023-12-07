@@ -16,16 +16,20 @@ public class UserDataMapper {
         try {
             Class.forName("org.sqlite.JDBC");
             Connection db = DriverManager.getConnection(ConfigManager.getDbParameter(ConfigManager.DbParameter.URL));
-            String statement = "INSERT INTO `customers` (`customer_id`, `cart_id`) VALUES (?, ?)";
+            String statement = "INSERT INTO `users` (`user_id`, `cart_id`, `passcode`, `user_type`) VALUES (?, ?, ?, ?)";
 
             PreparedStatement dbStatement = db.prepareStatement(statement);
             dbStatement.setString(1, user.getUserId().toString());
             dbStatement.setString(2, user.getCartId().toString());
+            dbStatement.setString(3, user.getPasscode());
+            dbStatement.setString(4, user.getUserType().name());
 
             dbStatement.executeUpdate();
 
+            dbStatement.close();
+            db.close();
         } catch (SQLException | ClassNotFoundException e) {
-            throw new DataMapperException("Error occurred while inserting a row in the Customers table: " + e);
+            throw new DataMapperException("Error occurred while inserting a row in the Users table: " + e);
         }
     }
 
@@ -44,6 +48,8 @@ public class UserDataMapper {
             dbStatement.setString(3, user.getCartId().toString());
             dbStatement.executeUpdate();
 
+            dbStatement.close();
+            db.close();
         } catch (SQLException | ClassNotFoundException e) {
             throw new DataMapperException("Error occurred while updating a row in the CartItems table: " + e);
         }
@@ -84,6 +90,10 @@ public class UserDataMapper {
                 User user = new User(userId, cartId, passCode, userType);
                 users.add(user);
             }
+
+            dbStatement.close();
+            rs.close();
+            db.close();
         } catch (SQLException | ClassNotFoundException e) {
             throw new DataMapperException("Error occurred while retrieving orders: " + e);
         }

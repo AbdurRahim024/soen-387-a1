@@ -73,8 +73,7 @@ public class CartServlet extends HttpServlet {
         //Adds a particular product to the cart
         if (url.startsWith("/cart/products")) {
             String sku = request.getParameter("productSku");
-            String password = UsersServlet.pass;
-            String customerId = null;
+            String passcode = UsersServlet.pass;
             try {
                 customerId = getCustomerID(password);
                 logic.addProductToCart(customerId, sku);
@@ -140,6 +139,8 @@ public class CartServlet extends HttpServlet {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             } catch (UserNotFoundException | ProductNotFoundException e) {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            } catch (DataMapperException e) {
+                throw new RuntimeException(e);
             }
         }
 
