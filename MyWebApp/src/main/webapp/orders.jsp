@@ -1,6 +1,7 @@
 <%@ page import="com.mywebapp.logic.models.Product" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="com.mywebapp.logic.models.Order" %>
+<%@ page import="com.mywebapp.logic.models.User" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -158,6 +159,10 @@
             for (Order order : list){ %>
         <div class="product">
             <h2><b>Order id: </b> <%=order.getOrderId()%></h2>
+            <%
+                String user = order.getOrderUser();
+            %>
+            <p><b>Order owner: </b><%=user.equals("guest") ? "Unclaimed order" : user%></p>
             <p><b>Shipping address: </b><%=order.getShippingAddress()%></p>
             <p><b>Shipping status: </b><%=order.isShipped() ? "Shipped" : "Not shipped"%></p>
             <div class="button-container">
