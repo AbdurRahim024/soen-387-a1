@@ -15,6 +15,7 @@ public class Order {
     private String shippingAddress;
     private UUID trackingNumber;
     private boolean isShipped;
+    private String passcode;
 
     public Order(UUID userId, String shippingAddress) {
         this.userId = userId;
@@ -70,6 +71,20 @@ public class Order {
     public static ArrayList<Order> getOrdersByUser(UUID userId) throws DataMapperException {
         return OrderDataMapper.getOrders(-1, userId);
     }
+
+    public String getOrderUser() {
+        String orderOwner;
+        try {
+            orderOwner = User.getUser(String.valueOf(this.userId)).getPasscode();
+        } catch (UserNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (DataMapperException e) {
+            throw new RuntimeException(e);
+        }
+
+        return orderOwner;
+    }
+
 
 
     //*******************************************************************************
@@ -127,4 +142,5 @@ public class Order {
     public void setItems(ArrayList<CartItem> items) {
         this.items = items;
     }
+
 }

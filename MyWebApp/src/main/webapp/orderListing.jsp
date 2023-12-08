@@ -161,9 +161,11 @@
   <div id="product-container">
     <%
       Order order = (Order) request.getAttribute("order");
+      String user = order.getOrderUser();
       %>
     <div class="product">
       <h2><b>Order id: </b> <%=order.getOrderId()%></h2>
+      <p><b>Order owner: </b><%=user.equals("guest") ? "Unclaimed order" : user%></p>
       <p><b>Shipping address: </b><%=order.getShippingAddress()%></p>
       <p><b>Shipping status: </b><%=order.isShipped() ? "Shipped" : "Not shipped"%></p>
       <p><b>Tracking number: </b><%=order.getTrackingNumber() == null ? "Order was not shipped" : order.getTrackingNumber()%></p>
