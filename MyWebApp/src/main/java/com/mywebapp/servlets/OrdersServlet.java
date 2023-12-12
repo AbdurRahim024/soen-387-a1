@@ -18,7 +18,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-@WebServlet(name = "ordersServlet", value = {"/orders/*", "/orderForm", "/createOrder", "/shipOrder", "/claim"})
+@WebServlet(name = "ordersServlet", value = {"/orders/*", "/orderForm", "/createOrder", "/shipOrder", "/claimOrder"})
 public class OrdersServlet extends HttpServlet{
     LogicFacade logic = new LogicFacade();
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -133,18 +133,25 @@ public class OrdersServlet extends HttpServlet{
         }
 
         //TODO: test /claim
-        else if (url.equals("/claim")) {
+        else if (url.equals("/claimOrder")) {
             int order_id = (Integer) request.getAttribute("order_id");
             response.setStatus(HttpServletResponse.SC_OK);
 
             try {
                 logic.setOrderOwner(order_id, UsersServlet.pass);
+                if (UsersServlet.type.equals("user")) {
+                    orders = logic.getOrdersByUser(UsersServlet.pass);
+                } else {
+                    orders = logic.getAllOrders();
+                }
+
             } catch (OrderNotFoundException | OrderAlreadyBelongsToCustomerException | UserNotFoundException e) {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             } catch (DataMapperException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
 
+            request.setAttribute("orders", orders);
             RequestDispatcher dispatcher = request.getRequestDispatcher("orders.jsp");
             dispatcher.forward(request, response);
         }

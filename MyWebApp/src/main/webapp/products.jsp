@@ -161,6 +161,7 @@
     <% }  %>
     <a href="/cart">Cart</a>
     <a href="/orders">View Orders</a>
+    <a href="/claimOrder">Claim Order</a>
     <a href="#" id="change-button">Change passcode</a>
     <a href="/logout">Logout</a>
 
