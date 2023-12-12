@@ -150,6 +150,7 @@
   <% } %>
   <a href="/cart">Cart</a>
   <a href="/orders">View Orders</a>
+  <a href="/claimOrder">Claim Order</a>
   <a href="/logout">Logout</a>
   <% } else if (isLoggedIn != null && isLoggedIn.equals("Log in or register to add items to the cart")){ %>
   <br>
