@@ -16,7 +16,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-@WebServlet(name = "usersServlet", value = {"/registerUser", "/authenticateUser", "/logout", "/changePasscode", "/users", "/grant", "/revoke"})
+@WebServlet(name = "usersServlet", value = {"/registerUser", "/authenticateUser", "/logout", "/changePasscode", "/users", "/grant"})
 public class UsersServlet extends HttpServlet {
 
     LogicFacade logic = new LogicFacade();
@@ -47,10 +47,11 @@ public class UsersServlet extends HttpServlet {
                 }
                 request.setAttribute("isLoggedIn", UsersServlet.isValid);
                 request.setAttribute("userType", UsersServlet.type);
+                request.setAttribute("currentUser", UsersServlet.pass);
                 RequestDispatcher dispatcher = request.getRequestDispatcher("/users.jsp");
                 dispatcher.forward(request, response);
             }
-        } else if (url.equals("/grant") || url.equals("/revoke")) {
+        } else if (url.equals("/grant")) {
             if (type.equals("admin")) {
                 String isAllowed = "You are not authorized!";
                 String password = request.getParameter("password");
@@ -60,6 +61,8 @@ public class UsersServlet extends HttpServlet {
 
                 try {
                     logic.changeRole(password);
+                    ArrayList<User> users = logic.getUsers();
+                    request.setAttribute("users", users);
                 } catch (UserNotFoundException e) {
                     response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 } catch (DataMapperException e) {
